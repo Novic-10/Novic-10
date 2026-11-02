@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cybersecurity Portfolio | SOC Analyst & DFIR</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Fira Code for terminal aesthetic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            cyan: '#06b6d4',
+                            sky: '#0284c7',
+                            accent: '#38bdf8',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar for dark theme */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0284c7;
+        }
+        .cyber-grid {
+            background-size: 30px 30px;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-200 font-sans antialiased selection:bg-cyan-500 selection:text-slate-950 min-h-screen flex flex-col">
+
+    <!-- Top Navigation Header -->
+    <header class="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-slate-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="#" class="flex items-center gap-2 group">
+                <div class="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 group-hover:bg-cyan-500/20 transition-all">
+                    <i class="fa-solid font-mono text-sm">&lt;/&gt;</i>
+                </div>
+                <span class="font-bold text-lg text-slate-100 tracking-tight">ALEX<span class="text-cyan-400">.DEFENSE</span></span>
+            </a>
+
+            <!-- Desktop Nav Items -->
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
+                <a href="#about" class="hover:text-cyan-400 transition-colors">About</a>
+                <a href="#certifications" class="hover:text-cyan-400 transition-colors">Certifications</a>
+                <a href="#homelabs" class="hover:text-cyan-400 transition-colors">Homelabs</a>
+                <a href="#writeups" class="hover:text-cyan-400 transition-colors">CTF Writeups</a>
+                <a href="#skills" class="hover:text-cyan-400 transition-colors">Skills</a>
+            </nav>
+
+            <!-- Header Quick Actions -->
+            <div class="hidden sm:flex items-center gap-3">
+                <a href="https://github.com/YOUR_GITHUB_USERNAME" target="_blank" rel="noopener noreferrer" 
+                   class="p-2 text-slate-400 hover:text-cyan-400 hover:bg-slate-800 rounded-lg transition-all" title="GitHub Profile">
+                    <i class="fa-brands fa-github text-lg"></i>
+                </a>
+                <a href="https://linkedin.com/in/YOUR_LINKEDIN_USERNAME" target="_blank" rel="noopener noreferrer" 
+                   class="p-2 text-slate-400 hover:text-cyan-400 hover:bg-slate-800 rounded-lg transition-all" title="LinkedIn Profile">
+                    <i class="fa-brands fa-linkedin text-lg"></i>
+                </a>
+                <a href="#contact" class="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500 hover:text-slate-950 transition-all">
+                    Get In Touch
+                </a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-btn" class="md:hidden p-2 text-slate-400 hover:text-slate-100 focus:outline-none" aria-label="Toggle menu">
+                <i class="fa-solid fa-bars text-xl"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-slate-900 border-b border-slate-800 px-4 pt-2 pb-4 space-y-2">
+            <a href="#about" class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-cyan-400 hover:bg-slate-800">About</a>
+            <a href="#certifications" class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-cyan-400 hover:bg-slate-800">Certifications</a>
+            <a href="#homelabs" class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-cyan-400 hover:bg-slate-800">Homelabs</a>
+            <a href="#writeups" class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-cyan-400 hover:bg-slate-800">CTF Writeups</a>
+            <a href="#skills" class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-cyan-400 hover:bg-slate-800">Skills</a>
+            <div class="pt-2 flex items-center gap-4 px-3">
+                <a href="https://github.com/YOUR_GITHUB_USERNAME" target="_blank" class="text-slate-400 hover:text-cyan-400"><i class="fa-brands fa-github text-xl"></i></a>
+                <a href="https://linkedin.com/in/YOUR_LINKEDIN_USERNAME" target="_blank" class="text-slate-400 hover:text-cyan-400"><i class="fa-brands fa-linkedin text-xl"></i></a>
+                <a href="mailto:your.email@example.com" class="text-slate-400 hover:text-cyan-400"><i class="fa-solid fa-envelope text-xl"></i></a>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <!-- HERO SECTION -->
+        <section id="about" class="relative py-20 lg:py-28 overflow-hidden cyber-grid border-b border-slate-800/60">
+            <!-- Background Glow Overlay -->
+            <div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 bg-cyan-500/10 blur-[120px] rounded-full pointer-events-none"></div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                    
+                    <!-- Left Hero Content -->
+                    <div class="lg:col-span-7 space-y-6">
+                        <!-- Role Badge -->
+                        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-xs font-mono text-cyan-400">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                            <span>SOC ANALYST TIER 1 | BLUE TEAM & DFIR</span>
+                        </div>
+
+                        <!-- Main Title -->
+                        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-100 tracking-tight leading-tight">
+                            Defending Systems.<br>
+                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-400 to-blue-500">
+                                Analyzing Threats.
+                            </span>
+                        </h1>
+
+                        <!-- Bio / Description -->
+                        <p class="text-slate-400 text-base sm:text-lg leading-relaxed max-w-2xl">
+                            Cybersecurity professional specializing in Security Operations, Digital Forensics, and Threat Detection. Hands-on experience investigating alerts, constructing production-grade homelabs, and publishing detailed CTF writeups.
+                        </p>
+
+                        <!-- Call to Action Links -->
+                        <div class="pt-4 flex flex-wrap gap-4 items-center">
+                            <a href="#homelabs" class="px-6 py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold text-sm transition-all shadow-lg shadow-cyan-500/20 flex items-center gap-2">
+                                <i class="fa-solid fa-flask"></i>
+                                View Homelabs
+                            </a>
+                            <a href="#writeups" class="px-6 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 font-semibold text-sm transition-all flex items-center gap-2">
+                                <i class="fa-solid fa-file-lines text-cyan-400"></i>
+                                CTF Writeups
+                            </a>
+                            <!-- REPLACE LINK BELOW WITH YOUR RESUME FILE OR GOOGLE DRIVE LINK -->
+                            <a href="YOUR_RESUME_LINK_HERE.pdf" target="_blank" rel="noopener noreferrer" class="px-4 py-3 rounded-xl text-slate-400 hover:text-slate-100 font-medium text-sm transition-all flex items-center gap-1">
+                                <i class="fa-solid fa-arrow-down-to-line"></i>
+                                Resume
+                            </a>
+                        </div>
+
+                        <!-- Quick Social Badges -->
+                        <div class="pt-6 flex items-center gap-6 text-sm text-slate-400 border-t border-slate-800/80">
+                            <!-- GitHub Link Placeholder -->
+                            <a href="https://github.com/YOUR_GITHUB_USERNAME" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 hover:text-cyan-400 transition-colors">
+                                <i class="fa-brands fa-github text-slate-300"></i>
+                                <span>github.com/YOUR_USERNAME</span>
+                            </a>
+                            <!-- LinkedIn Link Placeholder -->
+                            <a href="https://linkedin.com/in/YOUR_LINKEDIN_USERNAME" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 hover:text-cyan-400 transition-colors">
+                                <i class="fa-brands fa-linkedin text-cyan-500"></i>
+                                <span>LinkedIn Profile</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Right Hero Interactive Terminal Card -->
+                    <div class="lg:col-span-5">
+                        <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden">
+                            <!-- Terminal Header -->
+                            <div class="bg-slate-950/80 px-4 py-3 border-b border-slate-800 flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+                                    <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                                    <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
+                                </div>
+                                <div class="text-xs font-mono text-slate-500 flex items-center gap-1">
+                                    <i class="fa-solid fa-terminal text-[10px]"></i> soc_analyst@defender:~
+                                </div>
+                            </div>
+                            <!-- Terminal Body -->
+                            <div class="p-5 font-mono text-xs sm:text-sm leading-relaxed space-y-3 bg-slate-950/60">
+                                <div class="text-slate-400">
+                                    <span class="text-emerald-400">guest@portfolio:~$</span> cat status.json
+                                </div>
+                                <div class="text-slate-300 pl-4 border-l-2 border-slate-800 space-y-1 text-xs">
+                                    <p><span class="text-cyan-400">"status":</span> "Active Security Analyst",</p>
+                                    <p><span class="text-cyan-400">"primary_focus":</span> ["Incident Response", "DFIR"],</p>
+                                    <p><span class="text-cyan-400">"certifications":</span> ["BTL1", "CySA+", "AZ-104"],</p>
+                                    <p><span class="text-cyan-400">"current_lab":</span> "Active Directory & Sysmon Integrations",</p>
+                                    <p><span class="text-cyan-400">"open_for_roles":</span> <span class="text-emerald-400">true</span></p>
+                                </div>
+                                <div class="text-slate-400 pt-2">
+                                    <span class="text-emerald-400">guest@portfolio:~$</span> ./check_readiness.sh
+                                </div>
+                                <div class="text-cyan-300 text-xs">
+                                    [+] Memory Forensics: <span class="text-emerald-400">READY</span> (Volatility 3)<br>
+                                    [+] Log Analysis: <span class="text-emerald-400">READY</span> (Zeek / Splunk / ELK)<br>
+                                    [+] Threat Detection: <span class="text-emerald-400">READY</span> (Sysmon / YARA)
+                                </div>
+                                <div class="flex items-center text-slate-400 pt-1">
+                                    <span class="text-emerald-400">guest@portfolio:~$</span>
+                                    <span class="ml-2 w-2 h-4 bg-cyan-400 animate-pulse"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- CERTIFICATIONS SECTION -->
+        <section id="certifications" class="py-16 lg:py-24 bg-slate-950 border-b border-slate-800/60">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+                    <div>
+                        <div class="text-cyan-400 font-mono text-xs tracking-wider uppercase mb-2">Validated Expertise</div>
+                        <h2 class="text-3xl sm:text-4xl font-bold text-slate-100">Certifications</h2>
+                    </div>
+                    <p class="text-slate-400 text-sm max-w-md mt-2 md:mt-0">
+                        Industry-recognized certifications validating blue team operational skills, security analysis, and cloud system administration.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                    <!-- Cert Card 1: BTL1 -->
+                    <div class="bg-slate-900 border border-slate-800 hover:border-cyan-500/50 rounded-2xl p-6 transition-all duration-300 flex flex-col justify-between group hover:shadow-xl hover:shadow-cyan-500/5">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-shield-halved text-xl"></i>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-full bg-slate-800 text-slate-300 text-xs font-mono">Issued</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-100 mb-1 group-hover:text-cyan-400 transition-colors">Blue Team Level 1 (BTL1)</h3>
+                            <p class="text-slate-400 text-xs font-mono mb-4">Security Blue Team</p>
+                            <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                                Hands-on practical certification covering Incident Response, Digital Forensics, Network Analysis (Wireshark), Threat Hunting, and SIEM usage. Passed 24-hour practical exam.
+                            </p>
+                        </div>
+                        <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between">
+                            <span class="text-xs text-slate-500">ID: BTL1-VERIFIED</span>
+                            <!-- REPLACE HREF WITH YOUR ACTUAL BADGE / VERIFICATION HYPERLINK -->
+                            <a href="https://www.credly.com/YOUR_BTL1_LINK" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-cyan-400 hover:text-cyan-300 flex items-center gap-1">
+                                Verify Cert <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Cert Card 2: CySA+ -->
+                    <div class="bg-slate-900 border border-slate-800 hover:border-cyan-500/50 rounded-2xl p-6 transition-all duration-300 flex flex-col justify-between group hover:shadow-xl hover:shadow-cyan-500/5">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 rounded-xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400 group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-user-shield text-xl"></i>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-full bg-slate-800 text-slate-300 text-xs font-mono">CompTIA</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-100 mb-1 group-hover:text-cyan-400 transition-colors">CompTIA CySA+</h3>
+                            <p class="text-slate-400 text-xs font-mono mb-4">Cybersecurity Analyst</p>
+                            <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                                Validates behavioral analytics for network and device security, threat identification, security architecture review, and compliance mitigation strategies.
+                            </p>
+                        </div>
+                        <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between">
+                            <span class="text-xs text-slate-500">ID: COMP00100XXXXXX</span>
+                            <!-- REPLACE HREF WITH YOUR ACTUAL BADGE / VERIFICATION HYPERLINK -->
+                            <a href="https://www.credly.com/YOUR_CYSA_LINK" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-cyan-400 hover:text-cyan-300 flex items-center gap-1">
+                                Verify Cert <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Cert Card 3: Azure AZ-104 -->
+                    <div class="bg-slate-900 border border-slate-800 hover:border-cyan-500/50 rounded-2xl p-6 transition-all duration-300 flex flex-col justify-between group hover:shadow-xl hover:shadow-cyan-500/5">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform">
+                                    <i class="fa-brands fa-microsoft text-xl"></i>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-full bg-slate-800 text-slate-300 text-xs font-mono">Microsoft</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-100 mb-1 group-hover:text-cyan-400 transition-colors">Azure Administrator (AZ-104)</h3>
+                            <p class="text-slate-400 text-xs font-mono mb-4">Microsoft Certified Associate</p>
+                            <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                                Expertise in managing cloud identities (Entra ID), governance, virtual networks, storage solutions, and cloud compute resources across Azure infrastructure.
+                            </p>
+                        </div>
+                        <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between">
+                            <span class="text-xs text-slate-500">ID: MS-AZ104-XXXXX</span>
+                            <!-- REPLACE HREF WITH YOUR ACTUAL BADGE / VERIFICATION HYPERLINK -->
+                            <a href="https://learn.microsoft.com/en-us/users/YOUR_USER" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-cyan-400 hover:text-cyan-300 flex items-center gap-1">
+                                Verify Cert <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- HOMELAB PROJECTS SECTION -->
+        <section id="homelabs" class="py-16 lg:py-24 bg-slate-900/40 border-b border-slate-800/60">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <div class="mb-12">
+                    <div class="text-cyan-400 font-mono text-xs tracking-wider uppercase mb-2">Hands-on Infrastructure</div>
+                    <h2 class="text-3xl sm:text-4xl font-bold text-slate-100">Homelab Projects</h2>
+                    <p class="text-slate-400 text-sm mt-2 max-w-2xl">
+                        Self-hosted defensive environments built from scratch to simulate enterprise infrastructure, centralized log aggregation, identity management, and storage encryption.
+                    </p>
+                </div>
+
+                <div class="space-y-8">
+
+                    <!-- Lab Project 1: Active Directory & GPO Lab -->
+                    <div class="bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-2xl p-6 lg:p-8 transition-all">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                            <div class="lg:col-span-7 space-y-4">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <span class="px-2.5 py-1 rounded-md bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-xs font-mono">Windows Server 2022</span>
+                                    <span class="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 text-xs font-mono">Active Directory</span>
+                                    <span class="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 text-xs font-mono">Sysmon</span>
+                                    <span class="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 text-xs font-mono">Group Policy (GPO)</span>
+                                </div>
+                                <h3 class="text-2xl font-bold text-slate-100">
+                                    Enterprise Active Directory & Hardened GPO Lab
+                                </h3>
+                                <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                                    Designed and deployed a full Active Directory domain controller environment on VirtualBox/Proxmox with Windows Server 2022 and Windows 10 endpoints. Implemented SwiftOnSecurity Sysmon configs, WinRM logging, and custom Group Policy Objects for endpoint hardening.
+                                </p>
+                                
+                                <div class="space-y-2 pt-2">
+                                    <h4 class="text-xs font-mono uppercase text-slate-400 tracking-wider">Key Implementation Features:</h4>
+                                    <ul class="text-xs sm:text-sm text-slate-300 space-y-1.5 list-disc list-inside">
+                                        <li>Configured OU hierarchy, Tiered Administrative Model, and LAPS for local admin passwords.</li>
+                                        <li>Centralized event logging forwarding (WEF/WEC) to a SIEM dashboard for real-time alert triage.</li>
+                                        <li>Simulated Kerberoasting and Pass-the-Hash attacks to verify Sysmon event ID detection coverage.</li>
+                                    </ul>
+                                </div>
+
+                                <div class="pt-4 flex flex-wrap items-center gap-4">
+                                    <!-- REPLACE HYPERLINK WITH YOUR REPO LINK -->
+                                    <a href="https://github.com/YOUR_GITHUB_USERNAME/active-directory-lab" target="_blank" rel="noopener noreferrer" 
+                                       class="px-4 py-2 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-xs font-semibold flex items-center gap-2 transition-all">
+                                        <i class="fa-brands fa-github"></i> Repository & Architecture Docs
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="lg:col-span-5 bg-slate-950 p-5 rounded-xl border border-slate-800/80 font-mono text-xs space-y-3">
+                                <div class="text-cyan-400 font-semibold border-b border-slate-800 pb-2 flex items-center justify-between">
+                                    <span>LAB TOPOLOGY SUMMARY</span>
+                                    <i class="fa-solid fa-network-wired text-slate-500"></i>
+                                </div>
+                                <div class="space-y-1.5 text-slate-400">
+                                    <div class="flex justify-between"><span class="text-slate-300">Domain Controller:</span> <span>192.168.10.10 (DC01)</span></div>
+                                    <div class="flex justify-between"><span class="text-slate-300">SIEM / Collector:</span> <span>192.168.10.20 (SIEM01)</span></div>
+                                    <div class="flex justify-between"><span class="text-slate-300">Target Workstation:</span> <span>192.168.10.50 (WIN10-WS)</span></div>
+                                    <div class="flex justify-between"><span class="text-slate-300">Active Logging:</span> <span>Sysmon, PowerShell L5</span></div>
+                                </div>
+                                <div class="p-3 bg-slate-900 rounded border border-slate-800 text-[11px] text-slate-300">
+                                    <span class="text-emerald-400 font-bold">[Success]</span> Active Directory Auditing verified: Event IDs 4624, 4625, 4688, Sysmon Event ID 1 & 3 captured.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lab Project 2: LUKS-Encrypted Pi-hole / Samba Server -->
+                    <div class="bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-2xl p-6 lg:p-8 transition-all">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                            <div class="lg:col-span-7 space-y-4">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <span class="px-2.5 py-1 rounded-md bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-xs font-mono">Raspberry Pi OS</span>
+                                    <span class="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 text-xs font-mono">LUKS Encryption</span>
+                                    <span class="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 text-xs font-mono">Pi-hole DNS</span>
+                                    <span class="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 text-xs font-mono">Samba NAS</span>
+                                </div>
+                                <h3 class="text-2xl font-bold text-slate-100">
+                                    LUKS-Encrypted Pi-hole DNS Sinkhole & Secured Samba Server
+                                </h3>
+                                <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                                    Engineered a hardened home network gateway and network-attached storage solution using Raspberry Pi hardware running Debian. Integrated LUKS (Linux Unified Key Setup) for full-disk encryption with automated headless unlock capabilities over Dropbear SSH.
+                                </p>
+                                
+                                <div class="space-y-2 pt-2">
+                                    <h4 class="text-xs font-mono uppercase text-slate-400 tracking-wider">Key Implementation Features:</h4>
+                                    <ul class="text-xs sm:text-sm text-slate-300 space-y-1.5 list-disc list-inside">
+                                        <li>Deploys network-wide DNS filtering with Pi-hole and Unbound recursive DNS for privacy & blocklisting.</li>
+                                        <li>Hardened Samba shares restricting access via ACLs, SMB3 encryption, and disabled SMB1 protocol.</li>
+                                        <li>Remote boot unlocking configured via encrypted SSH during initramfs stage.</li>
+                                    </ul>
+                                </div>
+
+                                <div class="pt-4 flex flex-wrap items-center gap-4">
+                                    <!-- REPLACE HYPERLINK WITH YOUR REPO LINK -->
+                                    <a href="https://github.com/YOUR_GITHUB_USERNAME/secure-pi-nas-setup" target="_blank" rel="noopener noreferrer" 
+                                       class="px-4 py-2 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-xs font-semibold flex items-center gap-2 transition-all">
+                                        <i class="fa-brands fa-github"></i> Repository & Guide
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="lg:col-span-5 bg-slate-950 p-5 rounded-xl border border-slate-800/80 font-mono text-xs space-y-3">
+                                <div class="text-cyan-400 font-semibold border-b border-slate-800 pb-2 flex items-center justify-between">
+                                    <span>SECURITY CONFIGURATION</span>
+                                    <i class="fa-solid fa-lock text-slate-500"></i>
+                                </div>
+                                <div class="space-y-1.5 text-slate-400">
+                                    <div class="flex justify-between"><span class="text-slate-300">Disk Cipher:</span> <span>aes-xts-plain64 (LUKS2)</span></div>
+                                    <div class="flex justify-between"><span class="text-slate-300">DNS Protocol:</span> <span>DNS-over-HTTPS (DoH)</span></div>
+                                    <div class="flex justify-between"><span class="text-slate-300">SMB Protocol:</span> <span>SMBv3 Mandatory</span></div>
+                                    <div class="flex justify-between"><span class="text-slate-300">Firewall:</span> <span>ufw (Default Deny Inbound)</span></div>
+                                </div>
+                                <div class="p-3 bg-slate-900 rounded border border-slate-800 text-[11px] text-slate-300">
+                                    <span class="text-emerald-400 font-bold">[Protected]</span> Zero unencrypted storage at rest. Blocks 150k+ telemetry and malicious domains daily.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- CTF WRITEUPS SECTION -->
+        <section id="writeups" class="py-16 lg:py-24 bg-slate-950 border-b border-slate-800/60">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-10">
+                    <div>
+                        <div class="text-cyan-400 font-mono text-xs tracking-wider uppercase mb-2">Investigation & Analysis</div>
+                        <h2 class="text-3xl sm:text-4xl font-bold text-slate-100">CTF Writeups & Investigations</h2>
+                    </div>
+                    
+                    <!-- Search & Filter Controls -->
+                    <div class="mt-4 md:mt-0 flex flex-col sm:flex-row gap-3">
+                        <div class="relative">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
+                            <input type="text" id="writeup-search" placeholder="Search writeups..." 
+                                   class="bg-slate-900 border border-slate-800 rounded-lg pl-9 pr-4 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 w-full sm:w-48">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Writeups Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="writeups-container">
+
+                    <!-- Writeup 1: BTLO Haunted Festival -->
+                    <div class="writeup-card bg-slate-900 border border-slate-800 hover:border-cyan-500/50 rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 group" data-category="btlo memory dfir">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="px-2.5 py-1 rounded-md bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-xs font-mono">Blue Team Labs Online</span>
+                                <span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">Medium</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-100 mb-2 group-hover:text-cyan-400 transition-colors">
+                                BTLO - Haunted Festival
+                            </h3>
+                            <p class="text-slate-400 text-xs font-mono mb-3">Category: Digital Forensics & Volatility 3</p>
+                            <p class="text-slate-300 text-sm leading-relaxed mb-4">
+                                Deep dive memory dump analysis of an infected workstation. Isolated malicious process injections, carved executable binaries out of RAM using Volatility 3, and reconstructed command-and-control (C2) communication channels.
+                            </p>
+                            
+                            <div class="flex flex-wrap gap-1.5 mb-6">
+                                <span class="px-2 py-0.5 bg-slate-950 text-slate-400 rounded text-[11px] font-mono">Volatility 3</span>
+                                <span class="px-2 py-0.5 bg-slate-950 text-slate-400 rounded text-[11px] font-mono">Memdump</span>
+                                <span class="px-2 py-0.5 bg-slate-950 text-slate-400 rounded text-[11px] font-mono">Process Injection</span>
+                            </div>
+                        </div>
+
+                        <!-- REPLACE HYPERLINK WITH YOUR ACTUAL WRITEUP LINK (e.g. GitHub Markdown file or Blog post) -->
+                        <a href="https://github.com/YOUR_GITHUB_USERNAME/CTF-Writeups/blob/main/BTLO-Haunted-Festival.md" target="_blank" rel="noopener noreferrer"
+                           class="w-full py-2.5 rounded-xl bg-slate-950 hover:bg-cyan-500 hover:text-slate-950 text-slate-300 border border-slate-800 hover:border-cyan-500 text-xs font-semibold flex items-center justify-center gap-2 transition-all">
+                            <span>Read Full Writeup</span>
+                            <i class="fa-solid fa-arrow-right text-[11px]"></i>
+                        </a>
+                    </div>
+
+                    <!-- Writeup 2: BTLO Cerulean -->
+                    <div class="writeup-card bg-slate-900 border border-slate-800 hover:border-cyan-500/50 rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 group" data-category="btlo network traffic">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="px-2.5 py-1 rounded-md bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-xs font-mono">Blue Team Labs Online</span>
+                                <span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Easy</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-100 mb-2 group-hover:text-cyan-400 transition-colors">
+                                BTLO - Cerulean
+                            </h3>
+                            <p class="text-slate-400 text-xs font-mono mb-3">Category: Network Traffic Analysis (PCAP)</p>
+                            <p class="text-slate-300 text-sm leading-relaxed mb-4">
+                                Investigated a PCAP capture containing suspicious SMB traffic and compromised internal user credentials. Utilized Wireshark display filters and Zeek logs to trace lateral movement and identify exfiltrated files.
+                            </p>
+                            
+                            <div class="flex flex-wrap gap-1.5 mb-6">
+                                <span class="px-2 py-0.5 bg-slate-950 text-slate-400 rounded text-[11px] font-mono">Wireshark</span>
+                                <span class="px-2 py-0.5 bg-slate-950 text-slate-400 rounded text-[11px] font-mono">Zeek</span>
+                                <span class="px-2 py-0.5 bg-slate-950 text-slate-400 rounded text-[11px] font-mono">SMB Analysis</span>
+                            </div>
+                        </div>
+
+                        <!-- REPLACE HYPERLINK WITH YOUR ACTUAL WRITEUP LINK -->
+                        <a href="https://github.com/YOUR_GITHUB_USERNAME/CTF-Writeups/blob/main/BTLO-Cerulean.md" target="_blank" rel="noopener noreferrer"
+                           class="w-full py-2.5 rounded-xl bg-slate-950 hover:bg-cyan-500 hover:text-slate-950 text-slate-300 border border-slate-800 hover:border-cyan-500 text-xs font-semibold flex items-center justify-center gap-2 transition-all">
+                            <span>Read Full Writeup</span>
+                            <i class="fa-solid fa-arrow-right text-[11px]"></i>
+                        </a>
+                    </div>
+
+                    <!-- Writeup 3: BTLO Magika -->
+                    <div classwriteup-card bg-slate-900 border border-slate-800 hover:border-cyan-500/50 rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 group" data-category="btlo Windows Forensics Eric Zimmerman">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="px-2.5 py-1 rounded-md bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-xs font-mono">Blue Team Labs Online</span>
+                                <span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">Medium</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-100 mb-2 group-hover:text-cyan-400 transition-colors">
+                                BTLO - Magika
+                            </h3>
+                            <p class="text-slate-400 text-xs font-mono mb-3">Category: Windows Artifact Analysis</p>
+                            <p class="text-slate-300 text-sm leading-relaxed mb-4">
+                                Analyzed Windows triage artifacts including MFT records, Amcache, Prefetch files, and Shimcache using Eric Zimmerman's tools (MFTECmd, PECmd) to construct an accurate timeline of attacker execution.
+                            </p>
+                            
+                            <div class="flex flex-wrap gap-1.5 mb-6">
+                                <span class="px-2 py-0.5 bg-slate-950 text-slate-400 rounded text-[11px] font-mono">EZ Tools</span>
+                                <span class="px-2 py-0.5 bg-slate-950 text-slate-400 rounded text-[11px] font-mono">$MFT Analysis</span>
+                                <span class="px-2 py-0.5 bg-slate-950 text-slate-400 rounded text-[11px] font-mono">Prefetch</span>
+                            </div>
+                        </div>
+
+                        <!-- REPLACE HYPERLINK WITH YOUR ACTUAL WRITEUP LINK -->
+                        <a href="https://github.com/YOUR_GITHUB_USERNAME/CTF-Writeups/blob/main/BTLO-Magika.md" target="_blank" rel="noopener noreferrer"
+                           class="w-full py-2.5 rounded-xl bg-slate-950 hover:bg-cyan-500 hover:text-slate-950 text-slate-300 border border-slate-800 hover:border-cyan-500 text-xs font-semibold flex items-center justify-center gap-2 transition-all">
+                            <span>Read Full Writeup</span>
+                            <i class="fa-solid fa-arrow-right text-[11px]"></i>
+                        </a>
+                    </div>
+
+                    <!-- Writeup 4: Router Firmware Exploitation -->
+                    <div class="writeup-card bg-slate-900 border border-slate-800 hover:border-cyan-500/50 rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 group" data-category="hardware firmware Ghidra reverse">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="px-2.5 py-1 rounded-md bg-purple-500/10 text-purple-400 border border-purple-500/20 text-xs font-mono">Hardware & Firmware</span>
+                                <span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20">Hard</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-100 mb-2 group-hover:text-cyan-400 transition-colors">
+                                Embedded Router Firmware Analysis & Vulnerability Discovery
+                            </h3>
+                            <p class="text-slate-400 text-xs font-mono mb-3">Category: Firmware Extraction & Reverse Engineering</p>
+                            <p class="text-slate-300 text-sm leading-relaxed mb-4">
+                                Extracted filesystem from a vendor router binary image using Binwalk. Uncovered hardcoded administrative credentials and audited CGI binaries in Ghidra to pinpoint an unauthenticated command injection flaw.
+                            </p>
+                            
+                            <div class="flex flex-wrap gap-1.5 mb-6">
+                                <span class="px-2 py-0.5 bg-slate-950 text-slate-400 rounded text-[11px] font-mono">Binwalk</span>
+                                <span class="px-2 py-0.5 bg-slate-950 text-slate-400 rounded text-[11px] font-mono">Ghidra</span>
+                                <span class="px-2 py-0.5 bg-slate-950 text-slate-400 rounded text-[11px] font-mono">MIPS Assembly</span>
+                            </div>
+                        </div>
+
+                        <!-- REPLACE HYPERLINK WITH YOUR ACTUAL WRITEUP LINK -->
+                        <a href="https://github.com/YOUR_GITHUB_USERNAME/CTF-Writeups/blob/main/Router-Firmware-Exploitation.md" target="_blank" rel="noopener noreferrer"
+                           class="w-full py-2.5 rounded-xl bg-slate-950 hover:bg-cyan-500 hover:text-slate-950 text-slate-300 border border-slate-800 hover:border-cyan-500 text-xs font-semibold flex items-center justify-center gap-2 transition-all">
+                            <span>Read Full Writeup</span>
+                            <i class="fa-solid fa-arrow-right text-[11px]"></i>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- TECHNICAL SKILLS MATRIX -->
+        <section id="skills" class="py-16 lg:py-24 bg-slate-900/40 border-b border-slate-800/60">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <div class="mb-12">
+                    <div class="text-cyan-400 font-mono text-xs tracking-wider uppercase mb-2">Technical Competencies</div>
+                    <h2 class="text-3xl sm:text-4xl font-bold text-slate-100">Skills & Security Stack</h2>
+                    <p class="text-slate-400 text-sm mt-2 max-w-xl">
+                        A breakdown of tools, platforms, and methodologies I utilize daily for security operations, incident response, and system administration.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+                    <!-- Category 1: DFIR & Memory Forensics -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+                        <div class="flex items-center gap-3 mb-4 text-cyan-400">
+                            <i class="fa-solid fa-microscope text-xl"></i>
+                            <h3 class="font-bold text-slate-100 text-base">DFIR & Memory</h3>
+                        </div>
+                        <ul class="space-y-2.5 text-xs text-slate-300 font-mono">
+                            <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Volatility 3 (RAM Parsing)
+                            </li>
+                            <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Eric Zimmerman Suite
+                            </li>
+                            <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> FTK Imager & Autopsy
+                            </li>
+                            <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> KAPE Triage Data Extraction
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Category 2: Network & Threat Analysis -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+                        <div class="flex items-center gap-3 mb-4 text-cyan-400">
+                            <i class="fa-solid fa-network-wired text-xl"></i>
+                            <h3 class="font-bold text-slate-100 text-base">Network & Threat Analysis</h3>
+                        </div>
+                        <ul class="space-y-2.5 text-xs text-slate-300 font-mono">
+                            <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Zeek & Wireshark (PCAP)
+                            </li>
+                            <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Splunk Enterprise / Elastic
+                            </li>
+                            <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Snort & Suricata IDS
+                            </li>
+                            <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> YARA Rule Creation
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Category 3: Systems & Cloud Administration -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+                        <div class="flex items-center gap-3 mb-4 text-cyan-400">
+                            <i class="fa-solid fa-server text-xl"></i>
+                            <h3 class="font-bold text-slate-100 text-base">Systems & Identity</h3>
+                        </div>
+                        <ul class="space-y-2.5 text-xs text-slate-300 font-mono">
+                            <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Active Directory & GPO
+                            </li>
+                            <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> GCP & Azure (Entra ID)
+                            </li>
+                            <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Linux Hardening (LUKS / SSH)
+                            </li>
+                            <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Sysmon & Windows Event Logs
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Category 4: Scripting & Automation -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+                        <div class="flex items-center gap-3 mb-4 text-cyan-400">
+                            <i class="fa-solid fa-code text-xl"></i>
+                            <h3 class="font-bold text-slate-100 text-base">Scripting & Tools</h3>
+                        </div>
+                        <ul class="space-y-2.5 text-xs text-slate-300 font-mono">
+                            <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Python (Automation & Log Parsing)
+                            </li>
+                            <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> PowerShell Administration
+                            </li>
+                            <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Bash Scripting & Systemd
+                            </li>
+                            <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Git & Markdown Documentation
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- FOOTER / CONTACT SECTION -->
+        <section id="contact" class="py-16 lg:py-20 bg-slate-950">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                
+                <div class="max-w-2xl mx-auto space-y-6">
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-xs font-mono text-cyan-400">
+                        <i class="fa-solid fa-paper-plane"></i> Let's Connect
+                    </div>
+
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-100">
+                        Interested in working together or reviewing my work?
+                    </h2>
+                    
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        I am currently looking for Tier 1 / Tier 2 SOC Analyst, Digital Forensics, and Threat Detection opportunities. Feel free to reach out directly via email or LinkedIn.
+                    </p>
+
+                    <!-- Email Box Copy Widget -->
+                    <div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+                        <!-- REPLACE WITH YOUR EMAIL ADDRESS -->
+                        <div class="bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-sm font-mono text-slate-200 flex items-center justify-between w-full sm:w-auto gap-4">
+                            <span id="email-address">your.email@example.com</span>
+                            <button onclick="copyEmail()" class="text-xs bg-slate-800 hover:bg-cyan-500 hover:text-slate-950 text-cyan-400 px-2.5 py-1 rounded transition-all flex items-center gap-1.5">
+                                <i class="fa-solid fa-copy"></i>
+                                <span id="copy-text">Copy</span>
+                            </button>
+                        </div>
+
+                        <a href="mailto:your.email@example.com" class="px-6 py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold text-sm transition-all shadow-lg shadow-cyan-500/20 flex items-center gap-2">
+                            <i class="fa-solid fa-envelope"></i>
+                            Send Direct Email
+                        </a>
+                    </div>
+
+                    <!-- Social Icons -->
+                    <div class="pt-8 flex justify-center items-center gap-6 text-xl">
+                        <!-- REPLACE HYPERLINKS WITH YOUR SOCIAL PROFILE URLS -->
+                        <a href="https://github.com/YOUR_GITHUB_USERNAME" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-cyan-400 transition-colors" title="GitHub">
+                            <i class="fa-brands fa-github"></i>
+                        </a>
+                        <a href="https://linkedin.com/in/YOUR_LINKEDIN_USERNAME" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-cyan-400 transition-colors" title="LinkedIn">
+                            <i class="fa-brands fa-linkedin"></i>
+                        </a>
+                        <a href="mailto:your.email@example.com" class="text-slate-400 hover:text-cyan-400 transition-colors" title="Email">
+                            <i class="fa-solid fa-envelope"></i>
+                        </a>
+                    </div>
+
+                    <!-- Copyright Notice -->
+                    <p class="text-slate-600 text-xs font-mono pt-8">
+                        &copy; <span id="year"></span> Cybersecurity Portfolio. Built for GitHub Pages.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- Interactive JavaScript -->
+    <script>
+        // Set current dynamic year in footer
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // Mobile Navigation Toggle
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Close mobile menu on link click
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // Search Filter for Writeups
+        const searchInput = document.getElementById('writeup-search');
+        const writeupCards = document.querySelectorAll('.writeup-card');
+
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            writeupCards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                const category = card.getAttribute('data-category').toLowerCase();
+                if (text.includes(query) || category.includes(query)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // Copy Email to Clipboard helper
+        function copyEmail() {
+            const emailText = document.getElementById('email-address').textContent;
+            
+            // Native clipboard API fallback logic for iFrame compatibility
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(emailText).then(showCopied).catch(fallbackCopy);
+            } else {
+                fallbackCopy();
+            }
+
+            function fallbackCopy() {
+                const dummy = document.createElement('textarea');
+                document.body.appendChild(dummy);
+                dummy.value = emailText;
+                dummy.select();
+                document.execCommand('copy');
+                document.body.removeChild(dummy);
+                showCopied();
+            }
+
+            function showCopied() {
+                const copyBtnText = document.getElementById('copy-text');
+                copyBtnText.textContent = 'Copied!';
+                setTimeout(() => {
+                    copyBtnText.textContent = 'Copy';
+                }, 2000);
+            }
+        }
+    </script>
+</body>
+</html>
