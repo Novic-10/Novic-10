@@ -1,16 +1,20 @@
-## Hi there 👋
+# Cybersecurity Analyst & DFIR Portfolio
 
-<!--
-**Novic-10/Novic-10** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+Welcome to my portfolio! Here you will find my writeups, certifications, and homelab documentation.
 
-Here are some ideas to get you started:
+---
+## 💻 Homelab Projects
+* **Active Directory & Network Security Lab**: [View Repository](https://github.com/Novic-10/AD-Lab)
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+---
+
+## 🚩 CTF Writeups
+* **BTLO - Cerulean Writeup**: [Read Writeup](./writeups/cerulean.md)
+* **BTLO - Haunted Festival**: [Read Writeup](./writeups/haunted-festival.md)
+
+---
+
+## 🏆 Certifications
+- **Blue Team Level 1 (BTL1)** — [Verify Certificate](https://credly.com)
+- **CompTIA CySA+** — [Verify Certificate](https://credly.com)
+- **Microsoft Certified: Azure Administrator (AZ-104)** — [Verify Certificate](https://credly.com)
