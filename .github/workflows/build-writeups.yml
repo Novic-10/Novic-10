@@ -1,0 +1,38 @@
+name: Auto Build CTF Writeups
+
+on:
+  push:
+    paths:
+      - 'drafts/*.md'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install google-generativeai
+
+      - name: Run Writeup Generator
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python scripts/build_writeups.py
+
+      - name: Commit and Push Generated Writeups
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add writeups/
+          git commit -m "Auto-generate CTF writeup from draft [skip ci]" || exit 0
+          git push

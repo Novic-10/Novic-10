@@ -11,3 +11,8 @@ secrets.json
 # OS / Editor files
 .DS_Store
 .vscode/
+
+
+# Ignore Python cached files
+__pycache__/
+*.pyc
