@@ -1,0 +1,111 @@
+[1mdiff --git a/drafts/BEC-ky.md b/drafts/BEC-ky.md[m
+[1mnew file mode 100644[m
+[1mindex 0000000..e02cbce[m
+[1m--- /dev/null[m
+[1m+++ b/drafts/BEC-ky.md[m
+[36m@@ -0,0 +1,60 @@[m
+[32m+[m[32m#CyberchefCTF #BECCTF #EmailAnalysisCTF #TimeLineExplorerCTF[m
+[32m+[m[32m# Context[m
+[32m+[m[32mOur Situation? - Up the creek without a paddle. We’re facing a suspected cyber incident involving unauthorised yet seemingly legitimate bank transfers from the company pension fund to multiple external accounts. Figure out what’s happened.[m
+[32m+[m[32m# Questions[m
+[32m+[m[32m## 1. What is the source address of the initial phishing email? _(5 points)_[m
+[32m+[m[32m```shell[m
+[32m+[m[32mSabastian@flanaganspensions.co.uk[m
+[32m+[m[32m```[m
+[32m+[m[32m## 2. What type of compromise is this? _(5 points)_[m
+[32m+[m[32m```shell[m
+[32m+[m[32mBusiness Email COmpromise based on the name of the[m[41m [m
+[32m+[m[32m```[m
+[32m+[m[32m## 3.  What are the two IPs utilised by the TA? _(5 points)_[m
+[32m+[m[32m```shell[m
+[32m+[m[32mHad to read the azure .csv logs. The first one was located among others under the code UserLoggedIN and key:value of ClientIp[m
+[32m+[m
+[32m+[m[32mThe 2nd was located under new-inboxrule with CLient IP as well[m
+[32m+[m
+[32m+[m[32m```[m
+[32m+[m[32m## 4. Which bank is the transaction sent to? _(2 points)_[m
+[32m+[m[32m```shell[m
+[32m+[m[32mRead one of the emails that contains the SWIFT information and you can lookup the bank there.[m
+[32m+[m[32mIt was a nigerian bank[m
+[32m+[m[32m```[m
+[32m+[m
+[32m+[m[32m## 5. What is the name of the Inbox folder created during the compromise? _(4 points)_[m
+[32m+[m[32m```shell[m
+[32m+[m[32mCheck out FolderCreated operation code[m
+[32m+[m[32m```[m
+[32m+[m
+[32m+[m[32m## 6. What word is the first inbox rule created looking for, within the subject or body, prior to deleting the email _(4 points)_[m
+[32m+[m[32m```shell[m
+[32m+[m[32mChec k[m
+[32m+[m[32m```[m
+[32m+[m
+[32m+[m[32m# Workflow[m
+[32m+[m
+[32m+[m
+[32m+[m[32m# Artifacts / Assets[m
+[32m+[m
+[32m+[m[32m| Item                  | Value                                       | File accessed                                                                      |[m
+[32m+[m[32m| --------------------- | ------------------------------------------- | ---------------------------------------------------------------------------------- |[m
+[32m+[m[32m| Beck Inbox Access IPs | , 20.68.123.31, 20.77.248.66, 52.108.224.1, | tempestasenergyoutlook-my.sharepoint.com/personal/becky_lorray_tempestasenergy_com |[m
+[32m+[m[32m| IPs                   |                                             | 2.127.216.50, 20.77.248.66, 52.108.224.1, 109.175.196.67, 159.203.17.81            |[m
+[32m+[m
+[32m+[m[32m# Indicators[m
+[32m+[m
+[32m+[m[32m| TYPE                   | Summary                                                                                              | Timestamp           | Mitre ATT&CK code |[m
+[32m+[m[32m| ---------------------- | ---------------------------------------------------------------------------------------------------- | ------------------- | ----------------- |[m
+[32m+[m[32m| New-InboxRule          | Becky had a new iunbox rule created to forward emails to 95.181.232.30:23701 and                     | 2025-07-02T15:40:10 |                   |[m
+[32m+[m[32m| DeleteMessage          | Client IP 95.181.232.30:24176 initiated this on a message. Rule named "Stop processing rules"        | 2025-07-02T15:48:39 |                   |[m
+[32m+[m[32m| Becky suspicious login | Attacker logs in from 95.181.232.30 wiuth failed login initially. 2.127.216.50, 40.126.41.96<br><br> | 2025-07-02T15:45:05 |                   |[m
+[32m+[m[32m| SMTP send Code         | Attack sends email "Withdrawal-bernard" to                                                           | 2025-07-02T15:57:23 |                   |[m
+[32m+[m[32m| New-InboxRule          | Sent to Sebastian@flanaganspensions.co.uk,                                                           | 2025-07-02T15:58:42 |                   |[m
+[32m+[m[32m| Email fund transfer    | The SWIFT/BIC of the Bank maps to FIRST BANK OF NIGERIA LTD                                          |                     |                   |[m
+[32m+[m[32m| Phishing Email         | COntains a image.png                                                                                 |                     |                   |[m
+[32m+[m
+[32m+[m[32m# Big learning curves[m
+[32m+[m[32m1. Once the first malicious action has been discovered, correlate it with the previous login time.[m
+[32m+[m[32m2. Understanding the operation codes was the first big hurdle and parsing the log information for what actions are being taken.[m[41m [m
+[1mdiff --git a/drafts/MiddleMayhem.md b/drafts/MiddleMayhem.md[m
+[1mnew file mode 100644[m
+[1mindex 0000000..fcfb831[m
+[1m--- /dev/null[m
+[1m+++ b/drafts/MiddleMayhem.md[m
+[36m@@ -0,0 +1,74 @@[m
+[32m+[m[32m#ctf #LinuxLogsCTF #NextJS #Splunk[m
+[32m+[m[32m# Context[m
+[32m+[m[32mThe security team at MiddleMayhem Inc. has detected unusual network traffic to their admin portal, but no security breaches have been confirmed. Your SOC team has been provided with SIEM logs from the incident. Analyze the attack pattern to determine how attackers bypassed authentication, gained remote code execution, and moved laterally through the network.[m
+[32m+[m
+[32m+[m[32m[CTF Link](https://blueteamlabs.online/home/investigation/middlemayhem-aa3c27f5d1)[m
+[32m+[m[32m[Proof of completion link](https://blueteamlabs.online/achievement/share/172832/259)[m
+[32m+[m[32m# ScratchPad[m
+[32m+[m
+[32m+[m[32m# Questions[m
+[32m+[m[32m1. Access the Website in the browser, present it in the bookmark, and identify the JavaScript framework and version used. _(2 points)_[m
+[32m+[m[32m- To find and access the local host web pages, Run:[m
+[32m+[m[32m```shell[m
+[32m+[m[32mps aux | grep -E "apache."[m
+[32m+[m[32m```[m
+[32m+[m[32m```shell[m
+[32m+[m[32msudo ss -tulpn | grep -E ':(443|80)'[m
+[32m+[m[32m```[m
+[32m+[m[32m* On the login page of the website, Use developer tools and enter into the console" `window.next.version` 15.0.0 and next.js are the answers.[m
+[32m+[m[32m* Go to the main page and extract all the contents, upload to cyberchef and use modules XML beautify and syntax highlighter. Search for filepaths and comments like[m[41m [m
+[32m+[m[32m> [!Identifying the Javascript framework and version via console][m
+[32m+[m[32m>- **Next.js:** `window.next.version`[m
+[32m+[m[32m> - **Vue:** `window.Vue.version` or `window.__VUE__.version`[m
+[32m+[m[32m> - **jQuery:** `window.jQuery.fn.jquery`[m
+[32m+[m[32m> * ***React:** `window.__REACT_DEVTOOLS_GLOBAL_HOOK__` (requires DevTools extension)[m
+[32m+[m
+[32m+[m[32m> [!HTTP Response Headers][m
+[32m+[m[32m> Look for headers advertising the framework, such as `X-Powered-By: Next.js` or `X-Powered-By: Express` (which occasionally includes the version depending on how the server is configured).[m
+[32m+[m
+[32m+[m[32m2. Using Splunk, Find the attacker’s IP address _(3 points)_[m
+[32m+[m[32m```splunk[m
+[32m+[m[32mindex=* host=webapp http_response_code=200 ip_src="172.217.164.174"[m[41m [m
+[32m+[m[32m```[m
+[32m+[m[32m1. Analyze the SIEM logs to determine how many unique URIs were accessed by the attacker. _(2 points)_[m
+[32m+[m[32m```splunk[m
+[32m+[m[32mindex=* host=webapp ip_src="218.92.0.204" |stats dc(http_request_uri) as "Unique URIs Accessed"[m
+[32m+[m[32m```[m
+[32m+[m[32m1. Explore the site and identify two specific locations that could reveal internal structures or potential access points not meant for public eyes. Provide the two relative URLs. _(3 points)_[m
+[32m+[m	[32m* Searching for robots.txt on the main page showed this /admin, `/admin/file-upload`[m
+[32m+[m[32m2. Based on the Framework and Version, what recent CVE could be used to b

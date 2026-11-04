@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Context | Oliver Hersee</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-slate-200 font-sans antialiased selection:bg-cyan-500 selection:text-slate-950">
+    <main class="max-w-4xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+        <a href="../index.html#writeups" class="inline-flex items-center gap-2 text-slate-400 hover:text-cyan-400 text-sm font-mono mb-8 transition-colors">
+            <i class="fa-solid fa-arrow-left text-xs"></i> Back to Portfolio
+        </a>
+        <article class="prose prose-invert max-w-none space-y-6">
+            <div class="min-h-screen bg-slate-900 text-slate-200 font-sans p-6 md:p-10">
+
+  <header class="mb-10 text-center">
+    <h1 class="text-4xl md:text-5xl font-extrabold text-cyan-400 mb-2">Cyber Incident Writeup</h1>
+    <p class="text-xl md:text-2xl text-slate-300">Business Email Compromise (BEC) Investigation</p>
+    <div class="mt-4 flex flex-wrap justify-center gap-2 text-sm text-slate-400 font-mono">
+      <span class="bg-slate-800 px-3 py-1 rounded-full border border-cyan-700/50">#CyberchefCTF</span>
+      <span class="bg-slate-800 px-3 py-1 rounded-full border border-cyan-700/50">#BECCTF</span>
+      <span class="bg-slate-800 px-3 py-1 rounded-full border border-cyan-700/50">#EmailAnalysisCTF</span>
+      <span class="bg-slate-800 px-3 py-1 rounded-full border border-cyan-700/50">#TimeLineExplorerCTF</span>
+    </div>
+  </header>
+
+  <section class="mb-10 p-6 bg-slate-800/50 rounded-lg shadow-lg border border-slate-700/80">
+    <h2 class="text-3xl font-bold text-cyan-400 mb-4">Executive Summary</h2>
+    <p class="text-slate-300 leading-relaxed">
+      This report details the investigation into a suspected cyber incident involving unauthorized bank transfers from the company pension fund. The incident has been identified as a Business Email Compromise (BEC), where an attacker gained unauthorized access to an employee's email account, specifically Becky Lorray's, to initiate fraudulent financial transactions. The attacker utilized sophisticated techniques including creating inbox rules to forward and delete emails, and impersonating legitimate entities to facilitate the transfer of funds to an external Nigerian bank. Our analysis focuses on identifying the attacker's methods, infrastructure, and the scope of the compromise.
+    </p>
+  </section>
+
+  <section class="mb-10 p-6 bg-slate-800/50 rounded-lg shadow-lg border border-slate-700/80">
+    <h2 class="text-3xl font-bold text-cyan-400 mb-4">Challenge Overview</h2>
+    <p class="text-slate-300 leading-relaxed">
+      The objective of this Capture The Flag (CTF) challenge was to act as an incident responder, analyzing provided logs and artifacts to understand the full scope of a cyber incident. The primary goal was to determine how the compromise occurred, identify key attacker indicators, and trace the fraudulent financial activity. This involved parsing email logs, identifying suspicious login activities, analyzing email rules, and tracing bank transfer details to answer specific investigative questions.
+    </p>
+  </section>
+
+  <section class="mb-10 p-6 bg-slate-800/50 rounded-lg shadow-lg border border-slate-700/80">
+    <h2 class="text-3xl font-bold text-cyan-400 mb-4">Key Takeaways & Detection/Security Insights</h2>
+    <ul class="list-disc list-inside text-slate-300 space-y-3">
+      <li>
+        <strong class="text-cyan-300">Correlation is Key:</strong> Once a malicious action is discovered (e.g., `New-InboxRule`), it is crucial to correlate it with preceding events, especially login times and source IPs, to establish the attacker's initial access point and timeline.
+      </li>
+      <li>
+        <strong class="text-cyan-300">Understanding Operation Codes:</strong> Familiarity with common log operation codes (e.g., `UserLoggedIn`, `New-InboxRule`, `FolderCreated`, `DeleteMessage`, `SMTPSend`) is fundamental for parsing log information and understanding attacker actions.
+      </li>
+      <li>
+        <strong class="text-cyan-300">Monitoring Inbox Rule Creation:</strong> The creation of new inbox rules, especially those involving forwarding to external addresses or deleting messages, is a strong indicator of compromise and should trigger immediate alerts.
+      </li>
+      <li>
+        <strong class="text-cyan-300">Geolocation & IP Reputation:</strong> Suspicious logins from unusual geographic locations or IPs with poor reputation scores should be flagged. In this case, IPs like <code class="font-mono text-cyan-300 bg-slate-800 px-1 rounded">95.181.232.30</code> were associated with attacker activity.
+      </li>
+      <li>
+        <strong class="text-cyan-300">Financial Transaction Verification:</strong> All requests for significant financial transactions, particularly those involving changes to beneficiary details or international transfers, must undergo stringent multi-factor verification processes outside of email communication.
+      </li>
+      <li>
+        <strong class="text-cyan-300">Phishing Awareness:</strong> The initial compromise likely stemmed from a phishing email, highlighting the ongoing need for robust employee training and advanced email security solutions.
+      </li>
+    </ul>
+  </section>
+
+  <section class="mb-10 p-6 bg-slate-800/50 rounded-lg shadow-lg border border-slate-700/80">
+    <h2 class="text-3xl font-bold text-cyan-400 mb-4">Step-by-Step Investigation Workflow</h2>
+    <ol class="list-decimal list-inside text-slate-300 space-y-3">
+      <li>
+        <strong class="text-cyan-300">Initial Log Review:</strong> Began by examining Azure CSV logs for suspicious activities, focusing on user login events and email-related operations.
+      </li>
+      <li>
+        <strong class="text-cyan-300">Identify Suspicious Logins:</strong> Located `UserLoggedIn` operation codes and identified unusual `ClientIp` addresses, noting failed login attempts followed by successful ones from the same suspicious IPs.
+      </li>
+      <li>
+        <strong class="text-cyan-300">Trace Attacker Actions:</strong> Correlated suspicious login times with subsequent email operations. Specifically looked for `New-InboxRule` and `FolderCreated` operation codes to understand how the attacker maintained persistence and exfiltrated information.
+      </li>
+      <li>
+        <strong class="text-cyan-300">Analyze Inbox Rules:</strong> Investigated the details of newly created inbox rules to determine their purpose, such as forwarding emails to external addresses (<code class="font-mono text-cyan-300 bg-slate-800 px-1 rounded">95.181.232.30:23701</code>) or deleting specific messages.
+      </li>
+      <li>
+        <strong class="text-cyan-300">Examine Email Content:</strong> Reviewed emails, particularly those related to financial transactions, to extract critical information like SWIFT/BIC codes and beneficiary bank details.
+      </li>
+      <li>
+        <strong class="text-cyan-300">Identify Phishing Source:</strong> Determined the source address of the initial phishing email that likely led to the account compromise.
+      </li>
+      <li>
+        <strong class="text-cyan-300">Document Indicators of Compromise (IOCs):</strong> Compiled a list of identified IPs, email addresses, and timestamps associated with malicious activity.
+      </li>
+    </ol>
+  </section>
+
+  <section class="mb-10 p-6 bg-slate-800/50 rounded-lg shadow-lg border border-slate-700/80">
+    <h2 class="text-3xl font-bold text-cyan-400 mb-4">Question & Answer Solutions / Findings</h2>
+
+    <div class="mb-6">
+      <h3 class="text-xl font-semibold text-slate-300 mb-2">1. What is the source address of the initial phishing email? <span class="text-slate-400">(5 points)</span></h3>
+      <p class="bg-slate-800 p-3 rounded-md border border-slate-700/80">
+        <code class="font-mono text-cyan-300">Sabastian@flanaganspensions.co.uk</code>
+      </p>
+    </div>
+
+    <div class="mb-6">
+      <h3 class="text-xl font-semibold text-slate-300 mb-2">2. What type of compromise is this? <span class="text-slate-400">(5 points)</span></h3>
+      <p class="bg-slate-800 p-3 rounded-md border border-slate-700/80">
+        <code class="font-mono text-cyan-300">Business Email Compromise (BEC)</code>
+      </p>
+      <p class="text-sm text-slate-400 mt-1">Based on the nature of the attack involving unauthorized bank transfers via email account compromise.</p>
+    </div>
+
+    <div class="mb-6">
+      <h3 class="text-xl font-semibold text-slate-300 mb-2">3. What are the two IPs utilised by the TA? <span class="text-slate-400">(5 points)</span></h3>
+      <p class="bg-slate-800 p-3 rounded-md border border-slate-700/80">
+        <code class="font-mono text-cyan-300">95.181.232.30</code> (for New-InboxRule, DeleteMessage, and suspicious login) and <code class="font-mono text-cyan-300">2.127.216.50</code> (for initial suspicious login attempt).
+      </p>
+      <p class="text-sm text-slate-400 mt-1">Identified from Azure CSV logs under `UserLoggedIn` and `New-InboxRule` operations, specifically the `ClientIp` field.</p>
+    </div>
+
+    <div class="mb-6">
+      <h3 class="text-xl font-semibold text-slate-300 mb-2">4. Which bank is the transaction sent to? <span class="text-slate-400">(2 points)</span></h3>
+      <p class="bg-slate-800 p-3 rounded-md border border-slate-700/80">
+        <code class="font-mono text-cyan-300">FIRST BANK OF NIGERIA LTD</code>
+      </p>
+      <p class="text-sm text-slate-400 mt-1">Determined by looking up the SWIFT/BIC information found in one of the fraudulent transaction emails.</p>
+    </div>
+
+    <div class="mb-6">
+      <h3 class="text-xl font-semibold text-slate-300 mb-2">5. What is the name of the Inbox folder created during the compromise? <span class="text-slate-400">(4 points)</span></h3>
+      <p class="bg-slate-800 p-3 rounded-md border border-slate-700/80">
+        The specific folder name needs to be extracted from the logs associated with the <code class="font-mono text-cyan-300">FolderCreated</code> operation code.
+      </p>
+      <p class="text-sm text-slate-400 mt-1">Review logs for the `FolderCreated` operation to identify the exact folder name.</p>
+    </div>
+
+    <div class="mb-6">
+      <h3 class="text-xl font-semibold text-slate-300 mb-2">6. What word is the first inbox rule created looking for, within the subject or body, prior to deleting the email? <span class="text-slate-400">(4 points)</span></h3>
+      <p class="bg-slate-800 p-3 rounded-md border border-slate-700/80">
+        The specific word needs to be extracted from the details of the first inbox rule created.
+      </p>
+      <p class="text-sm text-slate-400 mt-1">Examine the properties of the inbox rule created (e.g., "Stop processing rules") for keywords in its conditions.</p>
+    </div>
+  </section>
+
+  <section class="mb-10 p-6 bg-slate-800/50 rounded-lg shadow-lg border border-slate-700/80">
+    <h2 class="text-3xl font-bold text-cyan-400 mb-4">Artifacts / Assets</h2>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse border border-slate-700/80 rounded-lg">
+        <thead class="bg-slate-700">
+          <tr>
+            <th class="p-3 border border-slate-700/80 text-cyan-300">Item</th>
+            <th class="p-3 border border-slate-700/80 text-cyan-300">Value</th>
+            <th class="p-3 border border-slate-700/80 text-cyan-300">File Accessed</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="bg-slate-800 hover:bg-slate-700/70 transition-colors">
+            <td class="p-3 border border-slate-700/80 font-mono">Beck Inbox Access IPs</td>
+            <td class="p-3 border border-slate-700/80 font-mono">20.68.123.31, 20.77.248.66, 52.108.224.1</td>
+            <td class="p-3 border border-slate-700/80 font-mono">tempestasenergyoutlook-my.sharepoint.com/personal/becky_lorray_tempestasenergy_com</td>
+          </tr>
+          <tr class="bg-slate-800 hover:bg-slate-700/70 transition-colors">
+            <td class="p-3 border border-slate-700/80 font-mono">Attacker IPs</td>
+            <td class="p-3 border border-slate-700/80 font-mono">2.127.216.50, 20.77.248.66, 52.108.224.1, 109.175.196.67, 159.203.17.81, 95.181.232.30</td>
+            <td class="p-3 border border-slate-700/80 font-mono">N/A (Derived from various log entries)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="mb-10 p-6 bg-slate-800/50 rounded-lg shadow-lg border border-slate-700/80">
+    <h2 class="text-3xl font-bold text-cyan-400 mb-4">Indicators of Compromise (IOCs)</h2>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse border border-slate-700/80 rounded-lg">
+        <thead class="bg-slate-700">
+          <tr>
+            <th class="p-3 border border-slate-700/80 text-cyan-300">TYPE</th>
+            <th class="p-3 border border-slate-700/80 text-cyan-300">Summary</th>
+            <th class="p-3 border border-slate-700/80 text-cyan-300">Timestamp</th>
+            <th class="p-3 border border-slate-700/80 text-cyan-300">Mitre ATT&CK Code</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="bg-slate-800 hover:bg-slate-700/70 transition-colors">
+            <td class="p-3 border border-slate-700/80 font-mono">New-InboxRule</td>
+            <td class="p-3 border border-slate-700/80">Becky had a new inbox rule created to forward emails to <code class="font-mono text-cyan-300">95.181.232.30:23701</code></td>
+            <td class="p-3 border border-slate-700/80 font-mono">2025-07-02T15:40:10</td>
+            <td class="p-3 border border-slate-700/80"></td>
+          </tr>
+          <tr class="bg-slate-800 hover:bg-slate-700/70 transition-colors">
+            <td class="p-3 border border-slate-700/80 font-mono">DeleteMessage</td>
+            <td class="p-3 border border-slate-700/80">Client IP <code class="font-mono text-cyan-300">95.181.232.30:24176</code> initiated this on a message. Rule named "Stop processing rules"</td>
+            <td class="p-3 border border-slate-700/80 font-mono">2025-07-02T15:48:39</td>
+            <td class="p-3 border border-slate-700/80"></td>
+          </tr>
+          <tr class="bg-slate-800 hover:bg-slate-700/70 transition-colors">
+            <td class="p-3 border border-slate-700/80 font-mono">Suspicious Login</td>
+            <td class="p-3 border border-slate-700/80">Attacker logs in from <code class="font-mono text-cyan-300">95.181.232.30</code> with failed login initially. Also <code class="font-mono text-cyan-300">2.127.216.50</code>, <code class="font-mono text-cyan-300">40.126.41.96</code></td>
+            <td class="p-3 border border-slate-700/80 font-mono">2025-07-02T15:45:05</td>
+            <td class="p-3 border border-slate-700/80"></td>
+          </tr>
+          <tr class="bg-slate-800 hover:bg-slate-700/70 transition-colors">
+            <td class="p-3 border border-slate-700/80 font-mono">SMTP Send Code</td>
+            <td class="p-3 border border-slate-700/80">Attack sends email "Withdrawal-bernard" to external recipient</td>
+            <td class="p-3 border border-slate-700/80 font-mono">2025-07-02T15:57:23</td>
+            <td class="p-3 border border-slate-700/80"></td>
+          </tr>
+          <tr class="bg-slate-800 hover:bg-slate-700/70 transition-colors">
+            <td class="p-3 border border-slate-700/80 font-mono">New-InboxRule</td>
+            <td class="p-3 border border-slate-700/80">Rule created to forward emails to <code class="font-mono text-cyan-300">Sebastian@flanaganspensions.co.uk</code></td>
+            <td class="p-3 border border-slate-700/80 font-mono">2025-07-02T15:58:42</td>
+            <td class="p-3 border border-slate-700/80"></td>
+          </tr>
+          <tr class="bg-slate-800 hover:bg-slate-700/70 transition-colors">
+            <td class="p-3 border border-slate-700/80 font-mono">Email Fund Transfer</td>
+            <td class="p-3 border border-slate-700/80">The SWIFT/BIC of the Bank maps to <code class="font-mono text-cyan-300">FIRST BANK OF NIGERIA LTD</code></td>
+            <td class="p-3 border border-slate-700/80 font-mono">N/A</td>
+            <td class="p-3 border border-slate-700/80"></td>
+          </tr>
+          <tr class="bg-slate-800 hover:bg-slate-700/70 transition-colors">
+            <td class="p-3 border border-slate-700/80 font-mono">Phishing Email</td>
+            <td class="p-3 border border-slate-700/80">Contains an image.png attachment/inline image, likely for credential harvesting.</td>
+            <td class="p-3 border border-slate-700/80 font-mono">N/A</td>
+            <td class="p-3 border border-slate-700/80"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</div>
+        </article>
+    </main>
+</body>
+</html>

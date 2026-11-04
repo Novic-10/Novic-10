@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Context | Oliver Hersee</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-slate-200 font-sans antialiased selection:bg-cyan-500 selection:text-slate-950">
+    <main class="max-w-4xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+        
+        <article class="prose prose-invert max-w-none space-y-6">
+            <div class="max-w-5xl mx-auto px-4 py-8">
+  <!-- Platform Breadcrumb -->
+  <p class="font-mono text-xs text-slate-400 uppercase tracking-widest">// CTF · WRITEUP</p>
+
+  <!-- CTF Title -->
+  <h1 class="text-3xl sm:text-4xl font-bold text-slate-100 tracking-tight my-3">NIKA-AD</h1>
+
+  <!-- Metadata Pill Badges -->
+  <div class="flex flex-wrap gap-2 my-4 font-mono text-xs uppercase">
+    <span class="bg-cyan-950 text-cyan-400 border border-cyan-800 px-3 py-1 rounded">BLue Team Labs Online</span>
+    <span class="bg-slate-800 text-slate-300 border border-slate-700 px-3 py-1 rounded">Medium</span>
+    <span class="bg-slate-800/80 text-slate-400 border border-slate-700/60 px-3 py-1 rounded">Wireshark</span>
+    <span class="bg-slate-800/80 text-slate-400 border border-slate-700/60 px-3 py-1 rounded">Splunk</span>
+  </div>
+
+  <!-- Action Button Bar -->
+  <div class="flex flex-wrap items-center gap-3 mt-6 mb-8 font-mono text-xs">
+    <a href="../index.html#writeups" class="inline-flex items-center gap-2 border border-cyan-500/40 text-cyan-400 hover:bg-cyan-500/10 px-4 py-2 rounded transition-all">← BACK TO PORTFOLIO</a>
+    <a href="https://blueteamlabs.online/achievement/share/172832/211" target="_blank" class="inline-flex items-center gap-2 border border-pink-500/40 text-pink-400 hover:bg-pink-500/10 px-4 py-2 rounded transition-all">PROOF OF COMPLETION →</a>
+  </div>
+
+  <!-- Executive Summary & Overview -->
+  <h2 class="text-2xl font-bold text-slate-100 mb-4 mt-8">Executive Summary & Overview</h2>
+  <p class="text-slate-200 leading-relaxed mb-6">
+    This CTF challenged us to analyze a sophisticated cyber-attack by "BlackCipher" against "CYPYRATE's" network, which disrupted critical operations. The attack chain began with initial access to the Web Server via an <code class="font-mono text-cyan-300">EternalBlue</code> exploit. Following this, the attacker leveraged <code class="font-mono text-cyan-300">Kerberoasting</code> to compromise the <code class="font-mono text-cyan-300">nrob</code> user account, enabling lateral movement to the File Server via RDP. On the File Server, privilege escalation was achieved by exploiting weak service permissions using <code class="font-mono text-cyan-300">Powerview.ps1</code> and <code class="font-mono text-cyan-300">sc.exe</code> to add <code class="font-mono text-cyan-300">nrob</code> to the local Administrators group. Subsequently, <code class="font-mono text-cyan-300">mimikatz.exe</code> was deployed to dump credentials, leading to further lateral movement to the IT Admin Workstation, likely using <code class="font-mono text-cyan-300">rzen</code>'s credentials. The final stage involved establishing persistence and control over the Domain Controller through a <code class="font-mono text-cyan-300">Golden Ticket</code> attack, executed with <code class="font-mono text-cyan-300">PsExec64.exe</code>. The investigation relied heavily on network packet analysis with Wireshark and log analysis with Splunk to reconstruct the attack timeline and identify specific TTPs.
+  </p>
+
+  <!-- Asset Information & IOC Matrix -->
+  <h2 class="text-2xl font-bold text-slate-100 mb-4 mt-8">Asset Information</h2>
+  <div class="overflow-x-auto my-6 rounded-lg border border-slate-800 shadow-lg">
+    <table class="w-full text-left border-collapse text-sm">
+      <thead class="bg-slate-800/80 text-slate-300 text-xs uppercase tracking-wider font-mono">
+        <tr>
+          <th class="py-3 px-4 font-medium">Hostname</th>
+          <th class="py-3 px-4 font-medium">IP Address</th>
+          <th class="py-3 px-4 font-medium">Role</th>
+          <th class="py-3 px-4 font-medium">User</th>
+        </tr>
+      </thead>
+      <tbody class="text-slate-200">
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs">DC</td>
+          <td class="py-3 px-4 break-words font-mono text-xs">10.0.2.2</td>
+          <td class="py-3 px-4 break-words font-mono text-xs">Domain Controller</td>
+          <td class="py-3 px-4 break-words font-mono text-xs">Administrator</td>
+        </tr>
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs">IT-WKSTN</td>
+          <td class="py-3 px-4 break-words font-mono text-xs">10.0.2.5</td>
+          <td class="py-3 px-4 break-words font-mono text-xs">IT Admin Workstation</td>
+          <td class="py-3 px-4 break-words font-mono text-xs">Roar Zen</td>
+        </tr>
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs">WEB-SERVER</td>
+          <td class="py-3 px-4 break-words font-mono text-xs">10.0.2.10, 192.168.1.13</td>
+          <td class="py-3 px-4 break-words font-mono text-xs">Web Server (DMZ)</td>
+          <td class="py-3 px-4 break-words font-mono text-xs">Sunny Merry</td>
+        </tr>
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs">FILE-SERVER</td>
+          <td class="py-3 px-4 break-words font-mono text-xs">10.0.2.6</td>
+          <td class="py-3 px-4 break-words font-mono text-xs">File Server</td>
+          <td class="py-3 px-4 break-words font-mono text-xs">N/A</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="text-2xl font-bold text-slate-100 mb-4 mt-8">Indicators of Compromise (IOC) Matrix</h2>
+  <div class="overflow-x-auto my-6 rounded-lg border border-slate-800 shadow-lg">
+    <table class="w-full text-left border-collapse text-sm">
+      <thead class="bg-slate-800/80 text-slate-300 text-xs uppercase tracking-wider font-mono">
+        <tr>
+          <th class="py-3 px-4 font-medium">Type</th>
+          <th class="py-3 px-4 font-medium">Summary</th>
+          <th class="py-3 px-4 font-medium">MITRE ATT&CK Code</th>
+        </tr>
+      </thead>
+      <tbody class="text-slate-200">
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs">Reconnaissance</td>
+          <td class="py-3 px-4 break-words font-mono text-xs">Attacker <code class="font-mono text-cyan-300">192.168.1.12</code> port scanned Web Server <code class="font-mono text-cyan-300">192.168.1.13</code>, identifying open ports <code class="font-mono text-cyan-300">445, 4444, 139, 135</code>.</td>
+          <td class="py-3 px-4 break-words font-mono text-xs">T0846.001</td>
+        </tr>
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs">Initial Access</td>
+          <td class="py-3 px-4 break-words font-mono text-xs">SMB anonymous login with <code class="font-mono text-cyan-300">PeekNamedPipe</code> returning <code class="font-mono text-cyan-300">STATUS_INSUFF_SERVER_RESOURCES</code>, indicating <code class="font-mono text-cyan-300">EternalBlue</code> vulnerability.</td>
+          <td class="py-3 px-4 break-words font-mono text-xs">T1210</td>
+        </tr>
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs">Credential Access</td>
+          <td class="py-3 px-4 break-words font-mono text-xs">Kerberoasting attack (<code class="font-mono text-cyan-300">EventID 4768</code>) to obtain <code class="font-mono text-cyan-300">CYPYRATE\nrob</code>'s hash from the Domain Controller.</td>
+          <td class="py-3 px-4 break-words font-mono text-xs">T1558.003</td>
+        </tr>
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs">Lateral Movement</td>
+          <td class="py-3 px-4 break-words font-mono text-xs">Attacker logged into <code class="font-mono text-cyan-300">FILE-SERVER</code> as <code class="font-mono text-cyan-300">CYPYRATE\nrob</code> via RDP (<code class="font-mono text-cyan-300">Logon_Type=10</code>).</td>
+          <td class="py-3 px-4 break-words font-mono text-xs">T1078.002</td>
+        </tr>
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs">Discovery</td>
+          <td class="py-3 px-4 break-words font-mono text-xs"><code class="font-mono text-cyan-300">Powerview.ps1</code> executed via PowerShell script block (<code class="font-mono text-cyan-300">EventID 4104</code>) to find privilege escalation methods on <code class="font-mono text-cyan-300">FILE-SERVER</code>.</td>
+          <td class="py-3 px-4 break-words font-mono text-xs">T1059.001</td>
+        </tr>
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs">Privilege Escalation</td>
+          <td class="py-3 px-4 break-words font-mono text-xs"><code class="font-mono text-cyan-300">nrob</code> added to local Administrators group on <code class="font-mono text-cyan-300">FILE-SERVER</code> by exploiting weak service permissions using <code class="font-mono text-cyan-300">sc.exe</code>.</td>
+          <td class="py-3 px-4 break-words font-mono text-xs">T1574.010</td>
+        </tr>
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs">Credential Dumping</td>
+          <td class="py-3 px-4 break-words font-mono text-xs"><code class="font-mono text-cyan-300">mimikatz.exe</code> executed from <code class="font-mono text-cyan-300">C:\Users\nrob\Downloads\m\mimikatz-master\x64</code> on <code class="font-mono text-cyan-300">FILE-SERVER</code> to dump credentials.</td>
+          <td class="py-3 px-4 break-words font-mono text-xs">T1003.001</td>
+        </tr>
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs">Persistence</td>
+          <td class="py-3 px-4 break-words font-mono text-xs">Golden Ticket attack executed using <code class="font-mono text-cyan-300">comp.kirbi</code> and AES-256 hash to maintain access.</td>
+          <td class="py-3 px-4 break-words font-mono text-xs">T1558.001</td>
+        </tr>
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs">Execution</td>
+          <td class="py-3 px-4 break-words font-mono text-xs"><code class="font-mono text-cyan-300">PsExec64.exe</code> used to execute commands on the Domain Controller.</td>
+          <td class="py-3 px-4 break-words font-mono text-xs">T1021.002</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Step-by-Step Investigation Workflow -->
+  <h2 class="text-2xl font-bold text-slate-100 mb-4 mt-8">Step-by-Step Investigation Workflow</h2>
+
+  <div class="space-y-6">
+    <div class="bg-slate-900 p-5 rounded-lg border border-slate-800 shadow-md">
+      <h3 class="text-xl font-semibold text-slate-100 mb-3">1. Initial Reconnaissance & Attacker Identification</h3>
+      <p class="text-slate-200 mb-4">
+        The investigation began by identifying the attacker's IP address and initial reconnaissance activities against the Web Server using Wireshark.
+      </p>
+      <div class="bg-slate-800/60 rounded-md p-4 font-mono text-xs text-cyan-300 overflow-x-auto">
+        <pre><code class="break-all">ip.addr==192.168.1.12 && ip.addr==192.168.1.13 && tcp.flags.syn == 1 && tcp.flags.ack == 1</code></pre>
+      </div>
+      <p class="text-slate-400 mt-2">
+        <i class="fas fa-info-circle mr-2"></i> Filter for SYN/ACK packets between the attacker and web server to confirm initial connection attempts.
+      </p>
+    </div>
+
+    <div class="bg-slate-900 p-5 rounded-lg border border-slate-800 shadow-md">
+      <h3 class="text-xl font-semibold text-slate-100 mb-3">2. Identifying Targeted Service and Exploit</h3>
+      <p class="text-slate-200 mb-4">
+        Further Wireshark analysis focused on common SMB ports to pinpoint the service targeted for initial access and the specific exploit used.
+      </p>
+      <div class="bg-slate-800/60 rounded-md p-4 font-mono text-xs text-cyan-300 overflow-x-auto">
+        <pre><code class="break-all">ip.addr==192.168.1.12 && tcp.dstport in {445 4444 135 139}</code></pre>
+      </div>
+      <p class="text-slate-400 mt-2">
+        <i class="fas fa-info-circle mr-2"></i> Filter for traffic to common SMB/RPC ports from the attacker.
+      </p>
+      <div class="bg-slate-800/60 rounded-md p-4 font-mono text-xs text-cyan-300 overflow-x-auto mt-4">
+        <pre><code class="break-all">ip.addr==192.168.1.12 && tcp.port == 445</code></pre>
+      </div>
+      <p class="text-slate-400 mt-2">
+        <i class="fas fa-info-circle mr-2"></i> Inspect SMB traffic for NTLMSSP challenges and PeekNamedPipe calls indicating EternalBlue.
+      </p>
+    </div>
+
+    <div class="bg-slate-900 p-5 rounded-lg border border-slate-800 shadow-md">
+      <h3 class="text-xl font-semibold text-slate-100 mb-3">3. Kerberoasting Attack Detection</h3>
+      <p class="text-slate-200 mb-4">
+        Transitioning to Splunk, we searched for Kerberos service ticket requests to identify credential theft attempts against the Domain Controller.
+      </p>
+      <div class="bg-slate-800/60 rounded-md p-4 font-mono text-xs text-cyan-300 overflow-x-auto">
+        <pre><code class="break-all">EventID=4768</code></pre>
+      </div>
+      <p class="text-slate-400 mt-2">
+        <i class="fas fa-info-circle mr-2"></i> Search for Kerberos Service Ticket Operations (Event ID 4768) to detect Kerberoasting.
+      </p>
+    </div>
+
+    <div class="bg-slate-900 p-5 rounded-lg border border-slate-800 shadow-md">
+      <h3 class="text-xl font-semibold text-slate-100 mb-3">4. Lateral Movement to File Server</h3>
+      <p class="text-slate-200 mb-4">
+        After compromising a user, the attacker moved laterally to the File Server. Splunk was used to trace logon events for the compromised user.
+      </p>
+      <div class="bg-slate-800/60 rounded-md p-4 font-mono text-xs text-cyan-300 overflow-x-auto">
+        <pre><code class="break-all">index=* host="FILE-SERVER" Account_Name=nrob TaskCategory=Logon Logon_Type=10 | sort + UtcTime</code></pre>
+      </div>
+      <p class="text-slate-400 mt-2">
+        <i class="fas fa-info-circle mr-2"></i> Filter for RDP (Logon Type 10) logons by the compromised user on the File Server.
+      </p>
+    </div>
+
+    <div class="bg-slate-900 p-5 rounded-lg border border-slate-800 shadow-md">
+      <h3 class="text-xl font-semibold text-slate-100 mb-3">5. Privilege Escalation on File Server</h3>
+      <p class="text-slate-200 mb-4">
+        The attacker attempted privilege escalation on the File Server. We investigated PowerShell script block execution and process creation events.
+      </p>
+      <div class="bg-slate-800/60 rounded-md p-4 font-mono text-xs text-cyan-300 overflow-x-auto">
+        <pre><code class="break-all">index=* host="FILE-SERVER" EventCode IN ("1", "4688", "4104", "4103") Image!="*splunk*" latest="05/18/2024:08:50:37" | sort - _time | table _time, EventCode, Image, CommandLine, ParentCommandLine, ParentImage, User</code></pre>
+      </div>
+      <p class="text-slate-400 mt-2">
+        <i class="fas fa-info-circle mr-2"></i> Search for process creation (Event 1, 4688) and PowerShell script block logging (Event 4104, 4103) to identify privilege escalation tools like Powerview.
+      </p>
+      <div class="bg-slate-800/60 rounded-md p-4 font-mono text-xs text-cyan-300 overflow-x-auto mt-4">
+        <pre><code class="break-all">index=* host="FILE-SERVER" EventCode IN ("1", "4688") powershell.exe Image!="*splunk*" | sort + _time | table _time, Image, CommandLine, ParentCommandLine, ParentImage, User</code></pre>
+      </div>
+      <p class="text-slate-400 mt-2">
+        <i class="fas fa-info-circle mr-2"></i> Refine search to focus on PowerShell processes and their command lines to find service abuse.
+      </p>
+    </div>
+
+    <div class="bg-slate-900 p-5 rounded-lg border border-slate-800 shadow-md">
+      <h3 class="text-xl font-semibold text-slate-100 mb-3">6. Credential Dumping</h3>
+      <p class="text-slate-200 mb-4">
+        After gaining elevated privileges, the attacker dumped credentials. We looked for known credential dumping tools in common temporary/download directories.
+      </p>
+      <div class="bg-slate-800/60 rounded-md p-4 font-mono text-xs text-cyan-300 overflow-x-auto">
+        <pre><code class="break-all">index=* host="FILE-SERVER" "*\\Temp\\*" OR "*\\tmp\\*" OR "\\Downloads\\*" OR "\\*AppData\\*" OR "*\\ProgramData\\*" OR "*\\Tasks\\*" NOT "*splunk*"</code></pre>
+      </div>
+      <p class="text-slate-400 mt-2">
+        <i class="fas fa-info-circle mr-2"></i> Broad search for suspicious executables in common user-writable or temporary directories.
+      </p>
+    </div>
+
+    <div class="bg-slate-900 p-5 rounded-lg border border-slate-800 shadow-md">
+      <h3 class="text-xl font-semibold text-slate-100 mb-3">7. Further Lateral Movement & Persistence</h3>
+      <p class="text-slate-200 mb-4">
+        Using newly dumped credentials, the attacker moved to another workstation and established persistence on the Domain Controller.
+      </p>
+      <div class="bg-slate-800/60 rounded-md p-4 font-mono text-xs text-cyan-300 overflow-x-auto">
+        <pre><code class="break-all">index=* host="FILE-SERVER" EventCode IN ("1", "4688", "4104", "4103", "4624", "4625") Image!="*splunk*" earliest="05/18/2024:08:50:37" | stats count by User</code></pre>
+      </div>
+      <p class="text-slate-400 mt-2">
+        <i class="fas fa-info-circle mr-2"></i> Analyze user activity post-credential dump to identify new accounts used for lateral movement.
+      </p>
+      <div class="bg-slate-800/60 rounded-md p-4 font-mono text-xs text-cyan-300 overflow-x-auto mt-4">
+        <pre><code class="break-all">index=* earliest="05/18/2024:08:56:32" CurrentDirectory="C:\\Users\\rzen\\*" | table _time, User, CommandLine, ParentCommandLine, host, Hashes</code></pre>
+      </div>
+      <p class="text-slate-400 mt-2">
+        <i class="fas fa-info-circle mr-2"></i> Search for activity related to the compromised user <code class="font-mono text-cyan-300">rzen</code>, specifically for tools like <code class="font-mono text-cyan-300">PsExec</code>.
+      </p>
+    </div>
+  </div>
+
+  <!-- Question & Answer Solutions -->
+  <h2 class="text-2xl font-bold text-slate-100 mb-4 mt-8">Question & Answer Solutions</h2>
+
+  <div class="space-y-4">
+    <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-md">
+      <p class="text-slate-200"><strong class="text-cyan-400">Q1) Attacker IP address?</strong></p>
+      <p class="text-slate-100 mt-2"><code class="font-mono text-cyan-300 font-bold">192.168.1.12</code></p>
+      <p class="text-slate-400 text-sm mt-1">Identified through Wireshark packet analysis, specifically SYN/ACK conversations with the Web Server.</p>
+    </div>
+    <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-md">
+      <p class="text-slate-200"><strong class="text-cyan-400">Q2) Service targeted on Web Server?</strong></p>
+      <p class="text-slate-100 mt-2"><code class="font-mono text-cyan-300 font-bold">SMB</code></p>
+      <p class="text-slate-400 text-sm mt-1">Attacker targeted port 445, commonly used by SMB.</p>
+    </div>
+    <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-md">
+      <p class="text-slate-200"><strong class="text-cyan-400">Q3) OS and version of targeted Web Server?</strong></p>
+      <p class="text-slate-100 mt-2"><code class="font-mono text-cyan-300 font-bold">Windows 7</code></p>
+      <p class="text-slate-400 text-sm mt-1">Revealed in the NTLMSSP challenge response during SMB negotiation.</p>
+    </div>
+    <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-md">
+      <p class="text-slate-200"><strong class="text-cyan-400">Q4) Popular exploit used?</strong></p>
+      <p class="text-slate-100 mt-2"><code class="font-mono text-cyan-300 font-bold">EternalBlue</code></p>
+      <p class="text-slate-400 text-sm mt-1">Evident from SMB anonymous login with <code class="font-mono text-cyan-300">PeekNamedPipe</code> returning <code class="font-mono text-cyan-300">STATUS_INSUFF_SERVER_RESOURCES</code>.</p>
+    </div>
+    <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-md">
+      <p class="text-slate-200"><strong class="text-cyan-400">Q5) Type of attack to get user hash from DC?</strong></p>
+      <p class="text-slate-100 mt-2"><code class="font-mono text-cyan-300 font-bold">Kerberoasting</code></p>
+      <p class="text-slate-400 text-sm mt-1">Identified by <code class="font-mono text-cyan-300">EventID 4768</code> in Splunk logs, indicating Kerberos service ticket requests.</p>
+    </div>
+    <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-md">
+      <p class="text-slate-200"><strong class="text-cyan-400">Q6) Domain user targeted?</strong></p>
+      <p class="text-slate-100 mt-2"><code class="font-mono text-cyan-300 font-bold">CYPYRATE\nrob</code></p>
+      <p class="text-slate-400 text-sm mt-1">The user account whose hash was obtained via Kerberoasting.</p>
+    </div>
+    <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-md">
+      <p class="text-slate-200"><strong class="text-cyan-400">Q7) Computer logged into after compromise?</strong></p>
+      <p class="text-slate-100 mt-2"><code class="font-mono text-cyan-300 font-bold">FILE-SERVER</code></p>
+      <p class="text-slate-400 text-sm mt-1">Confirmed by Splunk logs showing <code class="font-mono text-cyan-300">nrob</code>'s logon activity on this host.</p>
+    </div>
+    <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-md">
+      <p class="text-slate-200"><strong class="text-cyan-400">Q8) Protocol used to access the computer?</strong></p>
+      <p class="text-slate-100 mt-2"><code class="font-mono text-cyan-300 font-bold">RDP</code></p>
+      <p class="text-slate-400 text-sm mt-1">Indicated by <code class="font-mono text-cyan-300">Logon_Type=10</code> in Splunk logs.</p>
+    </div>
+    <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-md">
+      <p class="text-slate-200"><strong class="text-cyan-400">Q9) File/script used for privilege escalation methods?</strong></p>
+      <p class="text-slate-100 mt-2"><code class="font-mono text-cyan-300 font-bold">Powerview.ps1</code></p>
+      <p class="text-slate-400 text-sm mt-1">Discovered through Splunk analysis of <code class="font-mono text-cyan-300">EventID 4104</code> (PowerShell script block execution).</p>
+    </div>
+    <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-md">
+      <p class="text-slate-200"><strong class="text-cyan-400">Q10) Service abused for privilege escalation?</strong></p>
+      <p class="text-slate-100 mt-2"><code class="font-mono text-cyan-300 font-bold">AV_Troubleshoot</code></p>
+      <p class="text-slate-400 text-sm mt-1">Identified from command line arguments related to service configuration changes.</p>
+    </div>
+    <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-md">
+      <p class="text-slate-200"><strong class="text-cyan-400">Q11) Command used to abuse the service?</strong></p>
+      <p class="text-slate-100 mt-2"><code class="font-mono text-cyan-300 font-bold">net localgroup Administrators CYPYRATE\nrob /add</code></p>
+      <p class="text-slate-400 text-sm mt-1">The command executed to add <code class="font-mono text-cyan-300">nrob</code> to the local Administrators group.</p>
+    </div>
+    <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-md">
+      <p class="text-slate-200"><strong class="text-cyan-400">Q12) MITRE ID for privilege escalation technique?</strong></p>
+      <p class="text-slate-100 mt-2"><code class="font-mono text-cyan-300 font-bold">T1574.010</code></p>
+      <p class="text-slate-400 text-sm mt-1">Corresponds to Path Interception: Services File Permissions.</p>
+    </div>
+    <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-md">
+      <p class="text-slate-200"><strong class="text-cyan-400">Q13) Malicious executable used to dump credentials?</strong></p>
+      <p class="text-slate-100 mt-2"><code class="font-mono text-cyan-300 font-bold">mimikatz.exe</code></p>
+      <p class="text-slate-400 text-sm mt-1">Found by searching for executables in common download/temp directories.</p>
+    </div>
+    <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-md">
+      <p class="text-slate-200"><strong class="text-cyan-400">Q14) Directory from which executable was run?</strong></p>
+      <p class="text-slate-100 mt-2"><code class="font-mono text-cyan-300 font-bold">C:\Users\nrob\Downloads\m\mimikatz-master\x64</code></p>
+      <p class="text-slate-400 text-sm mt-1">Identified from process execution logs.</p>
+    </div>
+    <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-md">
+      <p class="text-slate-200"><strong class="text-cyan-400">Q15) Computer accessed using newly compromised user?</strong></p>
+      <p class="text-slate-100 mt-2"><code class="font-mono text-cyan-300 font-bold">IT-WKSTN</code></p>
+      <p class="text-slate-400 text-sm mt-1">Confirmed by logon events for the new user on this workstation.</p>
+    </div>
+    <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-md">
+      <p class="text-slate-200"><strong class="text-cyan-400">Q16) Domain user's credentials used for new system?</strong></p>
+      <p class="text-slate-100 mt-2"><code class="font-mono text-cyan-300 font-bold">CYPYRATE\rzen</code></p>
+      <p class="text-slate-400 text-sm mt-1">Likely obtained from the credential dump and used for lateral movement.</p>
+    </div>
+    <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-md">
+      <p class="text-slate-200"><strong class="text-cyan-400">Q17) Attack used for persistent network access?</strong></p>
+      <p class="text-slate-100 mt-2"><code class="font-mono text-cyan-300 font-bold">Golden Ticket</code></p>
+      <p class="text-slate-400 text-sm mt-1">Indicated by the use of a Kerberos ticket file and AES-256 hash.</p>
+    </div>
+    <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-md">
+      <p class="text-slate-200"><strong class="text-cyan-400">Q18) AES-256 hash used for the attack?</strong></p>
+      <p class="text-slate-100 mt-2"><code class="font-mono text-cyan-300 font-bold">4c517465330767f6a9ab9bb02f6b07da6a6c7f401087b97fceb3fdbe1cb9ee2a</code></p>
+      <p class="text-slate-400 text-sm mt-1">The specific hash associated with the Golden Ticket attack.</p>
+    </div>
+    <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-md">
+      <p class="text-slate-200"><strong class="text-cyan-400">Q19) Name of the ticket (file), that was used in the previously found attack?</strong></p>
+      <p class="text-slate-100 mt-2"><code class="font-mono text-cyan-300 font-bold">comp.kirbi</code></p>
+      <p class="text-slate-400 text-sm mt-1">The Kerberos ticket file used in the Golden Ticket attack.</p>
+    </div>
+    <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-md">
+      <p class="text-slate-200"><strong class="text-cyan-400">Q20) Utility did the attacker use to execute commands on the Domain Controller?</strong></p>
+      <p class="text-slate-100 mt-2"><code class="font-mono text-cyan-300 font-bold">PsExec64.exe</code></p>
+      <p class="text-slate-400 text-sm mt-1">Identified from command line execution logs on the IT Admin Workstation.</p>
+    </div>
+  </div>
+
+  <!-- Key Takeaways & Security Insights -->
+  <h2 class="text-2xl font-bold text-slate-100 mb-4 mt-8">Key Takeaways & Security Insights</h2>
+  <ul class="list-disc list-inside text-slate-200 leading-relaxed space-y-3 mb-6">
+    <li>
+      <strong class="text-cyan-400">Patch Management is Critical:</strong> The initial compromise via <code class="font-mono text-cyan-300">EternalBlue</code> highlights the severe risks of unpatched systems, especially public-facing ones. Regular and timely patching is paramount.
+    </li>
+    <li>
+      <strong class="text-cyan-400">Strong Authentication & Least Privilege:</strong> <code class="font-mono text-cyan-300">Kerberoasting</code> and subsequent credential dumping underscore the need for strong, unique passwords for service accounts and enforcing the principle of least privilege across all user accounts.
+    </li>
+    <li>
+      <strong class="text-cyan-400">Endpoint Detection & Response (EDR):</strong> The use of tools like <code class="font-mono text-cyan-300">Powerview.ps1</code> and <code class="font-mono text-cyan-300">mimikatz.exe</code>, along with service abuse, demonstrates the importance of robust EDR solutions capable of detecting suspicious PowerShell activity, process injection, and credential dumping attempts.
+    </li>
+    <li>
+      <strong class="text-cyan-400">Network Segmentation:</strong> The DMZ and internal network segmentation were present but the attacker was able to pivot. Proper segmentation and strict firewall rules between zones could have limited lateral movement post-initial compromise.
+    </li>
+    <li>
+      <strong class="text-cyan-400">Log Monitoring & Alerting:</strong> Effective use of Splunk was crucial for this investigation. Comprehensive logging (especially PowerShell script block logging, process creation, and logon events) combined with proactive alerting is vital for early detection of malicious activities.
+    </li>
+    <li>
+      <strong class="text-cyan-400">Service Hardening:</strong> The privilege escalation via weak service permissions emphasizes the need for regular security audits of service configurations and permissions to prevent exploitation.
+    </li>
+  </ul>
+</div>
+        </article>
+    </main>
+</body>
+</html>

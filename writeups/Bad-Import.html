@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Context | Oliver Hersee</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-slate-200 font-sans antialiased selection:bg-cyan-500 selection:text-slate-950">
+    <main class="max-w-4xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+        <a href="../index.html#writeups" class="inline-flex items-center gap-2 text-slate-400 hover:text-cyan-400 text-sm font-mono mb-8 transition-colors">
+            <i class="fa-solid fa-arrow-left text-xs"></i> Back to Portfolio
+        </a>
+        <article class="prose prose-invert max-w-none space-y-6">
+            <div class="max-w-5xl mx-auto px-4 py-8">
+  <p class="font-mono text-xs text-slate-400 uppercase tracking-widest">// CTF · WRITEUP</p>
+  <h1 class="text-3xl sm:text-4xl font-bold text-slate-100 tracking-tight my-3">BadImport CTF</h1>
+
+  <div class="flex flex-wrap gap-2 my-4 font-mono text-xs uppercase">
+    <span class="bg-cyan-950 text-cyan-400 border border-cyan-800 px-3 py-1 rounded">Blue Team Labs Online</span>
+    <span class="bg-slate-800 text-slate-300 border border-slate-700 px-3 py-1 rounded">Easy</span>
+    <span class="bg-slate-800/80 text-slate-400 border border-slate-700/60 px-3 py-1 rounded">SPLUNK</span>
+    <span class="bg-slate-800/80 text-slate-400 border border-slate-700/60 px-3 py-1 rounded">SYSMON</span>
+    <span class="bg-slate-800/80 text-slate-400 border border-slate-700/60 px-3 py-1 rounded">ROBOCOPY</span>
+  </div>
+
+  <div class="flex flex-wrap items-center gap-3 mt-6 mb-8 font-mono text-xs">
+    <a href="../index.html#writeups" class="inline-flex items-center gap-2 border border-cyan-500/40 text-cyan-400 hover:bg-cyan-500/10 px-4 py-2 rounded transition-all">
+      <i class="fas fa-arrow-left"></i> BACK TO PORTFOLIO
+    </a>
+    <a href="https://blueteamlabs.online/achievement/share/172832/300" target="_blank" class="inline-flex items-center gap-2 border border-pink-500/40 text-pink-400 hover:bg-pink-500/10 px-4 py-2 rounded transition-all">
+      PROOF OF COMPLETION <i class="fas fa-arrow-right"></i>
+    </a>
+  </div>
+
+  <h2 class="text-2xl font-bold text-slate-100 mt-8 mb-4">Executive Summary & Overview</h2>
+  <p class="text-slate-200 leading-relaxed mb-4">
+    This CTF writeup details an investigation into a multi-stage attack chain involving initial compromise, persistence, lateral movement, and privilege escalation across several systems within the Meridian network. The attack began with the compromise of <code class="font-mono text-cyan-300">DEV-WKS-01</code>, where a renamed PowerShell binary (<code class="font-mono text-cyan-300">wt.exe</code>) was used to establish C2 communication and deploy a malicious script. The attacker then established persistence via a Run key modification and harvested credentials.
+  </p>
+  <p class="text-slate-200 leading-relaxed mb-4">
+    Leveraging stolen credentials, the attacker moved laterally to <code class="font-mono text-cyan-300">BUILD-01</code>, a Jenkins build server, where they enumerated systems, modified build scripts, and employed timestomping to conceal their activities. A malicious plugin (<code class="font-mono text-cyan-300">telemetry.js</code>) was deployed and then transferred to the production application server, <code class="font-mono text-cyan-300">SRV-APP-01</code>, via SMB. On the production server, the attacker escalated privileges using a named pipe and established further persistence through a new service, ultimately leading to the production server beaconing out to the attacker's C2 infrastructure.
+  </p>
+
+  <h2 class="text-2xl font-bold text-slate-100 mt-8 mb-4">Asset Information</h2>
+  <div class="overflow-x-auto my-6 rounded-lg border border-slate-800 shadow-lg">
+    <table class="w-full text-left border-collapse text-sm">
+      <thead>
+        <tr class="bg-slate-800/80 text-slate-300 text-xs uppercase tracking-wider font-mono">
+          <th class="py-3 px-4 font-semibold">Hostname</th>
+          <th class="py-3 px-4 font-semibold">Summary</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">SRV-APP-01.meridian.local</td>
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">Production Application Server</td>
+        </tr>
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">BUILD-01.meridian.local</td>
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">Jenkins Build Server</td>
+        </tr>
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">DEV-WKS-01.meridian.local</td>
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">Developer Workstation</td>
+        </tr>
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">sfrlak.com</td>
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">Proven Malicious on VirusTotal lookup</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="text-2xl font-bold text-slate-100 mt-8 mb-4">Indicators of Compromise (IOC) Matrix</h2>
+  <div class="overflow-x-auto my-6 rounded-lg border border-slate-800 shadow-lg">
+    <table class="w-full text-left border-collapse text-sm">
+      <thead>
+        <tr class="bg-slate-800/80 text-slate-300 text-xs uppercase tracking-wider font-mono">
+          <th class="py-3 px-4 font-semibold">Type</th>
+          <th class="py-3 px-4 font-semibold">Summary</th>
+          <th class="py-3 px-4 font-semibold">MITRE ATT&CK Code</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">Persistence</td>
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">
+            <code class="break-all font-mono text-cyan-300">C:\Program Files\nodejs\node.exe</code> on <code class="break-all font-mono text-cyan-300">DEV-WKS-01.meridian.local</code> modified WindowsTerminalUpdate run key <code class="break-all font-mono text-cyan-300">HKU\S-1-5-21-1004336348-1177238915-682003330-1001\Software\Microsoft\Windows\CurrentVersion\Run\WindowsTerminalUpdate</code>
+          </td>
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">T1547.001</td>
+        </tr>
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">C2 Communication</td>
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">
+            <code class="break-all font-mono text-cyan-300">DEV-WKS-01.meridian.local</code> with image <code class="break-all font-mono text-cyan-300">C:\ProgramData\wt.exe</code> making outbound connections to public IP <code class="break-all font-mono text-cyan-300">sfrclak.com, 142.11.206.73:8000</code> on account <code class="break-all font-mono text-cyan-300">jcarter</code>
+          </td>
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">T1071.001</td>
+        </tr>
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">Powershell Execution</td>
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">
+            <code class="break-all font-mono text-cyan-300">"C:\ProgramData\wt.exe" -NoProfile -ep Bypass -File C:\Users\jcarter\AppData\Local\Temp\6202033.ps1</code> with ParentCommandLine <code class="break-all font-mono text-cyan-300">C:\Windows\system32\cmd.exe /c "C:\ProgramData\.run.bat"</code>
+          </td>
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">T1059.001</td>
+        </tr>
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">Malicious File Creation</td>
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">
+            <code class="break-all font-mono text-cyan-300">C:\Users\jcarter\AppData\Local\Temp\6202033.ps1</code> created by <code class="break-all font-mono text-cyan-300">C:\Program Files\nodejs\node.exe</code>
+          </td>
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">T1105</td>
+        </tr>
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">Lateral Movement</td>
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">
+            <code class="break-all font-mono text-cyan-300">jcarter</code> uses WinRM (port 5985) from <code class="break-all font-mono text-cyan-300">DEV-WKS-01.meridian.local</code> to <code class="break-all font-mono text-cyan-300">BUILD-01.meridian.local</code>
+          </td>
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">T1021.006</td>
+        </tr>
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">Credential Access</td>
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">
+            Reg query performed on <code class="break-all font-mono text-cyan-300">"HKCU\Software\SimonTatham\PuTTY\Sessions"</code>
+          </td>
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">T1552.001</td>
+        </tr>
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">Staging Data</td>
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">
+            The <code class="break-all font-mono text-cyan-300">.ps1</code> file begins copying data from <code class="break-all font-mono text-cyan-300">"C:\Users\jcarter\AppData\Roaming\npm\.npmrc"</code>, <code class="break-all font-mono text-cyan-300">"C:\Users\jcarter\AppData\Local\Google\Chrome\User Data\Default\Login Data"</code>, <code class="break-all font-mono text-cyan-300">"C:\Users\jcarter\.aws\credentials"</code> and staging them in <code class="break-all font-mono text-cyan-300">C:\Users\jcarter\AppData\Local\Temp\</code>
+          </td>
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">T1074.001</td>
+        </tr>
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">Suspicious Transfer</td>
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">
+            <code class="break-all font-mono text-cyan-300">C:\Windows\system32\Robocopy.exe "C:\Jenkins\workspace\customer-portal\dist\customer-portal" "\\SRV-APP-01\c$\inetpub\customer-portal" /MIR /R:1 /W:1</code> - SMB transfer from <code class="break-all font-mono text-cyan-300">BUILD-01</code> to <code class="break-all font-mono text-cyan-300">SRV-APP-01</code>
+          </td>
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">T1021.002</td>
+        </tr>
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">Initial Access</td>
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">
+            <code class="break-all font-mono text-cyan-300">DEV-WKS-01</code> makes connection to <code class="break-all font-mono text-cyan-300">sfrclak.com</code> over port <code class="break-all font-mono text-cyan-300">8000</code> using <code class="break-all font-mono text-cyan-300">C:\ProgramData\wt.exe</code>
+          </td>
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">T1071.001</td>
+        </tr>
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">Lateral Movement</td>
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">
+            <code class="break-all font-mono text-cyan-300">jcarter</code> from <code class="break-all font-mono text-cyan-300">devs-wks-01</code> logs into <code class="break-all font-mono text-cyan-300">svc_jenkinsdeploy</code> on <code class="break-all font-mono text-cyan-300">build-01.meridian</code> on eventcode <code class="break-all font-mono text-cyan-300">4648</code>
+          </td>
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">T1078.002</td>
+        </tr>
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">Enumeration</td>
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">
+            Upon logging in as <code class="break-all font-mono text-cyan-300">svc_jenkinsdeploy</code> on <code class="break-all font-mono text-cyan-300">BUILD-01</code>, attacker enumerates Domain admins, host name, <code class="break-all font-mono text-cyan-300">build.bat</code> for credentials
+          </td>
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">T1087.002, T1082, T1083</td>
+        </tr>
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">Timestamp Modification</td>
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">
+            <code class="break-all font-mono text-cyan-300">svc_jenkins</code> modified timestamps for <code class="break-all font-mono text-cyan-300">app.js</code> and <code class="break-all font-mono text-cyan-300">build.bat</code>. This is known as Timestomping
+          </td>
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">T1070.006</td>
+        </tr>
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">Lateral Movement</td>
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">
+            <code class="break-all font-mono text-cyan-300">telemetry.js</code> from <code class="break-all font-mono text-cyan-300">BUILD-01</code> gets copied over to <code class="break-all font-mono text-cyan-300">SRV-APP-01</code> in the customer portal plugins
+          </td>
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">T1021.002</td>
+        </tr>
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">Privilege Escalation</td>
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">
+            User <code class="break-all font-mono text-cyan-300">svc_portal</code> using <code class="break-all font-mono text-cyan-300">svc_helper.exe</code> created a named pipe called <code class="break-all font-mono text-cyan-300">spoolss</code>
+          </td>
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">T1055</td>
+        </tr>
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">Persistence</td>
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">
+            CommandLine: <code class="break-all font-mono text-cyan-300">sc create WinTelemetrySvc binPath= "C:\ProgramData\WinTelemetry\svc.exe" start= auto</code>. New service created with weird binary set to execute on startup
+          </td>
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">T1543.003</td>
+        </tr>
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">C2 Beaconing</td>
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">
+            <code class="break-all font-mono text-cyan-300">SRV-APP-01</code> begins communicating with Threat Actor's c2 server over port <code class="break-all font-mono text-cyan-300">8000</code>
+          </td>
+          <td class="py-3 px-4 break-words font-mono text-xs text-slate-200">T1071.001</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="text-2xl font-bold text-slate-100 mt-8 mb-4">Step-by-Step Investigation Workflow</h2>
+
+  <p class="text-slate-200 leading-relaxed mb-2">
+    Initial search for suspicious PowerShell execution on <code class="font-mono text-cyan-300">DEV-WKS-01</code>.
+  </p>
+  <div class="bg-slate-800/70 text-cyan-300 font-mono text-sm p-4 rounded-lg overflow-x-auto my-4 border border-slate-700">
+    <pre><code>index=main Channel="Microsoft-Windows-Sysmon/Operational" Computer="DEV-WKS-01.meridian.local" EventID="1" CommandLine IN ("*-enc*", "*hidden*", "*bypass*") earliest="03/31/2026:00:45:22"| sort + UtcTime</code></pre>
+  </div>
+
+  <p class="text-slate-200 leading-relaxed mb-2">
+    Identifying outbound connections and destination ports from <code class="font-mono text-cyan-300">jcarter</code> on <code class="font-mono text-cyan-300">DEV-WKS-01</code>.
+  </p>
+  <div class="bg-slate-800/70 text-cyan-300 font-mono text-sm p-4 rounded-lg overflow-x-auto my-4 border border-slate-700">
+    <pre><code>index=main Channel="Microsoft-Windows-Sysmon/Operational" EventID="3" User="MERIDIAN\\jcarter" | sort + UtcTime | eventstats count by DestinationPort| table UtcTime, DestinationPort, count, DestinationIp, DestinationHostName</code></pre>
+  </div>
+
+  <p class="text-slate-200 leading-relaxed mb-2">
+    Investigating processes related to the temporary directory used for staging.
+  </p>
+  <div class="bg-slate-800/70 text-cyan-300 font-mono text-sm p-4 rounded-lg overflow-x-auto my-4 border border-slate-700">
+    <pre><code>index=main (CommandLine="*C:\\Users\\jcarter\\AppData\\Local\\Temp\\*" OR ParentCommandLine="*C:\\Users\\jcarter\\AppData\\Local\\Temp\\*" OR CurrentDirectory="*C:\\Users\\jcarter\\AppData\\Local\\Temp\\*")| table _time, User, CommandLine, ParentCommandLine, CurrentDirectory</code></pre>
+  </div>
+
+  <p class="text-slate-200 leading-relaxed mb-2">
+    Searching for command execution related to Jenkins build scripts on <code class="font-mono text-cyan-300">BUILD-01</code>.
+  </p>
+  <div class="bg-slate-800/70 text-cyan-300 font-mono text-sm p-4 rounded-lg overflow-x-auto my-4 border border-slate-700">
+    <pre><code>index=main Computer="BUILD-01.meridian.local" earliest="03/31/2026:00:45:23" (EventCode="1" OR EventCode="4688") Image="C:\\Windows\\System32\\cmd.exe" CommandLine="C:\\Windows\\system32\\cmd.exe /c type C:\\Jenkins\\workspace\\customer-portal\\build.bat" User="MERIDIAN\\svc_jenkinsdeploy"</code></pre>
+  </div>
+
+  <p class="text-slate-200 leading-relaxed mb-2">
+    Identifying SMB transfers from <code class="font-mono text-cyan-300">BUILD-01</code> to <code class="font-mono text-cyan-300">SRV-APP-01</code>.
+  </p>
+  <div class="bg-slate-800/70 text-cyan-300 font-mono text-sm p-4 rounded-lg overflow-x-auto my-4 border border-slate-700">
+    <pre><code>index=* sourcetype=_json EventCode="3" host="BUILD-01" DestinationHostname="SRV-APP-01.meridian.local"</code></pre>
+  </div>
+
+  <p class="text-slate-200 leading-relaxed mb-2">
+    Discovering named pipe creation events for privilege escalation or persistence.
+  </p>
+  <div class="bg-slate-800/70 text-cyan-300 font-mono text-sm p-4 rounded-lg overflow-x-auto my-4 border border-slate-700">
+    <pre><code>index=main (EventCode=17 OR EventCode=18)</code></pre>
+  </div>
+
+  <h2 class="text-2xl font-bold text-slate-100 mt-8 mb-4">Question & Answer Solutions</h2>
+
+  <p class="text-slate-200 leading-relaxed mb-2">
+    <strong>Q1. Which workstation first contact the attacker's command-and-control server? Provide the Workstation, the destination IP, and the destination port.</strong>
+    <br>
+    <strong>A1. <code class="font-mono text-cyan-300">DEV-WKS-01, 142.11.206.73, 8000</code></strong>
+    <br>
+    (Identified through Sysmon EventID 3 logs showing outbound connections to a known malicious IP.)
+  </p>
+  <figure class="my-6">
+    <img src="images/BTLO_BadImport_Prod-c2.png" alt="Service contacting c2 server on the workstation" class="rounded-lg border border-slate-700/80 w-full shadow-md hover:border-slate-600 transition-all" />
+    <figcaption class="text-xs text-center text-slate-400 mt-2 font-mono">Service contacting c2 server on the workstation</figcaption>
+  </figure>
+
+  <p class="text-slate-200 leading-relaxed mb-2">
+    <strong>Q2. From which working directory did the attacker's first payload execute on the workstation?</strong>
+    <br>
+    <strong>A2. <code class="font-mono text-cyan-300">C:\ProgramData\</code></strong>
+    <br>
+    (The renamed binary <code class="font-mono text-cyan-300">wt.exe</code> executed from this non-standard location.)
+  </p>
+
+  <p class="text-slate-200 leading-relaxed mb-2">
+    <strong>Q3. The attacker placed a renamed Windows binary in a non-standard location. What is the actual file? As per description.</strong>
+    <br>
+    <strong>A3. <code class="font-mono text-cyan-300">wt.exe</code> (renamed PowerShell)</strong>
+    <br>
+    (The description and command lines indicate a renamed PowerShell executable.)
+  </p>
+
+  <p class="text-slate-200 leading-relaxed mb-2">
+    <strong>Q4. What is the full path of the script file the attacker dropped on the workstation as the first stage of execution?</strong>
+    <br>
+    <strong>A4. <code class="font-mono text-cyan-300">C:\Users\jcarter\AppData\Local\Temp\6202033.ps1</code></strong>
+    <br>
+    (Found in Sysmon EventID 1 logs showing process creation with the PowerShell command line.)
+  </p>
+
+  <p class="text-slate-200 leading-relaxed mb-2">
+    <strong>Q5. A persistence mechanism was established by the Attacker? Provide the registry path written, and the value content.</strong>
+    <br>
+    <strong>A5. Path: <code class="font-mono text-cyan-300">HKU\S-1-5-21-1004336348-1177238915-682003330-1001\Software\Microsoft\Windows\CurrentVersion\Run\WindowsTerminalUpdate</code>, Value: <code class="font-mono text-cyan-300">C:\ProgramData\.run.bat</code></strong>
+    <br>
+    (Discovered by searching Sysmon EventID 13 for registry modifications to Run keys.)
+  </p>
+  <figure class="my-6">
+    <img src="images/BTLO_BadImport_WKS-persistence-.run.png" alt="Persistence Mechanism in the Runkeys" class="rounded-lg border border-slate-700/80 w-full shadow-md hover:border-slate-600 transition-all" />
+    <figcaption class="text-xs text-center text-slate-400 mt-2 font-mono">Persistence Mechanism in the Runkeys</figcaption>
+  </figure>
+
+  <p class="text-slate-200 leading-relaxed mb-2">
+    <strong>Q6. The attacker collected several files containing user credentials and secrets from the workstation. Provide the file name (in alphabetical order)(Dot file being the first).</strong>
+    <br>
+    <strong>A6. <code class="font-mono text-cyan-300">.tmp, a, h, k, ld, n</code></strong>
+    <br>
+    (Identified by analyzing file creation events (Sysmon EventID 11) in the staging directory.)
+  </p>
+
+  <p class="text-slate-200 leading-relaxed mb-2">
+    <strong>Q7. Attacker then laterally moved to next machine. What is the machine and which account was used?</strong>
+    <br>
+    <strong>A7. Machine: <code class="font-mono text-cyan-300">BUILD-01</code>, Account: <code class="font-mono text-cyan-300">svc_jenkinsdeploy</code></strong>
+    <br>
+    (Found by searching for explicit logon events (EventID 4648) originating from <code class="font-mono text-cyan-300">DEV-WKS-01</code>.)
+  </p>
+
+  <p class="text-slate-200 leading-relaxed mb-2">
+    <strong>Q8. At what date and time did the attacker Logged into the next machine?</strong>
+    <br>
+    <strong>A8. <code class="font-mono text-cyan-300">2026-04-02, 19:35:48</code></strong>
+    <br>
+    (Timestamp associated with the EventID 4648 logon event.)
+  </p>
+
+  <p class="text-slate-200 leading-relaxed mb-2">
+    <strong>Q9. On the recently compromised host, the attacker planted a file and modified an existing build script in the Jenkins workspace. To lower the suspicion they forged a creation timestamp on one of them, what fake timestamp value was applied?</strong>
+    <br>
+    <strong>A9. <code class="font-mono text-cyan-300">2026-04-03 08:17:30</code></strong>
+    <br>
+    (Identified by comparing <code class="font-mono text-cyan-300">CreationUtcTime</code> and <code class="font-mono text-cyan-300">PreviousCreationUtcTime</code> in Sysmon EventID 2 logs.)
+  </p>
+
+  <p class="text-slate-200 leading-relaxed mb-2">
+    <strong>Q10. A new file appeared under the customer-portal application's plugins folder. Provide its full path?</strong>
+    <br>
+    <strong>A10. <code class="font-mono text-cyan-300">C:\Jenkins\workspace\customer-portal\plugins\telemetry.js</code></strong>
+    <br>
+    (Discovered by searching for file creation events within the Jenkins plugins directory on <code class="font-mono text-cyan-300">BUILD-01</code>.)
+  </p>
+
+  <p class="text-slate-200 leading-relaxed mb-2">
+    <strong>Q11. What is the name of the file transferred from BUILD-01 to SRV-APP-01?</strong>
+    <br>
+    <strong>A11. <code class="font-mono text-cyan-300">telemetry.js</code></strong>
+    <br>
+    (Identified from Robocopy command line and SMB transfer logs.)
+  </p>
+
+  <p class="text-slate-200 leading-relaxed mb-2">
+    <strong>Q12. The attacker escalated privileges on the production server. Provide the full path of the binary used for the escalation, and the named pipe associated with the abuse.</strong>
+    <br>
+    <strong>A12. Binary: <code class="font-mono text-cyan-300">C:\ProgramData\WinTelemetry\svc.exe</code>, Named Pipe: <code class="font-mono text-cyan-300">spoolss</code></strong>
+    <br>
+    (Found by correlating named pipe creation events (Sysmon EventID 17/18) with process execution on <code class="font-mono text-cyan-300">SRV-APP-01</code>.)
+  </p>
+
+  <p class="text-slate-200 leading-relaxed mb-2">
+    <strong>Q13. The attacker achieved persistence on the production server. Provide the name of used/registered for that.</strong>
+    <br>
+    <strong>A13. <code class="font-mono text-cyan-300">WinTelemetrySvc</code></strong>
+    <br>
+    (Discovered by analyzing service creation events and associated command lines.)
+  </p>
+
+  <h2 class="text-2xl font-bold text-slate-100 mt-8 mb-4">Key Takeaways & Security Insights</h2>
+  <ul class="list-disc list-inside text-slate-200 mb-4 space-y-2">
+    <li>
+      <strong class="text-slate-100">Living Off The Land (LoTL) Binaries:</strong> The use of <code class="font-mono text-cyan-300">node.exe</code> (or a renamed PowerShell like <code class="font-mono text-cyan-300">wt.exe</code>) to execute malicious scripts highlights the importance of monitoring legitimate binaries for anomalous behavior, especially when executed from non-standard paths or with suspicious arguments.
+    </li>
+    <li>
+      <strong class="text-slate-100">Sysmon EventID 13 for Registry Monitoring:</strong> Sysmon EventID 13 is crucial for detecting persistence mechanisms involving registry modifications, particularly to Run keys. The <code class="font-mono text-cyan-300">Details</code> field provides the exact value inserted, which is vital for forensic analysis.
+    </li>
+    <li>
+      <strong class="text-slate-100">Proactive Threat Intelligence:</strong> Performing OSINT lookups on suspicious IP addresses (like <code class="font-mono text-cyan-300">142.11.206.73</code>) early in an investigation can significantly accelerate threat identification and confirm malicious intent.
+    </li>
+    <li>
+      <strong class="text-slate-100">Lateral Movement Detection:</strong> Monitoring explicit logon events (EventID 4648) and remote service connections (e.g., WinRM, SMB) is critical for detecting lateral movement, especially when service accounts are used from unexpected sources.
+    </li>
+    <li>
+      <strong class="text-slate-100">Timestomping as Evasion:</strong> Attackers use techniques like timestomping (Sysmon EventID 2 showing <code class="font-mono text-cyan-300">CreationUtcTime</code> vs <code class="font-mono text-cyan-300">PreviousCreationUtcTime</code>) to blend malicious files with legitimate ones, emphasizing the need for robust file integrity monitoring and detailed timestamp analysis.
+    </li>
+    <li>
+      <strong class="text-slate-100">Supply Chain Attack Vector:</strong> Modifying build scripts and deploying malicious plugins in a Jenkins environment demonstrates a potential supply chain attack vector, where compromised build systems can distribute malware to production environments.
+    </li>
+  </ul>
+</div>
+        </article>
+    </main>
+</body>
+</html>
