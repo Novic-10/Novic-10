@@ -197,7 +197,7 @@
                                 <div class="text-slate-300 pl-4 border-l-2 border-slate-800 space-y-1 text-xs">
                                     <p><span class="text-cyan-400">"whoami":</span> "Oliver Hersee",</p>
                                     <p><span class="text-cyan-400">"status":</span> "IT Helpdesk, Aspiring SOC Analyst",</p>
-                                    <p><span class="text-cyan-400">"primary_focus":</span> ["Incident Response", "DFIR"],</p>
+                                    <p><span class="text-cyan-400">"primary_focus":</span> ["Incident Response", "Digital Forensics"],</p>
                                     <p><span class="text-cyan-400">"certifications":</span> ["BTL1", "CySA+", "Sec+", "Net+", "AZ-104"],</p>
                                     <p><span class="text-cyan-400">"current_lab":</span> "Portfolio & GitHub",</p>
                                     <p><span class="text-cyan-400">"open_for_roles":</span> <span class="text-emerald-400">true</span></p>
@@ -206,9 +206,9 @@
                                     <span class="text-emerald-400">novic@portfolio:~$</span> ./check_readiness.sh
                                 </div>
                                 <div class="text-cyan-300 text-xs">
-                                    [+] Memory Forensics: <span class="text-emerald-400">READY</span> (Volatility 3)<br>
-                                    [+] Log Analysis: <span class="text-emerald-400">READY</span> (Zeek / Splunk / Wireshark / Zimmerman Tools)<br>
-                                    [+] Threat Detection: <span class="text-emerald-400">READY</span> (Sysmon / VirusTotal / Auditd)
+                                    [+] MEMORY & HOST FORENSICS: <span class="text-emerald-400">READY</span> (Volatility / KAPE / FTK Imager)<br>
+                                    [+] Log Analysis: <span class="text-emerald-400">READY</span> (Splunk / Wireshark / Zimmerman Tools)<br>
+                                    [+] Threat Detection: <span class="text-emerald-400">READY</span> (Cyberchef / VirusTotal / Ghidra)
                                 </div>
                                 <div class="flex items-center text-slate-400 pt-1">
                                     <span class="text-emerald-400">novic@portfolio:~$</span>
@@ -356,7 +356,7 @@
 
 
         <!-- Update scroll-mt-* to match your header height -->
-<section id="homelabs" class="relative py-16 lg:py-24 bg-slate-900/40 border-b border-slate-800/60 overflow-hidden scroll-mt-1">
+<section id="homelabs" class="relative py-16 lg:py-24 bg-slate-900/40 border-b border-slate-800/60 scroll-mt-24">
             
     <!-- MAINTENANCE / OPSEC OVERLAY BADGE -->
             <div class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-slate-950/80 backdrop-blur-sm p-6 text-center">
@@ -394,110 +394,7 @@
 
                 <div class="space-y-8">
 
-                    <!-- Lab Project 1: Active Directory & GPO Lab -->
-                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 lg:p-8">
-                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                            <div class="lg:col-span-7 space-y-4">
-                                <div class="flex flex-wrap items-center gap-2">
-                                    <span class="px-2.5 py-1 rounded-md bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-xs font-mono">Windows Server 2022</span>
-                                    <span class="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 text-xs font-mono">Active Directory</span>
-                                    <span class="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 text-xs font-mono">Sysmon</span>
-                                    <span class="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 text-xs font-mono">Group Policy (GPO)</span>
-                                </div>
-                                <h3 class="text-2xl font-bold text-slate-100">
-                                    Enterprise Active Directory & Hardened GPO Lab
-                                </h3>
-                                <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
-                                    Designed and deployed a full Active Directory domain controller environment on VirtualBox/Proxmox with Windows Server 2022 and Windows 10 endpoints. Implemented SwiftOnSecurity Sysmon configs, WinRM logging, and custom Group Policy Objects for endpoint hardening.
-                                </p>
-                                
-                                <div class="space-y-2 pt-2">
-                                    <h4 class="text-xs font-mono uppercase text-slate-400 tracking-wider">Key Implementation Features:</h4>
-                                    <ul class="text-xs sm:text-sm text-slate-300 space-y-1.5 list-disc list-inside">
-                                        <li>Configured OU hierarchy, Tiered Administrative Model, and LAPS for local admin passwords.</li>
-                                        <li>Centralized event logging forwarding (WEF/WEC) to a SIEM dashboard for real-time alert triage.</li>
-                                        <li>Simulated Kerberoasting and Pass-the-Hash attacks to verify Sysmon event ID detection coverage.</li>
-                                    </ul>
-                                </div>
-
-                                <div class="pt-4 flex flex-wrap items-center gap-4">
-                                    <span class="px-4 py-2 rounded-lg bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 text-xs font-semibold flex items-center gap-2">
-                                        <i class="fa-brands fa-github"></i> Repository & Architecture Docs
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div class="lg:col-span-5 bg-slate-950 p-5 rounded-xl border border-slate-800/80 font-mono text-xs space-y-3">
-                                <div class="text-cyan-400 font-semibold border-b border-slate-800 pb-2 flex items-center justify-between">
-                                    <span>LAB TOPOLOGY SUMMARY</span>
-                                    <i class="fa-solid fa-network-wired text-slate-500"></i>
-                                </div>
-                                <div class="space-y-1.5 text-slate-400">
-                                    <div class="flex justify-between"><span class="text-slate-300">Domain Controller:</span> <span>192.168.10.10 (DC01)</span></div>
-                                    <div class="flex justify-between"><span class="text-slate-300">SIEM / Collector:</span> <span>192.168.10.20 (SIEM01)</span></div>
-                                    <div class="flex justify-between"><span class="text-slate-300">Target Workstation:</span> <span>192.168.10.50 (WIN10-WS)</span></div>
-                                    <div class="flex justify-between"><span class="text-slate-300">Active Logging:</span> <span>Sysmon, PowerShell L5</span></div>
-                                </div>
-                                <div class="p-3 bg-slate-900 rounded border border-slate-800 text-[11px] text-slate-300">
-                                    <span class="text-emerald-400 font-bold">[Success]</span> Active Directory Auditing verified: Event IDs 4624, 4625, 4688, Sysmon Event ID 1 & 3 captured.
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Lab Project 2: LUKS-Encrypted Pi-hole / Samba Server -->
-                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 lg:p-8">
-                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                            <div class="lg:col-span-7 space-y-4">
-                                <div class="flex flex-wrap items-center gap-2">
-                                    <span class="px-2.5 py-1 rounded-md bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-xs font-mono">Raspberry Pi OS</span>
-                                    <span class="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 text-xs font-mono">LUKS Encryption</span>
-                                    <span class="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 text-xs font-mono">Pi-hole DNS</span>
-                                    <span class="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 text-xs font-mono">Samba NAS</span>
-                                </div>
-                                <h3 class="text-2xl font-bold text-slate-100">
-                                    LUKS-Encrypted Pi-hole DNS Sinkhole & Secured Samba Server
-                                </h3>
-                                <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
-                                    Engineered a hardened home network gateway and network-attached storage solution using Raspberry Pi hardware running Debian. Integrated LUKS (Linux Unified Key Setup) for full-disk encryption with automated headless unlock capabilities over Dropbear SSH.
-                                </p>
-                                
-                                <div class="space-y-2 pt-2">
-                                    <h4 class="text-xs font-mono uppercase text-slate-400 tracking-wider">Key Implementation Features:</h4>
-                                    <ul class="text-xs sm:text-sm text-slate-300 space-y-1.5 list-disc list-inside">
-                                        <li>Deploys network-wide DNS filtering with Pi-hole and Unbound recursive DNS for privacy & blocklisting.</li>
-                                        <li>Hardened Samba shares restricting access via ACLs, SMB3 encryption, and disabled SMB1 protocol.</li>
-                                        <li>Remote boot unlocking configured via encrypted SSH during initramfs stage.</li>
-                                    </ul>
-                                </div>
-
-                                <div class="pt-4 flex flex-wrap items-center gap-4">
-                                    <span class="px-4 py-2 rounded-lg bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 text-xs font-semibold flex items-center gap-2">
-                                        <i class="fa-brands fa-github"></i> Repository & Guide
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div class="lg:col-span-5 bg-slate-950 p-5 rounded-xl border border-slate-800/80 font-mono text-xs space-y-3">
-                                <div class="text-cyan-400 font-semibold border-b border-slate-800 pb-2 flex items-center justify-between">
-                                    <span>SECURITY CONFIGURATION</span>
-                                    <i class="fa-solid fa-lock text-slate-500"></i>
-                                </div>
-                                <div class="space-y-1.5 text-slate-400">
-                                    <div class="flex justify-between"><span class="text-slate-300">Disk Cipher:</span> <span>aes-xts-plain64 (LUKS2)</span></div>
-                                    <div class="flex justify-between"><span class="text-slate-300">DNS Protocol:</span> <span>DNS-over-HTTPS (DoH)</span></div>
-                                    <div class="flex justify-between"><span class="text-slate-300">SMB Protocol:</span> <span>SMBv3 Mandatory</span></div>
-                                    <div class="flex justify-between"><span class="text-slate-300">Firewall:</span> <span>ufw (Default Deny Inbound)</span></div>
-                                </div>
-                                <div class="p-3 bg-slate-900 rounded border border-slate-800 text-[11px] text-slate-300">
-                                    <span class="text-emerald-400 font-bold">[Protected]</span> Zero unencrypted storage at rest. Blocks 150k+ telemetry and malicious domains daily.
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
+                   
         </section>
 
         <!-- CTF WRITEUPS SECTION -->
@@ -664,16 +561,16 @@
                         </div>
                         <ul class="space-y-2.5 text-xs text-slate-300 font-mono">
                             <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
-                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Volatility // DumpIt.exe // AVML
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Memory Acquisition & Analysis (Volatility 3 / DumpIt / AVML)
                             </li>
                             <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
-                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Registry Hive Parsing // Zimmerman tools
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Artifact & Registry Analysis (Eric Zimmerman Tools / RECmd)
                             </li>
                             <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
-                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> FTK Imager & Autopsy
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Forensic Imaging & Triage (FTK Imager / Autopsy / KAPE)
                             </li>
                             <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
-                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> KAPE Triage Data Extraction
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Host Evidentiary Collection (MFT / Prefetch / Event Logs)
                             </li>
                         </ul>
                     </div>
@@ -686,16 +583,16 @@
                         </div>
                         <ul class="space-y-2.5 text-xs text-slate-300 font-mono">
                             <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
-                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Wireshark // Zeek // Network Miner
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Packet & Traffic Analysis (Wireshark / Zeek / NetworkMiner)
                             </li>
                             <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
-                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Splunk // Azure Log Analytics KQL // Wazuh
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Log Aggregation & KQL (Splunk / Azure Log Analytics / Wazuh)
                             </li>
                             <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
-                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Snort // Suricata IDS // SPAN Port traffic inspection
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> NIDS & Traffic Inspection (Snort / Suricata / SPAN Ports)
                             </li>
                             <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
-                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Nessus // OpenVas Vulnerability scanning
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Vulnerability Management (Nessus / OpenVAS Scans)
                             </li>
                         </ul>
                     </div>
@@ -708,13 +605,13 @@
                         </div>
                         <ul class="space-y-2.5 text-xs text-slate-300 font-mono">
                             <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
-                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Active Directory & GPO // EntraID Administration
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Enterprise Identity & Access (Active Directory / GPO / Entra ID)
                             </li>
                             <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
                                 <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> GCP & Azure (Entra ID)
                             </li>
                             <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
-                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Linux &amp; Windows CLI tools
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Systems & Telemetry (Windows & Linux CLI / Sysmon)
                             </li>
                             <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
                                 <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Sysmon & Windows Event Logs
@@ -730,16 +627,16 @@
                         </div>
                         <ul class="space-y-2.5 text-xs text-slate-300 font-mono">
                             <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
-                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Python (Automation & Log Parsing)
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Python (SecOps Automation & Log Parsing)
                             </li>
                             <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
-                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> PowerShell Administration
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> PowerShell (Active Directory & System Admin)
                             </li>
                             <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
                                 <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Bash Scripting & Systemd
                             </li>
                             <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
-                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Git & Markdown Documentation
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Version Control & Docs (Git / GitHub Actions / Markdown)
                             </li>
                         </ul>
                     </div>
