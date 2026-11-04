@@ -355,9 +355,34 @@
         </section>
 
 
-        <!-- HOMELAB PROJECTS SECTION -->
-        <section id="homelabs" class="py-16 lg:py-24 bg-slate-900/40 border-b border-slate-800/60">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Update scroll-mt-* to match your header height -->
+<section id="homelabs" class="relative py-16 lg:py-24 bg-slate-900/40 border-b border-slate-800/60 overflow-hidden scroll-mt-1">
+            
+    <!-- MAINTENANCE / OPSEC OVERLAY BADGE -->
+            <div class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-slate-950/80 backdrop-blur-sm p-6 text-center">
+                <div class="max-w-xl mx-auto bg-slate-900/90 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl shadow-cyan-950/50">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono font-medium mb-4">
+                        <span class="h-2 w-2 rounded-full bg-amber-400 animate-pulse"></span>
+                        LAB PIPELINE OFFLINE
+                    </div>
+                    
+                    <h3 class="text-xl sm:text-2xl font-bold text-slate-100 mb-3">
+                        Homelab Projects
+                    </h3>
+                    
+                    <p class="text-xs sm:text-sm text-slate-400 leading-relaxed font-sans mb-4">
+                        This section is currently under construction.
+                    </p>
+
+                    <div class="inline-flex items-center gap-2 text-xs font-mono text-slate-500 bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800">
+                        <i class="fa-solid fa-shield-halved text-amber-400"></i>
+                        <span>Status: Work in Progress</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GREYED OUT / DISABLED BACKGROUND CONTENT -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 opacity-20 pointer-events-none select-none filter blur-[1px]">
                 
                 <div class="mb-12">
                     <div class="text-cyan-400 font-mono text-xs tracking-wider uppercase mb-2">Hands-on Infrastructure</div>
@@ -370,7 +395,7 @@
                 <div class="space-y-8">
 
                     <!-- Lab Project 1: Active Directory & GPO Lab -->
-                    <div class="bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-2xl p-6 lg:p-8 transition-all">
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 lg:p-8">
                         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                             <div class="lg:col-span-7 space-y-4">
                                 <div class="flex flex-wrap items-center gap-2">
@@ -396,11 +421,9 @@
                                 </div>
 
                                 <div class="pt-4 flex flex-wrap items-center gap-4">
-                                    <!-- REPLACE HYPERLINK WITH YOUR REPO LINK -->
-                                    <a href="https://github.com/YOUR_GITHUB_USERNAME/active-directory-lab" target="_blank" rel="noopener noreferrer" 
-                                       class="px-4 py-2 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-xs font-semibold flex items-center gap-2 transition-all">
+                                    <span class="px-4 py-2 rounded-lg bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 text-xs font-semibold flex items-center gap-2">
                                         <i class="fa-brands fa-github"></i> Repository & Architecture Docs
-                                    </a>
+                                    </span>
                                 </div>
                             </div>
 
@@ -423,7 +446,7 @@
                     </div>
 
                     <!-- Lab Project 2: LUKS-Encrypted Pi-hole / Samba Server -->
-                    <div class="bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-2xl p-6 lg:p-8 transition-all">
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 lg:p-8">
                         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                             <div class="lg:col-span-7 space-y-4">
                                 <div class="flex flex-wrap items-center gap-2">
@@ -449,11 +472,9 @@
                                 </div>
 
                                 <div class="pt-4 flex flex-wrap items-center gap-4">
-                                    <!-- REPLACE HYPERLINK WITH YOUR REPO LINK -->
-                                    <a href="https://github.com/YOUR_GITHUB_USERNAME/secure-pi-nas-setup" target="_blank" rel="noopener noreferrer" 
-                                       class="px-4 py-2 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-xs font-semibold flex items-center gap-2 transition-all">
+                                    <span class="px-4 py-2 rounded-lg bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 text-xs font-semibold flex items-center gap-2">
                                         <i class="fa-brands fa-github"></i> Repository & Guide
-                                    </a>
+                                    </span>
                                 </div>
                             </div>
 
@@ -478,7 +499,6 @@
                 </div>
             </div>
         </section>
-
 
         <!-- CTF WRITEUPS SECTION -->
         <section id="writeups" class="py-16 lg:py-24 bg-slate-950 border-b border-slate-800/60">
@@ -760,20 +780,6 @@
                         <a href="mailto:orhersee@gmail.com" class="px-6 py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold text-sm transition-all shadow-lg shadow-cyan-500/20 flex items-center gap-2">
                             <i class="fa-solid fa-envelope"></i>
                             Send Direct Email
-                        </a>
-                    </div>
-
-                    <!-- Social Icons -->
-                    <div class="pt-8 flex justify-center items-center gap-6 text-xl">
-                        <!-- REPLACE HYPERLINKS WITH YOUR SOCIAL PROFILE URLS -->
-                        <a href="https://github.com/YOUR_GITHUB_USERNAME" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-cyan-400 transition-colors" title="GitHub">
-                            <i class="fa-brands fa-github"></i>
-                        </a>
-                        <a href="https://linkedin.com/in/YOUR_LINKEDIN_USERNAME" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-cyan-400 transition-colors" title="LinkedIn">
-                            <i class="fa-brands fa-linkedin"></i>
-                        </a>
-                        <a href="mailto:orhersee@gmail.com" class="text-slate-400 hover:text-cyan-400 transition-colors" title="Email">
-                            <i class="fa-solid fa-envelope"></i>
                         </a>
                     </div>
 
