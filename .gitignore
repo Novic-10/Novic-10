@@ -16,3 +16,4 @@ secrets.json
 # Ignore Python cached files
 __pycache__/
 *.pyc
+venv/
