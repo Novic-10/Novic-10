@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Context | Oliver Hersee</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-slate-200 font-sans antialiased selection:bg-cyan-500 selection:text-slate-950">
+    <main class="max-w-4xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+        
+        <article class="prose prose-invert max-w-none space-y-6">
+            <div class="max-w-5xl mx-auto px-4 py-8">
+  <!-- Header Section -->
+  <p class="font-mono text-xs text-slate-400 uppercase tracking-widest">// BLUE TEAM LABS ONLINE · WRITEUP</p>
+  <h1 class="text-3xl sm:text-4xl font-bold text-slate-100 tracking-tight my-3">AWeSome</h1>
+
+  <!-- Metadata Pill Badges -->
+  <div class="flex flex-wrap gap-2 my-4 font-mono text-xs uppercase">
+    <span class="bg-cyan-950 text-cyan-400 border border-cyan-800 px-3 py-1 rounded">Blue Team Labs Online</span>
+    <span class="bg-slate-800 text-slate-300 border border-slate-700 px-3 py-1 rounded">Incident Response</span>
+    <span class="bg-slate-800 text-slate-300 border border-slate-700 px-3 py-1 rounded">Medium</span>
+    <span class="bg-slate-800/80 text-slate-400 border border-slate-700/60 px-3 py-1 rounded">SPLUNK</span>
+    <span class="bg-slate-800/80 text-slate-400 border border-slate-700/60 px-3 py-1 rounded">AWS</span>
+    
+  </div>
+
+  <!-- Action Button Bar -->
+  <div class="flex flex-wrap items-center gap-3 mt-6 mb-8 font-mono text-xs">
+    <a href="../index.html#writeups" class="inline-flex items-center gap-2 border border-cyan-500/40 text-cyan-400 hover:bg-cyan-500/10 px-4 py-2 rounded transition-all">
+      <i class="fas fa-arrow-left"></i> BACK TO PORTFOLIO
+    </a>
+    <a href="https://blueteamlabs.online/achievement/share/172832/233" target="_blank" class="inline-flex items-center gap-2 border border-pink-500/40 text-pink-400 hover:bg-pink-500/10 px-4 py-2 rounded transition-all">
+      PROOF OF COMPLETION <i class="fas fa-arrow-right"></i>
+    </a>
+  </div>
+
+  <!-- Executive Summary & Overview -->
+  <h2 class="text-2xl font-bold text-slate-100 mt-8 mb-4">Executive Summary & Overview</h2>
+  <p class="text-slate-200 leading-relaxed">
+    This writeup details the investigation into an AWS infrastructure breach at SecureNetDynamics. An attacker exploited exposed AWS access keys belonging to a developer, <code class="font-mono text-cyan-300">dev_harry</code>, to gain initial access. The adversary then performed extensive enumeration, extracted sensitive keys from S3, established persistence through new user accounts and privilege escalation, and ultimately launched a ransomware attack, encrypting critical files. The incident response focused on analyzing Splunk CloudTrail logs and system artifacts to reconstruct the attack chain, identify compromised resources, and pinpoint attacker actions and indicators of compromise.
+  </p>
+
+  <!-- Asset Information -->
+  <h2 class="text-2xl font-bold text-slate-100 mt-8 mb-4">Asset Information</h2>
+  <div class="overflow-x-auto my-6 rounded-lg border border-slate-800 shadow-lg">
+    <table class="w-full text-left border-collapse text-sm">
+      <thead class="bg-slate-800/80 text-slate-300 text-xs uppercase tracking-wider font-mono">
+        <tr>
+          <th class="py-3 px-4">Hostname / Identifier</th>
+          <th class="py-3 px-4">Summary</th>
+        </tr>
+      </thead>
+      <tbody class="text-slate-200">
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs">arn:aws:iam::764581110688:user/dev_harry</td>
+          <td class="py-3 px-4 break-words">Initial compromised AWS IAM user due to exposed access keys.</td>
+        </tr>
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs">arn:aws:iam::764581110688:user/dev-neo</td>
+          <td class="py-3 px-4 break-words">Compromised console login user, used for privilege escalation and persistence. Source IP: <code class="font-mono text-cyan-300">103.99.35.120</code>.</td>
+        </tr>
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs">dev_harry_bg</td>
+          <td class="py-3 px-4 break-words">Newly created user by attacker, added to <code class="font-mono text-cyan-300">dev_group</code> for persistence.</td>
+        </tr>
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs">dev_group</td>
+          <td class="py-3 px-4 break-words">Newly created group by attacker, used to grant administrative access to <code class="font-mono text-cyan-300">dev_harry_bg</code>.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Indicators of Compromise (IOC) Matrix -->
+  <h2 class="text-2xl font-bold text-slate-100 mt-8 mb-4">Indicators of Compromise (IOC) Matrix</h2>
+  <div class="overflow-x-auto my-6 rounded-lg border border-slate-800 shadow-lg">
+    <table class="w-full text-left border-collapse text-sm">
+      <thead class="bg-slate-800/80 text-slate-300 text-xs uppercase tracking-wider font-mono">
+        <tr>
+          <th class="py-3 px-4">Type</th>
+          <th class="py-3 px-4">Summary</th>
+          <th class="py-3 px-4">MITRE ATT&CK Code</th>
+        </tr>
+      </thead>
+      <tbody class="text-slate-200">
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs">AWS API Call Enumeration</td>
+          <td class="py-3 px-4 break-words">Compromised user <code class="font-mono text-cyan-300">dev_harry</code> ran <code class="font-mono text-cyan-300">GetCallerIdentity</code> API with user agent <code class="font-mono text-cyan-300">BOTO</code>.</td>
+          <td class="py-3 px-4 break-words font-mono text-xs">T1526</td>
+        </tr>
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs">Resource Creation</td>
+          <td class="py-3 px-4 break-words">Compromised user <code class="font-mono text-cyan-300">dev_harry</code> ran <code class="font-mono text-cyan-300">RunInstances</code> with IP <code class="font-mono text-cyan-300">172.31.30.142</code> and AMI ID <code class="font-mono text-cyan-300">ami-08be8aa61081045c0</code>.</td>
+          <td class="py-3 px-4 break-words font-mono text-xs">T1578.002</td>
+        </tr>
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs">Degrade Security</td>
+          <td class="py-3 px-4 break-words">Compromised account <code class="font-mono text-cyan-300">dev_harry</code> modified security group rules to allow public access.</td>
+          <td class="py-3 px-4 break-words font-mono text-xs">T1562.007</td>
+        </tr>
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs">Lateral Movement</td>
+          <td class="py-3 px-4 break-words">User <code class="font-mono text-cyan-300">dev-neo</code> signed in from IP <code class="font-mono text-cyan-300">103.99.35.120</code>.</td>
+          <td class="py-3 px-4 break-words font-mono text-xs">T1078.004</td>
+        </tr>
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs">Privilege Escalation</td>
+          <td class="py-3 px-4 break-words">User <code class="font-mono text-cyan-300">dev-neo</code> assigned administrator access policy <code class="font-mono text-cyan-300">arn:aws:iam::aws:policy/AdministratorAccess</code>.</td>
+          <td class="py-3 px-4 break-words font-mono text-xs">T1098.003</td>
+        </tr>
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+          <td class="py-3 px-4 break-words font-mono text-xs">Persistence (Credential Creation)</td>
+          <td class="py-3 px-4 break-words">Attacker's IP created new user <code class="font-mono text-cyan-300">dev_harry_bg</code> and added to <code class="font-mono text-cyan-300">dev_group</code>.</td>
+          <td class="py-3 px-4 break-words font-mono text-xs">T1098.001</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Step-by-Step Investigation Workflow -->
+  <h2 class="text-2xl font-bold text-slate-100 mt-8 mb-4">Step-by-Step Investigation Workflow</h2>
+  <p class="text-slate-200 leading-relaxed mb-4">
+    The investigation primarily leveraged Splunk to analyze AWS CloudTrail logs (<code class="font-mono text-cyan-300">cloudtrail-awesome.json</code>) to trace the attacker's activities.
+  </p>
+
+  <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-lg my-4">
+    <p class="text-slate-400 text-sm mb-2">1. Identify initial successful activity from compromised user <code class="font-mono text-cyan-300">dev_harry</code>.</p>
+    <pre class="bg-slate-800 text-cyan-300 p-3 rounded font-mono text-xs overflow-x-auto"><code>index=* "userIdentity.arn"="arn:aws:iam::764581110688:user/dev_harry" <br>| where isnull(errorCode)<br>| sort + eventTime</code></pre>
+  </div>
+
+  <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-lg my-4">
+    <p class="text-slate-400 text-sm mb-2">2. Determine the source IP address associated with the initial activities.</p>
+    <pre class="bg-slate-800 text-cyan-300 p-3 rounded font-mono text-xs overflow-x-auto"><code>index=* "userIdentity.arn"="arn:aws:iam::764581110688:user/dev_harry" <br>| where isnull(errorCode)<br>| table sourceIPAddress</code></pre>
+  </div>
+
+  <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-lg my-4">
+    <p class="text-slate-400 text-sm mb-2">3. Discover AMI used by the attacker to create EC2 instances.</p>
+    <pre class="bg-slate-800 text-cyan-300 p-3 rounded font-mono text-xs overflow-x-auto"><code>index=* "userIdentity.arn"="arn:aws:iam::764581110688:user/dev_harry" eventName="RunInstances"<br>| spath<br>| dedup requestParameters.instancesSet.items{}.imageId<br>| table eventTime eventName requestParameters.instancesSet.items{}.imageId _raw</code></pre>
+  </div>
+
+  <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-lg my-4">
+    <p class="text-slate-400 text-sm mb-2">4. Identify security group modified by the attacker to allow public access.</p>
+    <pre class="bg-slate-800 text-cyan-300 p-3 rounded font-mono text-xs overflow-x-auto"><code>index=* eventName IN ("*ModifySecurityGroupRules*", "ModifySecurityGroupIngress", "AuthorizeSecurityGroupIngress")</code></pre>
+  </div>
+
+  <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-lg my-4">
+    <p class="text-slate-400 text-sm mb-2">5. Find the username of the console login credentials discovered by the attacker.</p>
+    <pre class="bg-slate-800 text-cyan-300 p-3 rounded font-mono text-xs overflow-x-auto"><code>index=* source="cloudtrail-awesome.json" eventName=GetLoginProfile</code></pre>
+  </div>
+
+  <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-lg my-4">
+    <p class="text-slate-400 text-sm mb-2">6. Determine the source IP address of the compromised console login.</p>
+    <pre class="bg-slate-800 text-cyan-300 p-3 rounded font-mono text-xs overflow-x-auto"><code>index=* source="cloudtrail-awesome.json" "userIdentity.arn"="arn:aws:iam::764581110688:user/dev-neo" eventName=ConsoleLogin</code></pre>
+  </div>
+
+  <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-lg my-4">
+    <p class="text-slate-400 text-sm mb-2">7. Identify the policy attached to escalate privileges for the compromised user <code class="font-mono text-cyan-300">dev-neo</code>.</p>
+    <pre class="bg-slate-800 text-cyan-300 p-3 rounded font-mono text-xs overflow-x-auto"><code>index=* source="cloudtrail-awesome.json" "userIdentity.arn"="arn:aws:iam::764581110688:user/dev-neo" eventName IN ("AssumeRole", "AttachUserPolicy", "PutUserPolicy")</code></pre>
+  </div>
+
+  <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-lg my-4">
+    <p class="text-slate-400 text-sm mb-2">8. Find the critical file downloaded from S3 by the attacker.</p>
+    <pre class="bg-slate-800 text-cyan-300 p-3 rounded font-mono text-xs overflow-x-auto"><code>grep --color=always -i "key" ./* | tail -n 10</code></pre>
+  </div>
+
+  <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-lg my-4">
+    <p class="text-slate-400 text-sm mb-2">9. Identify the username and groupname created by the attacker for persistence.</p>
+    <pre class="bg-slate-800 text-cyan-300 p-3 rounded font-mono text-xs overflow-x-auto"><code>index=* source="cloudtrail-awesome.json" "userIdentity.arn"="arn:aws:iam::764581110688:user/dev-neo" eventName="CreateUser"<br><br>index=* source="cloudtrail-awesome.json" "dev_harry_bg" eventName=AddUserToGroup</code></pre>
+  </div>
+
+  <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-lg my-4">
+    <p class="text-slate-400 text-sm mb-2">10. Determine the source of the ransomware script downloaded to an instance.</p>
+    <p class="text-slate-400 text-sm italic">*(This step involved analyzing artifacts from the <code class="font-mono text-cyan-300">Instance.zip</code>, specifically the user's bash history.)*</p>
+  </div>
+
+  <!-- Question & Answer Solutions -->
+  <h2 class="text-2xl font-bold text-slate-100 mt-8 mb-4">Question & Answer Solutions</h2>
+
+  <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-lg my-4">
+    <p class="text-slate-200 mb-2">1. When was the first successful activity seen from the compromised AWS User as per logs? (Format: YYYY-MM-DD HH:MM:SS UTC)</p>
+    <p class="text-cyan-400 font-bold font-mono text-lg">2024-08-20 06:00:10 UTC</p>
+    <p class="text-slate-400 text-sm mt-2">Reasoning: Filtered for <code class="font-mono text-cyan-300">dev_harry</code>'s ARN, excluded errors, and sorted by <code class="font-mono text-cyan-300">eventTime</code>.</p>
+  </div>
+
+  <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-lg my-4">
+    <p class="text-slate-200 mb-2">2. What was the Source IP address associated with the activities? (Format: IP Address)</p>
+    <p class="text-cyan-400 font-bold font-mono text-lg">3.144.171.70</p>
+    <p class="text-slate-400 text-sm mt-2">Reasoning: Extracted <code class="font-mono text-cyan-300">sourceIPAddress</code> from the initial successful events.</p>
+  </div>
+
+  <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-lg my-4">
+    <p class="text-slate-200 mb-2">3. The attacker performed further enumeration and found an AMI image that the compromised user had access to. This AMI was used to create EC2 Instances. Find the AMI-ID. (Format: AMI-ID)</p>
+    <p class="text-cyan-400 font-bold font-mono text-lg">ami-08be8aa61081045c0</p>
+    <p class="text-slate-400 text-sm mt-2">Reasoning: Used <code class="font-mono text-cyan-300">spath</code> and <code class="font-mono text-cyan-300">dedup</code> on <code class="font-mono text-cyan-300">RunInstances</code> events to extract the <code class="font-mono text-cyan-300">imageId</code>.</p>
+    <figure class="my-6">
+      <img src="images/BTLO_awesome_AMI-pulled.png" alt="AMI ID extracted from Splunk logs" class="rounded-lg border border-slate-700/80 w-full shadow-md hover:border-slate-600 transition-all" />
+      <figcaption class="text-xs text-center text-slate-400 mt-2 font-mono">AMI ID extracted from Splunk logs</figcaption>
+    </figure>
+  </div>
+
+  <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-lg my-4">
+    <p class="text-slate-200 mb-2">4. The attacker changed the ingress rule of a security group, allowing everyone to connect through any port. Find this Security Group ID. (Format: Security Group ID)</p>
+    <p class="text-cyan-400 font-bold font-mono text-lg">sg-085becd1c5d4f7621</p>
+    <p class="text-slate-400 text-sm mt-2">Reasoning: Searched for security group modification events like <code class="font-mono text-cyan-300">ModifySecurityGroupIngress</code>.</p>
+  </div>
+
+  <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-lg my-4">
+    <p class="text-slate-200 mb-2">5. Attacker after further enumeration found the Console Login credentials of a user. What is the name of the user? (Format: Username)</p>
+    <p class="text-cyan-400 font-bold font-mono text-lg">dev-neo</p>
+    <p class="text-slate-400 text-sm mt-2">Reasoning: Identified the user associated with <code class="font-mono text-cyan-300">GetLoginProfile</code> events.</p>
+  </div>
+
+  <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-lg my-4">
+    <p class="text-slate-200 mb-2">6. From which IP was this login originated? (Format: IP Address)</p>
+    <p class="text-cyan-400 font-bold font-mono text-lg">103.99.35.120</p>
+    <p class="text-slate-400 text-sm mt-2">Reasoning: Filtered <code class="font-mono text-cyan-300">ConsoleLogin</code> events for user <code class="font-mono text-cyan-300">dev-neo</code> and extracted the <code class="font-mono text-cyan-300">sourceIPAddress</code>.</p>
+  </div>
+
+  <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-lg my-4">
+    <p class="text-slate-200 mb-2">7. What policy was attached to escalate access for this compromised user? (Format: Policy ARN)</p>
+    <p class="text-cyan-400 font-bold font-mono text-lg">arn:aws:iam::aws:policy/AdministratorAccess</p>
+    <p class="text-slate-400 text-sm mt-2">Reasoning: Searched for policy attachment events (<code class="font-mono text-cyan-300">AttachUserPolicy</code>) for user <code class="font-mono text-cyan-300">dev-neo</code>.</p>
+  </div>
+
+  <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-lg my-4">
+    <p class="text-slate-200 mb-2">8. The attacker downloaded a critical file from S3 Bucket using which an important instance can be accessed. What is the name of the File? (Format: Filename.extension)</p>
+    <p class="text-cyan-400 font-bold font-mono text-lg">devlopement-keys.pem</p>
+    <p class="text-slate-400 text-sm mt-2">Reasoning: Used <code class="font-mono text-cyan-300">grep</code> to find key-related files, revealing the downloaded PEM key.</p>
+    <figure class="my-6">
+      <img src="images/BTLO_awesome_Key-access.png" alt="Key access shown in logs" class="rounded-lg border border-slate-700/80 w-full shadow-md hover:border-slate-600 transition-all" />
+      <figcaption class="text-xs text-center text-slate-400 mt-2 font-mono">Key access shown in logs</figcaption>
+    </figure>
+  </div>
+
+  <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-lg my-4">
+    <p class="text-slate-200 mb-2">9. For more stealth access in the environment, the attackers created a user and a group with Administrative access. Find the username and groupname. (Format: Username, Groupname)</p>
+    <p class="text-cyan-400 font-bold font-mono text-lg">dev_harry_bg, dev_group</p>
+    <p class="text-slate-400 text-sm mt-2">Reasoning: Identified <code class="font-mono text-cyan-300">CreateUser</code> and <code class="font-mono text-cyan-300">AddUserToGroup</code> events by the attacker.</p>
+    <figure class="my-6">
+      <img src="images/BTLO_awesome_new-user.png" alt="New user and group creation in logs" class="rounded-lg border border-slate-700/80 w-full shadow-md hover:border-slate-600 transition-all" />
+      <figcaption class="text-xs text-center text-slate-400 mt-2 font-mono">New user and group creation in logs</figcaption>
+    </figure>
+  </div>
+
+  <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-lg my-4">
+    <p class="text-slate-200 mb-2">10. The attacker got access to an Instance and a Ransomware Script was downloaded in it. Using the given Instance.zip as an artifact, identify the IP and port from where the file was downloaded. (Format: IP:Port/File.extension)</p>
+    <p class="text-cyan-400 font-bold font-mono text-lg">3.144.171.70:8080/a.py</p>
+    <p class="text-slate-400 text-sm mt-2">Reasoning: Analyzed the user's bash history within the provided <code class="font-mono text-cyan-300">Instance.zip</code> artifact.</p>
+  </div>
+
+  <!-- Key Takeaways & Security Insights -->
+  <h2 class="text-2xl font-bold text-slate-100 mt-8 mb-4">Key Takeaways & Security Insights</h2>
+  <ul class="list-disc list-inside text-slate-200 space-y-2 leading-relaxed">
+    <li>
+      <strong class="text-cyan-400">Secure Credential Management:</strong> The initial breach highlights the critical importance of never embedding sensitive credentials like AWS access keys directly into source code. Implement secrets management solutions (e.g., AWS Secrets Manager, HashiCorp Vault) and enforce least privilege.
+    </li>
+    <li>
+      <strong class="text-cyan-400">Proactive Monitoring:</strong> Comprehensive logging (AWS CloudTrail, VPC Flow Logs) and a robust SIEM solution like Splunk are essential for detecting anomalous activities early in the attack chain.
+    </li>
+    <li>
+      <strong class="text-cyan-400">Behavioral Analytics:</strong> Monitoring for unusual API calls (e.g., <code class="font-mono text-cyan-300">GetCallerIdentity</code> from new IPs), console logins from suspicious locations, or rapid changes to security group rules can indicate compromise.
+    </li>
+    <li>
+      <strong class="text-cyan-400">Privilege Escalation Detection:</strong> Alerts for events like <code class="font-mono text-cyan-300">AttachUserPolicy</code> or <code class="font-mono text-cyan-300">CreateUser</code>/ <code class="font-mono text-cyan-300">AddUserToGroup</code> with administrative privileges are crucial for identifying persistence and privilege escalation attempts.
+    </li>
+    <li>
+      <strong class="text-cyan-400">Incident Response Preparedness:</strong> Having a well-defined incident response plan, including forensic artifact collection (like <code class="font-mono text-cyan-300">Instance.zip</code> for host-level analysis), is vital for effective post-compromise investigation.
+    </li>
+    <li>
+      <strong class="text-cyan-400">Supply Chain Security:</strong> Even internal development practices can introduce vulnerabilities. Regular code reviews and automated static analysis tools can help identify exposed secrets before deployment.
+    </li>
+  </ul>
+</div>
+        </article>
+    </main>
+</body>
+</html>

@@ -87,9 +87,10 @@ REQUIRED INKSEC HEADER STRUCTURE (Top of Writeup):
 
 3. Metadata Pill Badges (Single Horizontal Line):
    - Render a flex-wrap container (`flex flex-wrap gap-2 my-4 font-mono text-xs uppercase`).
-   - Badge 1 (Platform): `bg-cyan-950 text-cyan-400 border border-cyan-800 px-3 py-1 rounded`
-   - Badge 2 (Difficulty): `bg-slate-800 text-slate-300 border border-slate-700 px-3 py-1 rounded`
-   - Badges 3-5 (Top 3 Tools used): Extract up to 3 core tools mentioned in the notes (e.g., SPLUNK, SYSMON, ROBOCOPY) as `bg-slate-800/80 text-slate-400 border border-slate-700/60 px-3 py-1 rounded`.
+   - Badge 1 (Platform): `bg-cyan-950 text-cyan-400 border border-cyan-800 px-3 py-1 rounded`. This is what platform hosts the CTF e.g (Blue Team Labs Online, TryHackMe etc...)
+   - Badge 3 (Category): `bg-slate-800 text-slate-300 border border-slate-700 px-3 py-1 rounded`. Derive category from hashtags e.g (Incident Response, Digital Forensics, Reverse Engineering etc...)
+   - Badge 4 (Difficulty): `bg-slate-800 text-slate-300 border border-slate-700 px-3 py-1 rounded`. Pull difficulty from hashtags
+   - Badges 5-6 (Top 3 Tools used): Extract up to 3 core tools mentioned in the notes (e.g., SPLUNK, SYSMON, ROBOCOPY) as `bg-slate-800/80 text-slate-400 border border-slate-700/60 px-3 py-1 rounded`.
 
 4. Action Button Bar:
    - Render a flex-wrap gap container (`flex flex-wrap items-center gap-3 mt-6 mb-8 font-mono text-xs`):

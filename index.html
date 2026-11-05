@@ -322,7 +322,7 @@
                         </div>
                         <div class="pt-4 border-t border-slate-800/80 flex items-center justify-center">
                             <!-- REPLACE HREF WITH YOUR ACTUAL BADGE / VERIFICATION HYPERLINK -->
-                            <a href="https://www.credly.com/YOUR_LINK" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-cyan-400 hover:text-cyan-300 flex items-center gap-1">
+                            <a href="https://www.credly.com/badges/16416f5d-056c-46fc-bc0e-172522b4b4d1/linked_in_profile" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-cyan-400 hover:text-cyan-300 flex items-center gap-1">
                                 Verify Cert <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
                             </a>
                         </div>
@@ -421,7 +421,46 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="writeups-container">
 
                     
+                <!-- CTF Writeup Card: AWeSome -->
+<div class="writeup-card bg-[#0B1120] border border-cyan-900/40 hover:border-cyan-500/40 rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 group backdrop-blur-sm shadow-xl" data-category="btlo Incident Response AWS Splunk">
+  <div>
+    <!-- Badge & Difficulty Header -->
+    <div class="flex items-center justify-between mb-3">
+      <span class="rounded-md px-3 py-1 text-xs font-mono text-cyan-400 border border-cyan-800/60 bg-cyan-950/30">
+        Blue Team Labs Online
+      </span>
+      <span class="rounded-md px-3 py-1 text-xs font-mono text-amber-400 border border-amber-800/60 bg-amber-950/30">
+        Medium
+      </span>
+    </div>
 
+    <!-- Title & Category -->
+    <h3 class="text-2xl font-bold text-cyan-400 tracking-tight mt-4 mb-2 font-sans group-hover:text-cyan-300 transition-colors">
+      BTLO - AWeSome
+    </h3>
+    <p class="font-mono text-sm text-cyan-600/90 mb-4">
+      Category: Incident Response
+    </p>
+
+    <!-- Description -->
+    <p class="text-slate-300 text-sm leading-relaxed mb-6 font-sans">
+      Investigated an AWS infrastructure breach originating from exposed developer access keys. Reconstructed the full attack chain using Splunk CloudTrail logs, identifying S3 key exfiltration, unauthorized IAM account creation, privilege escalation, and ransomware deployment.
+    </p>
+
+    <!-- Skill Tags -->
+    <div class="flex flex-wrap gap-2 mb-6">
+      <span class="bg-slate-900/80 text-slate-300 border border-slate-800 font-mono text-xs px-3 py-1 rounded-md">SPLUNK</span>
+      <span class="bg-slate-900/80 text-slate-300 border border-slate-800 font-mono text-xs px-3 py-1 rounded-md">AWS</span>
+      <span class="bg-slate-900/80 text-slate-300 border border-slate-800 font-mono text-xs px-3 py-1 rounded-md">CloudTrail</span>
+      <span class="bg-slate-900/80 text-slate-300 border border-slate-800 font-mono text-xs px-3 py-1 rounded-md">IAM Analysis</span>
+    </div>
+  </div>
+
+  <!-- Primary Action Button -->
+  <a href="writeups/Awesome.html" class="w-full py-3 rounded-xl font-mono text-sm font-semibold text-cyan-400 border border-cyan-800/60 hover:bg-cyan-950/40 hover:border-cyan-400 transition-all flex items-center justify-center gap-2">
+    Read Full Writeup →
+  </a>
+</div>
             
                     <!-- CTF Writeup Card: Bad-Import -->
 <div class="writeup-card bg-[#0B1120] rounded-2xl border border-cyan-900/40 p-6 flex flex-col justify-between hover:border-cyan-500/40 transition-all duration-300 group shadow-xl" data-category="btlo Memory Forensics Execution Analysis">

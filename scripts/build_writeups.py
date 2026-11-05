@@ -81,9 +81,9 @@ STRICT STYLING & COLOR SCHEME:
 REQUIRED INKSEC HEADER STRUCTURE (Top of Writeup):
 1. Platform Breadcrumb Tagline:
    - Text format: `// {PLATFORM} · WRITEUP` in font-mono text-xs text-slate-400 uppercase tracking-widest. (Infer platform from tags like #Blue Team Labs Online, #TryHackMe, #Cyberdefenders, or default to `#CTF`).
-
+    - Do not include a "Back to Portfolio" Button above the platform header.
 2. CTF Title:
-   - Clean, bold H1 header (`text-3xl sm:text-4xl font-bold text-slate-100 tracking-tight my-3`). Do NOT place inside a boxed container.
+   - This is the name of the .md itself. Clean, bold H1 header (`text-3xl sm:text-4xl font-bold text-slate-100 tracking-tight my-3`). Do NOT place inside a boxed container.
 
 3. Metadata Pill Badges (Single Horizontal Line):
    - Render a flex-wrap container (`flex flex-wrap gap-2 my-4 font-mono text-xs uppercase`).
