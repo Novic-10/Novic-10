@@ -1,0 +1,29 @@
+# Environment variables and secrets
+.env
+.env.*
+*.pem
+*.key
+secrets.json
+
+# Git credentials / local store backups
+.git-credentials
+
+# OS / Editor files
+.DS_Store
+.vscode/
+
+
+# Ignore Python cached files
+__pycache__/
+*.pyc
+venv/
+drafts/*.md
+
+# Ignore raw CTF drafts and unencrypted screenshots
+drafts/
+writeups/images/
+
+# Ignore Image files (All writeup' images have embedded images)
+.png
+.jpg
+.gif

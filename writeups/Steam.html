@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="ctf-title" content="Steam">
+    <meta name="ctf-status" content="Retired">
+    <meta name="ctf-pass-hash" content="">
+    <meta name="ctf-platform" content="Blue Team Labs Online">
+    <meta name="ctf-difficulty" content="Medium">
+    <meta name="ctf-category" content="Digital forensics">
+    <meta name="ctf-description" content="">
+    <meta name="ctf-tags" content="#FTKImager #OSINT">
+    <title>Steam</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-slate-200 font-sans antialiased selection:bg-cyan-500 selection:text-slate-950">
+    <main class="max-w-4xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+        <a href="../index.html#writeups" class="inline-flex items-center gap-2 text-slate-400 hover:text-cyan-400 text-sm font-mono mb-8 transition-colors">
+            <i class="fa-solid fa-arrow-left text-xs"></i> Back to Portfolio
+        </a>
+        <article class="prose prose-invert max-w-none space-y-6">
+            <div class="max-w-5xl mx-auto px-4 py-8">
+    <p class="font-mono text-xs text-slate-500 uppercase tracking-widest mb-2">// BLUE TEAM LABS ONLINE · WRITEUP</p>
+    <h1 class="text-4xl sm:text-5xl font-bold text-slate-100 tracking-tight mb-4">Steam</h1>
+
+    <div class="flex flex-wrap gap-2 mb-6 font-mono text-xs font-semibold uppercase">
+        <span class="bg-cyan-950/80 text-cyan-400 border border-cyan-800/80 px-3 py-1 rounded">BLUE TEAM LABS ONLINE</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">MEDIUM</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">DIGITAL FORENSICS</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">FTKIMAGER</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">OSINT</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">RETIRED</span>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-3 my-6 font-mono text-xs">
+        <a href="../index.html#writeups" class="inline-flex items-center gap-2 bg-[#092b38] border border-cyan-800 text-cyan-400 hover:bg-cyan-900/50 px-4 py-2 rounded-lg transition-all"><i class="fa-solid fa-arrow-left text-xs"></i> BACK TO PORTFOLIO</a>
+    </div>
+
+    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight mb-4 mt-8 text-slate-100 font-sans">Executive Summary & Overview</h2>
+    <div class="text-slate-300 text-sm sm:text-base leading-relaxed space-y-4 mb-8 font-sans">
+        <p>This challenge involved a digital forensics investigation into a user's <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Steam</code> installation, which was located in a non-standard directory. The objective was to uncover details about the user's gaming habits, account information, and potential anti-forensic activities, based on the premise that a pet dog might be secretly playing games on the computer. The investigation required analyzing various configuration files and user data within the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Steam</code> directory structure.</p>
+        <p>Key aspects of the challenge included identifying installed games, the primary user account, associated metadata, and evidence of file manipulation within the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Steamapps</code> directory.</p>
+    </div>
+
+    <h2 class="text-2xl font-bold text-slate-100 mb-6 font-sans">Question & Answer Solutions</h2>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">1. What are the two games installed by the user? [List in alphabetical order] (Format: AGame, BGame)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">The Button, Quaver</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Identified installed games by examining the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">steamapps/common</code> directory and <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">appmanifest_*.acf</code> files.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">2. What is the username that automatically gets logged in when steam opens? (Format: Username)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">doglyfie</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Located the auto-login username in the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">config/loginusers.vdf</code> file.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">3. This is becoming a bit of a 'psychological horror' knowing that a dog is potentially playing games. How would Valve tag this? (Format: XXXX)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">1721</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Researched Steam store tags for 'psychological horror' to find the corresponding tag ID.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">4. What is the md5 hash of the avatar set for the user and what game is it from? (Format: MD5, game)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">0fa9bd3268de3aa948b9f7a63088afb6, The Button</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Extracted the avatar hash from user data files and identified its association with 'The Button' game.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">5. What is the Steam ID for the account? (Format: ID)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">76561199466436896</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Found the Steam ID in <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">~/snap/steam/common/.local/share/Steam/userdata/&lt;SteamID&gt;</code>. Another ID found was <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">STEAM_0:0:753085584</code>.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">6. What is the persona, city, state, country, and real name for the user? (Format: persona, city, state, country, real name)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">moxielysi, Canberra, Australian Capital Territory, AU, puppacup</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Utilized OSINT tools and Steam profile data to gather public user information.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">7. What is the previous name of the account? (Format: Name)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">desi</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Identified previous account names through Steam profile history analysis.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">8. What is the name of the most recent achievement and how is it achieved in the same game from Q4? (Format: AchievementName, yes/no)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">What's stopping you?, yes</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Investigated game achievements for 'The Button' and determined the method of achievement.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">9. It looks like the dog tried to hide what she was playing. Which directory did she perform anti-forensics on and what action did she do (select from MOVE|DELETE|COPY OVER|ADD FILES)? (Format: /full/directory/path, ACTION)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">/home/desi/snap/steam/common/.local/share/Steam/steamapps/common, DELETE</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Analyzed file system changes and logs to identify the directory <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">/home/desi/snap/steam/common/.local/share/Steam/steamapps/common</code> and the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">DELETE</code> action performed.</p>
+    </div>
+
+    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight mb-4 mt-8 text-slate-100 font-sans">Key Takeaways & Security Insights</h2>
+    <ul class="space-y-4 text-sm text-slate-300 font-sans my-4">
+        <li class="flex items-start gap-2">
+            <span class="text-cyan-400 mt-1">•</span>
+            <div>
+                <strong class="text-cyan-400 font-semibold font-mono">OSINT for User Profiling:</strong> Publicly available information on platforms like Steam can reveal extensive details about a user, including their persona, real name, location, and gaming history. Tools like <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">steamcommunity.com/profiles</code>, <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">steamhistory.net</code>, <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">steamid.io</code>, <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">steamladder.com</code>, and <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">steamdb.info</code> are invaluable for gathering such intelligence.
+            </div>
+        </li>
+        <li class="flex items-start gap-2">
+            <span class="text-cyan-400 mt-1">•</span>
+            <div>
+                <strong class="text-cyan-400 font-semibold font-mono">Forensic Value of Application Data:</strong> Even non-standard application installations, like Steam in this case, contain a wealth of forensic artifacts. Configuration files (<code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">.vdf</code>, <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">.acf</code>), user data directories, and cached information can reveal installed software, user accounts, activity logs, and attempts at anti-forensics.
+            </div>
+        </li>
+        <li class="flex items-start gap-2">
+            <span class="text-cyan-400 mt-1">•</span>
+            <div>
+                <strong class="text-cyan-400 font-semibold font-mono">Detecting Anti-Forensics:</strong> Identifying deleted files or modified directories within application data paths is crucial for detecting attempts to hide activity. Tools capable of file system journaling analysis or carving deleted data can help reconstruct such events.
+            </div>
+        </li>
+    </ul>
+</div>
+        </article>
+    </main>
+</body>
+</html>

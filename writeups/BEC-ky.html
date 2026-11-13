@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="ctf-title" content="BEC-ky">
+    <meta name="ctf-status" content="Retired">
+    <meta name="ctf-pass-hash" content="">
+    <meta name="ctf-platform" content="Blue Team Labs Online">
+    <meta name="ctf-difficulty" content="Easy">
+    <meta name="ctf-category" content="Incident Response">
+    <meta name="ctf-description" content="">
+    <meta name="ctf-tags" content="#Phishing, #EmailHeaderAnalysis, #BEC">
+    <title>BEC-ky</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-slate-200 font-sans antialiased selection:bg-cyan-500 selection:text-slate-950">
+    <main class="max-w-4xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+        <a href="../index.html#writeups" class="inline-flex items-center gap-2 text-slate-400 hover:text-cyan-400 text-sm font-mono mb-8 transition-colors">
+            <i class="fa-solid fa-arrow-left text-xs"></i> Back to Portfolio
+        </a>
+        <article class="prose prose-invert max-w-none space-y-6">
+            <div class="max-w-5xl mx-auto px-4 py-8">
+    <p class="font-mono text-xs text-slate-500 uppercase tracking-widest mb-2">// BLUE TEAM LABS ONLINE · WRITEUP</p>
+    <h1 class="text-4xl sm:text-5xl font-bold text-slate-100 tracking-tight mb-4">BEC-ky</h1>
+
+    <div class="flex flex-wrap gap-2 mb-6 font-mono text-xs font-semibold uppercase">
+        <span class="bg-cyan-950/80 text-cyan-400 border border-cyan-800/80 px-3 py-1 rounded">BLUE TEAM LABS ONLINE</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">EASY</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">EMAIL ANALYSIS</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">AZURE AD</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">OSINT</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">SPLUNK</span>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-3 my-6 font-mono text-xs">
+        <a href="../index.html#writeups" class="inline-flex items-center gap-2 bg-[#092b38] border border-cyan-800 text-cyan-400 hover:bg-cyan-900/50 px-4 py-2 rounded-lg transition-all"><i class="fa-solid fa-arrow-left text-xs"></i> BACK TO PORTFOLIO</a>
+    </div>
+
+    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight mb-4 mt-8 text-slate-100 font-sans">Executive Summary & Overview</h2>
+    <p class="text-slate-300 text-sm sm:text-base leading-relaxed space-y-4 mb-8 font-sans">
+        This writeup details the investigation into a Business Email Compromise (BEC) attack targeting an organization. The compromise originated from a phishing email, leading to unauthorized access to the mailbox of <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Becky Lorray</code>. The attacker, operating from multiple IP addresses, established persistence by creating malicious inbox rules designed to forward sensitive emails to an external address (<code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Sabastian@flanaganspensions.co.uk</code>) and delete legitimate communications. The ultimate goal of the attack was to initiate fraudulent financial transactions, specifically a fund transfer to the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">FIRST BANK OF NIGERIA LTD</code>. This analysis leverages Azure AD logs and email artifacts to reconstruct the attacker's timeline and identify key indicators of compromise.
+    </p>
+
+    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight mb-4 mt-8 text-slate-100 font-sans">Asset Information</h2>
+    <div class="overflow-x-auto my-6 rounded-xl border border-slate-800/80 bg-[#0B1120] shadow-xl">
+        <table class="w-full text-left border-collapse text-xs font-mono">
+            <thead>
+                <tr class="border-b border-slate-800 bg-slate-900/60 text-slate-400 uppercase tracking-wider">
+                    <th class="py-3 px-4">TYPE</th>
+                    <th class="py-3 px-4">VALUE</th>
+                    <th class="py-3 px-4">SUMMARY</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                    <td class="py-3 px-4 text-cyan-400 font-semibold break-all">EMAIL ADDRESS</td>
+                    <td class="py-3 px-4 text-cyan-400 font-semibold break-all">Sabastian@flanaganspensions.co.uk</td>
+                    <td class="py-3 px-4 text-slate-300 break-words font-sans">External email address used by the attacker for forwarding compromised emails.</td>
+                </tr>
+                <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                    <td class="py-3 px-4 text-cyan-400 font-semibold break-all">IP ADDRESS</td>
+                    <td class="py-3 px-4 text-cyan-400 font-semibold break-all">159.203.17.81</td>
+                    <td class="py-3 px-4 text-slate-300 break-words font-sans">Attacker IP address identified during initial suspicious login and <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">UserLoggedIN</code> operations.</td>
+                </tr>
+                <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                    <td class="py-3 px-4 text-cyan-400 font-semibold break-all">IP ADDRESS</td>
+                    <td class="py-3 px-4 text-cyan-400 font-semibold break-all">95.181.232.30</td>
+                    <td class="py-3 px-4 text-slate-300 break-words font-sans">Attacker IP address used for creating malicious <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">new-inboxrule</code> and initiating <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">DeleteMessage</code> operations.</td>
+                </tr>
+                <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                    <td class="py-3 px-4 text-cyan-400 font-semibold break-all">DOMAIN</td>
+                    <td class="py-3 px-4 text-cyan-400 font-semibold break-all">tempestasenergyoutlook-my.sharepoint.com</td>
+                    <td class="py-3 px-4 text-slate-300 break-words font-sans">SharePoint domain associated with the compromised user, <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Becky Lorray</code>.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight mb-6 mt-8 text-slate-100 font-sans">Question & Answer Solutions</h2>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">1. What is the source address of the initial phishing email?</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">Sabastian@flanaganspensions.co.uk</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Identified from the email logs as the sender of the initial malicious communication.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">2. What type of compromise is this?</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">BEC</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: The nature of the attack, involving email account compromise for financial fraud, aligns with Business Email Compromise (BEC).</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">3. What are the two IPs utilised by the TA?</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">159.203.17.81, 95.181.232.30</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: The first IP, <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">159.203.17.81</code>, was found in Azure CSV logs associated with <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">UserLoggedIN</code> operations. The second IP, <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">95.181.232.30</code>, was linked to the creation of a <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">new-inboxrule</code> operation, both identified via the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">ClientIp</code> field.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">4. Which bank is the transaction sent to?</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">FIRST BANK OF NIGERIA LTD</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Analysis of the email containing SWIFT information revealed the beneficiary bank as <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">FIRST BANK OF NIGERIA LTD</code>, a Nigerian bank.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">5. What is the name of the Inbox folder created during the compromise?</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">History</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Identified by filtering for the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">FolderCreated</code> operation code in the logs.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">6. What word is the first inbox rule created looking for, within the subject or body, prior to deleting the email?</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">Withdrawal</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Examination of the details of the first malicious inbox rule revealed it was configured to filter for the keyword <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Withdrawal</code> in email subjects or bodies.</p>
+    </div>
+
+    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight mb-4 mt-8 text-slate-100 font-sans">Key Takeaways & Security Insights</h2>
+    <ul class="space-y-4 text-sm text-slate-300 font-sans my-4">
+        <li class="flex items-start gap-2">
+            <span class="text-cyan-400 mt-1">•</span>
+            <div><strong class="text-cyan-400 font-semibold font-mono">Correlation of Events:</strong> Always correlate the first malicious action discovered with preceding login times and activities. This helps in pinpointing the exact moment of compromise and the initial access vector.</div>
+        </li>
+        <li class="flex items-start gap-2">
+            <span class="text-cyan-400 mt-1">•</span>
+            <div><strong class="text-cyan-400 font-semibold font-mono">Understanding Operation Codes:</strong> Familiarity with various log operation codes (e.g., <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">UserLoggedIN</code>, <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">new-inboxrule</code>, <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">FolderCreated</code>) is crucial for parsing log information and understanding the specific actions taken by an attacker.</div>
+        </li>
+        <li class="flex items-start gap-2">
+            <span class="text-cyan-400 mt-1">•</span>
+            <div><strong class="text-cyan-400 font-semibold font-mono">Multi-Factor Authentication (MFA):</strong> Strong MFA policies are essential to prevent unauthorized access, even if credentials are compromised via phishing.</div>
+        </li>
+        <li class="flex items-start gap-2">
+            <span class="text-cyan-400 mt-1">•</span>
+            <div><strong class="text-cyan-400 font-semibold font-mono">Email Security Awareness:</strong> Regular training for employees on identifying phishing attempts and suspicious emails can significantly reduce the risk of initial compromise.</div>
+        </li>
+    </ul>
+</div>
+        </article>
+    </main>
+</body>
+</html>

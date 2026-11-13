@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cybersecurity Portfolio | SOC Analyst & DFIR</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Fira Code for terminal aesthetic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            cyan: '#06b6d4',
+                            sky: '#0284c7',
+                            accent: '#38bdf8',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar for dark theme */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0284c7;
+        }
+        .cyber-grid {
+            background-size: 30px 30px;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-200 font-sans antialiased selection:bg-cyan-500 selection:text-slate-950 min-h-screen flex flex-col">
+
+    <!-- Top Navigation Header -->
+    <header class="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-slate-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="#" class="flex items-center gap-2 group">
+                <div class="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 group-hover:bg-cyan-500/20 transition-all">
+                    <i class="fa-solid font-mono text-sm">&lt;/&gt;</i>
+                </div>
+                <span class="font-bold text-lg text-slate-100 tracking-tight">Novic<span class="text-cyan-400">.10</span></span>
+            </a>
+
+            <!-- Desktop Nav Items -->
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
+                <a href="#about" class="hover:text-cyan-400 transition-colors">About</a>
+                <a href="#certifications" class="hover:text-cyan-400 transition-colors">Certifications</a>
+                <a href="#homelabs" class="hover:text-cyan-400 transition-colors">Homelabs</a>
+                <a href="#ctf-writeups" class="hover:text-cyan-400 transition-colors">CTF Writeups</a>
+                <a href="#skills" class="hover:text-cyan-400 transition-colors">Skills</a>
+            </nav>
+
+            <!-- Header Quick Actions -->
+            <div class="hidden sm:flex items-center gap-3">
+                <a href="https://novic-10.github.io/novic-10/" target="_blank" rel="noopener noreferrer" 
+                   class="p-2 text-slate-400 hover:text-cyan-400 hover:bg-slate-800 rounded-lg transition-all" title="GitHub Profile">
+                    <i class="fa-brands fa-github text-lg"></i>
+                </a>
+                <a href="https://www.linkedin.com/in/oliver-hersee-a67035322/" target="_blank" rel="noopener noreferrer" 
+                   class="p-2 text-slate-400 hover:text-cyan-400 hover:bg-slate-800 rounded-lg transition-all" title="LinkedIn Profile">
+                    <i class="fa-brands fa-linkedin text-lg"></i>
+                </a>
+                <a href="#contact" class="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500 hover:text-slate-950 transition-all">
+                    Get In Touch
+                </a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-btn" class="md:hidden p-2 text-slate-400 hover:text-slate-100 focus:outline-none" aria-label="Toggle menu">
+                <i class="fa-solid fa-bars text-xl"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-slate-900 border-b border-slate-800 px-4 pt-2 pb-4 space-y-2">
+            <a href="#about" class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-cyan-400 hover:bg-slate-800">About</a>
+            <a href="#certifications" class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-cyan-400 hover:bg-slate-800">Certifications</a>
+            <a href="#homelabs" class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-cyan-400 hover:bg-slate-800">Homelabs</a>
+            <a href="#ctf-writeups" class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-cyan-400 hover:bg-slate-800">CTF Writeups</a>
+            <a href="#skills" class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-cyan-400 hover:bg-slate-800">Skills</a>
+            <div class="pt-2 flex items-center gap-4 px-3">
+                <a href="https://novic-10.github.io/novic-10/" target="_blank" class="text-slate-400 hover:text-cyan-400"><i class="fa-brands fa-github text-xl"></i></a>
+                <a href="https://www.linkedin.com/in/oliver-hersee-a67035322/" target="_blank" class="text-slate-400 hover:text-cyan-400"><i class="fa-brands fa-linkedin text-xl"></i></a>
+                <a href="mailto:orhersee@gmail.com" class="text-slate-400 hover:text-cyan-400"><i class="fa-solid fa-envelope text-xl"></i></a>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <!-- HERO SECTION -->
+        <section id="about" class="relative py-20 lg:py-28 overflow-hidden cyber-grid border-b border-slate-800/60">
+            <!-- Background Glow Overlay -->
+            <div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 bg-cyan-500/10 blur-[120px] rounded-full pointer-events-none"></div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                    
+                    <!-- Left Hero Content -->
+                    <div class="lg:col-span-7 space-y-6">
+                        <!-- Role Badge -->
+                        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-xs font-mono text-cyan-400">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                            <span>SOC ANALYST TIER 1 | BLUE TEAM & DFIR</span>
+                        </div>
+
+                        <!-- Main Title -->
+                        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-100 tracking-tight leading-tight">
+                            Defending Systems.<br>
+                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-400 to-blue-500">
+                                Analyzing Threats.
+                            </span>
+                        </h1>
+
+                        <!-- Bio / Description -->
+                        <p class="text-slate-400 text-base sm:text-lg leading-relaxed max-w-2xl">
+                            Cybersecurity professional specializing in Security Operations, Digital Forensics, and Threat Detection. Hands-on experience investigating alerts, constructing production-grade homelabs, and publishing detailed CTF writeups.
+                        </p>
+
+                        <!-- Call to Action Links -->
+                        <div class="pt-4 flex flex-wrap gap-4 items-center">
+                            <a href="#homelabs" class="px-6 py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold text-sm transition-all shadow-lg shadow-cyan-500/20 flex items-center gap-2">
+                                <i class="fa-solid fa-flask"></i>
+                                View Homelabs
+                            </a>
+                            <a href="#ctf-writeups" class="px-6 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 font-semibold text-sm transition-all flex items-center gap-2">
+                                <i class="fa-solid fa-file-lines text-cyan-400"></i>
+                                CTF Writeups
+                            </a>
+                            <a href="resume.pdf" target="_blank" rel="noopener noreferrer" class="px-4 py-3 rounded-xl text-slate-400 hover:text-slate-100 font-medium text-sm transition-all flex items-center gap-1">
+                                <i class="fa-solid fa-arrow-down-to-line"></i>
+                                Resume
+                            </a>
+                        </div>
+
+                        <!-- Quick Social Badges -->
+                        <div class="pt-6 flex items-center gap-6 text-sm text-slate-400 border-t border-slate-800/80">
+                            <a href="https://novic-10.github.io/novic-10/" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 hover:text-cyan-400 transition-colors">
+                                <i class="fa-brands fa-github text-slate-300"></i>
+                                <span>Github Portfolio</span>
+                            </a>
+                            <a href="https://www.linkedin.com/in/oliver-hersee-a67035322/" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 hover:text-cyan-400 transition-colors">
+                                <i class="fa-brands fa-linkedin text-cyan-500"></i>
+                                <span>LinkedIn Profile</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Right Hero Interactive Terminal Card -->
+                    <div class="lg:col-span-5">
+                        <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden">
+                            <!-- Terminal Header -->
+                            <div class="bg-slate-950/80 px-4 py-3 border-b border-slate-800 flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+                                    <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                                    <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
+                                </div>
+                                <div class="text-xs font-mono text-slate-500 flex items-center gap-1">
+                                    <i class="fa-solid fa-terminal text-[10px]"></i> soc_analyst@defender:~
+                                </div>
+                            </div>
+                            <!-- Terminal Body -->
+                            <div class="p-5 font-mono text-xs sm:text-sm leading-relaxed space-y-3 bg-slate-950/60">
+                                <div class="text-slate-400">
+                                    <span class="text-emerald-400">novic@portfolio:~$</span> cat status.json
+                                </div>
+                                <div class="text-slate-300 pl-4 border-l-2 border-slate-800 space-y-1 text-xs">
+                                    <p><span class="text-cyan-400">"whoami":</span> "Oliver Hersee",</p>
+                                    <p><span class="text-cyan-400">"status":</span> "IT Helpdesk, Aspiring SOC Analyst",</p>
+                                    <p><span class="text-cyan-400">"primary_focus":</span> ["Incident Response", "Digital Forensics"],</p>
+                                    <p><span class="text-cyan-400">"certifications":</span> ["BTL1", "CySA+", "Sec+", "Net+", "AZ-104"],</p>
+                                    <p><span class="text-cyan-400">"current_lab":</span> "Portfolio & GitHub",</p>
+                                    <p><span class="text-cyan-400">"open_for_roles":</span> <span class="text-emerald-400">true</span></p>
+                                </div>
+                                <div class="text-slate-400 pt-2">
+                                    <span class="text-emerald-400">novic@portfolio:~$</span> ./check_readiness.sh
+                                </div>
+                                <div class="text-cyan-300 text-xs">
+                                    [+] MEMORY & HOST FORENSICS: <span class="text-emerald-400">READY</span> (Volatility / KAPE / FTK Imager)<br>
+                                    [+] Log Analysis: <span class="text-emerald-400">READY</span> (Splunk / Wireshark / Zimmerman Tools)<br>
+                                    [+] Threat Detection: <span class="text-emerald-400">READY</span> (Cyberchef / VirusTotal / Ghidra)
+                                </div>
+                                <div class="flex items-center text-slate-400 pt-1">
+                                    <span class="text-emerald-400">novic@portfolio:~$</span>
+                                    <span class="ml-2 w-2 h-4 bg-cyan-400 animate-pulse"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- CERTIFICATIONS SECTION -->
+        <section id="certifications" class="py-16 lg:py-24 bg-slate-950 border-b border-slate-800/60">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+                    <div>
+                        <div class="text-cyan-400 font-mono text-xs tracking-wider uppercase mb-2">Validated Expertise</div>
+                        <h2 class="text-3xl sm:text-4xl font-bold text-slate-100">Certifications</h2>
+                    </div>
+                    <p class="text-slate-400 text-sm max-w-md mt-2 md:mt-0">
+                        Industry-recognized certifications validating blue team operational skills, security analysis, and cloud system administration.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                    <!-- Cert Card 1: BTL1 -->
+                    <div class="bg-slate-900 border border-slate-800 hover:border-cyan-500/50 rounded-2xl p-6 transition-all duration-300 flex flex-col justify-between group hover:shadow-xl hover:shadow-cyan-500/5">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-shield-halved text-xl"></i>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-full bg-slate-800 text-slate-300 text-xs font-mono">Centri</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-100 mb-1 group-hover:text-cyan-400 transition-colors">Blue Team Level 1 (BTL1)</h3>
+                            <p class="text-slate-400 text-xs font-mono mb-4">Security Blue Team</p>
+                            <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                                Hands-on practical certification covering Incident Response, Digital Forensics, Network Analysis (Wireshark), Threat Hunting, and SIEM usage. Passed 24-hour practical exam.
+                            </p>
+                        </div>
+                        <div class="pt-4 border-t border-slate-800/80 flex items-center justify-center">
+                            <a href="https://www.credly.com/badges/fe7883ab-7bdd-4d64-bec7-738d134c827d/linked_in_profile" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-cyan-400 hover:text-cyan-300 flex items-center gap-1">
+                                Verify Cert <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Cert Card 2: CySA+ -->
+                    <div class="bg-slate-900 border border-slate-800 hover:border-cyan-500/50 rounded-2xl p-6 transition-all duration-300 flex flex-col justify-between group hover:shadow-xl hover:shadow-cyan-500/5">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 rounded-xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400 group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-user-shield text-xl"></i>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-full bg-slate-800 text-slate-300 text-xs font-mono">CompTIA</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-100 mb-1 group-hover:text-cyan-400 transition-colors">CySA+</h3>
+                            <p class="text-slate-400 text-xs font-mono mb-4">Cybersecurity Analyst</p>
+                            <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                                Validates behavioral analytics for network and device security, threat identification, security architecture review, and compliance mitigation strategies.
+                            </p>
+                        </div>
+                        <div class="pt-4 border-t border-slate-800/80 flex items-center justify-center">
+                            <a href="https://www.credly.com/badges/05e3717b-a74e-4bc3-84d3-b9b80fa3ac8a/linked_in_profile" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-cyan-400 hover:text-cyan-300 flex items-center gap-1">
+                                Verify Cert <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Cert Card 3: Azure AZ-104 -->
+                    <div class="bg-slate-900 border border-slate-800 hover:border-cyan-500/50 rounded-2xl p-6 transition-all duration-300 flex flex-col justify-between group hover:shadow-xl hover:shadow-cyan-500/5">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform">
+                                    <i class="fa-brands fa-microsoft text-xl"></i>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-full bg-slate-800 text-slate-300 text-xs font-mono">Microsoft</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-100 mb-1 group-hover:text-cyan-400 transition-colors">Azure Administrator (AZ-104)</h3>
+                            <p class="text-slate-400 text-xs font-mono mb-4">Microsoft Certified Associate</p>
+                            <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                                Expertise in managing cloud identities (Entra ID), governance, virtual networks, storage solutions, and cloud compute resources across Azure infrastructure.
+                            </p>
+                        </div>
+                        <div class="pt-4 border-t border-slate-800/80 flex items-center justify-center">
+                            <a href="https://learn.microsoft.com/en-us/users/oliverhersee-8398/credentials/609ab5b39c5fcc23?ref=https%3A%2F%2Fwww.linkedin.com%2F" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-cyan-400 hover:text-cyan-300 flex items-center gap-1">
+                                Verify Cert <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Cert Card 4: Security+ -->
+                    <div class="bg-slate-900 border border-slate-800 hover:border-cyan-500/50 rounded-2xl p-6 transition-all duration-300 flex flex-col justify-between group hover:shadow-xl hover:shadow-cyan-500/5">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-shield-halved text-xl"></i>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-full bg-slate-800 text-slate-300 text-xs font-mono">CompTIA</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-100 mb-1 group-hover:text-cyan-400 transition-colors">Security+</h3>
+                            <p class="text-slate-400 text-xs font-mono mb-4">CompTIA Certified Cybersecurity Professional</p>
+                            <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                                Core competencies across baseline security operations, architecture, threat analysis, risk management, incident response, and enterprise cryptography principles.
+                            </p>
+                        </div>
+                        <div class="pt-4 border-t border-slate-800/80 flex items-center justify-center">
+                            <a href="https://www.credly.com/badges/16416f5d-056c-46fc-bc0e-172522b4b4d1/linked_in_profile" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-cyan-400 hover:text-cyan-300 flex items-center gap-1">
+                                Verify Cert <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Cert Card 5: Network+ -->
+                    <div class="bg-slate-900 border border-slate-800 hover:border-cyan-500/50 rounded-2xl p-6 transition-all duration-300 flex flex-col justify-between group hover:shadow-xl hover:shadow-cyan-500/5">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-network-wired text-xl"></i>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-full bg-slate-800 text-slate-300 text-xs font-mono">CompTIA</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-100 mb-1 group-hover:text-cyan-400 transition-colors">Network+</h3>
+                            <p class="text-slate-400 text-xs font-mono mb-4">CompTIA Certified Network Professional</p>
+                            <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                                Fundamental enterprise networking principles, covering IP address schemes, OSI model layer protocols, network infrastructure, routing/switching concepts, and physical cable standards.
+                            </p>
+                        </div>
+                        <div class="pt-4 border-t border-slate-800/80 flex items-center justify-center">
+                            <a href="https://www.credly.com/badges/d2495924-af85-420f-867d-52c3a745f8ac/linked_in_profile" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-cyan-400 hover:text-cyan-300 flex items-center gap-1">
+                                Verify Cert <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- HOMELABS SECTION -->
+        <section id="homelabs" class="relative py-16 lg:py-24 bg-slate-900/40 border-b border-slate-800/60 scroll-mt-24">
+            <!-- MAINTENANCE OVERLAY BADGE -->
+            <div class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-slate-950/80 backdrop-blur-sm p-6 text-center">
+                <div class="max-w-xl mx-auto bg-slate-900/90 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl shadow-cyan-950/50">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono font-medium mb-4">
+                        <span class="h-2 w-2 rounded-full bg-amber-400 animate-pulse"></span>
+                        LAB PIPELINE OFFLINE
+                    </div>
+                    <h3 class="text-xl sm:text-2xl font-bold text-slate-100 mb-3">Homelab Projects</h3>
+                    <p class="text-xs sm:text-sm text-slate-400 leading-relaxed font-sans mb-4">This section is currently under construction.</p>
+                    <div class="inline-flex items-center gap-2 text-xs font-mono text-slate-500 bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800">
+                        <i class="fa-solid fa-shield-halved text-amber-400"></i>
+                        <span>Status: Work in Progress</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GREYED OUT BACKGROUND CONTENT -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 opacity-20 pointer-events-none select-none filter blur-[1px]">
+                <div class="mb-12">
+                    <div class="text-cyan-400 font-mono text-xs tracking-wider uppercase mb-2">Hands-on Infrastructure</div>
+                    <h2 class="text-3xl sm:text-4xl font-bold text-slate-100">Homelab Projects</h2>
+                    <p class="text-slate-400 text-sm mt-2 max-w-2xl">
+                        Self-hosted defensive environments built from scratch to simulate enterprise infrastructure, centralized log aggregation, identity management, and storage encryption.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- CTF WRITEUPS & INVESTIGATIONS SECTION -->
+        <section id="ctf-writeups" class="py-12 my-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-slate-950/40 border border-cyan-800/40 rounded-2xl p-6 md:p-8 shadow-2xl">
+              
+              <!-- Section Header -->
+              <div class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-cyan-800/40 pb-6">
+                <div>
+                  <span class="font-mono text-xs font-semibold text-cyan-400 uppercase tracking-widest block mb-2">
+                    // INVESTIGATION &amp; ANALYSIS
+                  </span>
+                  <h2 class="text-3xl md:text-4xl font-extrabold font-sans text-slate-100 tracking-tight">
+                    CTF Writeups &amp; Investigations
+                  </h2>
+                </div>
+
+                <!-- Search Input -->
+                <div class="relative w-full md:w-72">
+                  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fas fa-search text-slate-500 text-sm"></i>
+                  </div>
+                  <input 
+                    type="text" 
+                    id="writeup-search" 
+                    placeholder="Search writeups or tools..." 
+                    class="w-full pl-9 pr-4 py-2 bg-[#0B1120] border border-cyan-800/60 rounded-lg text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all font-mono"
+                  />
+                </div>
+              </div>
+
+              <!-- List Items Container -->
+              <div id="writeups-list" class="flex flex-col gap-4">
+
+                <div data-category="REVERSE ENGINEERING IDAPro Wireshark" data-status="active" class="bg-[#0B1120] border border-cyan-800/60 rounded-xl p-4 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-cyan-500/60 hover:shadow-cyan-950/40 transition-all group">
+
+  <!-- Left Side: CTF Title & Action Links -->
+
+  <div class="flex flex-wrap items-center gap-3">
+
+    <h3 class="text-xl font-bold font-sans text-slate-100 group-hover:text-cyan-400 transition-colors mr-2">
+
+      BTLO - KeyKey
+
+    </h3>
+
+    <a href="writeups/KeyKey.html" class="inline-flex items-center gap-2 border border-amber-800/80 bg-amber-950/30 text-amber-400 hover:bg-amber-900/40 hover:border-amber-500/60 px-3.5 py-1.5 rounded transition-all font-mono text-xs font-semibold uppercase group/lock">
+
+      <svg class="w-3.5 h-3.5 text-amber-400 group-hover/lock:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+
+      </svg>
+
+      <span>Unlock Writeup</span>
+
+    </a>
+
+    <a href="https://blueteamlabs.online/achievement/share/172832/258" target="_blank" class="inline-flex items-center gap-2 border border-pink-500/40 text-pink-400 hover:bg-pink-500/10 px-3.5 py-1.5 rounded transition-all font-mono text-xs font-semibold uppercase">
+
+      PROOF OF COMPLETION <i class="fas fa-arrow-right"></i>
+
+    </a>
+
+  </div>
+
+  <!-- Right Side: Tags (State -> Category -> Max 2 Tools) -->
+
+  <div class="flex flex-wrap items-center gap-2 md:justify-end">
+
+    <span class="font-mono text-red-400 bg-red-950/30 border border-red-800/60 rounded-md px-3 py-1 text-xs uppercase">Active</span>
+
+    <span class="font-mono text-cyan-400 bg-cyan-950/30 border border-cyan-800/60 rounded-md px-3 py-1 text-xs uppercase">REVERSE ENGINEERING</span>
+
+    <span class="font-mono text-xs text-slate-300 bg-slate-900 border border-slate-800 rounded px-2.5 py-1 uppercase">IDAPro</span>
+
+    <span class="font-mono text-xs text-slate-300 bg-slate-900 border border-slate-800 rounded px-2.5 py-1 uppercase">Wireshark</span>
+
+  </div>
+
+</div>       
+
+                <div data-category="INCIDENT RESPONSE WIRESHARK LINUXCLITOOLS" data-status="retired" class="bg-[#0B1120] border border-cyan-800/60 rounded-xl p-4 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-cyan-500/60 hover:shadow-cyan-950/40 transition-all group">
+  <!-- Left Side: CTF Title & Action Links -->
+  <div class="flex flex-wrap items-center gap-3">
+    <h3 class="text-xl font-bold font-sans text-slate-100 group-hover:text-cyan-400 transition-colors mr-2">
+      BTLO - Backstage
+    </h3>
+    <a href="writeups/Backstage.html" class="inline-flex items-center gap-2 border border-emerald-800/80 bg-emerald-950/30 text-emerald-400 hover:bg-emerald-900/40 hover:border-emerald-500/60 px-3.5 py-1.5 rounded transition-all font-mono text-xs font-semibold uppercase">
+      <span>Access Writeup</span>
+      <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+      </svg>
+    </a>
+    <a href="https://blueteamlabs.online/achievement/share/172832/98" target="_blank" class="inline-flex items-center gap-2 border border-pink-500/40 text-pink-400 hover:bg-pink-500/10 px-3.5 py-1.5 rounded transition-all font-mono text-xs font-semibold uppercase">
+      PROOF OF COMPLETION <i class="fas fa-arrow-right"></i>
+    </a>
+  </div>
+  <!-- Right Side: Tags (State -> Category -> Max 2 Tools) -->
+  <div class="flex flex-wrap items-center gap-2 md:justify-end">
+    <span class="font-mono text-amber-400 bg-amber-950/30 border border-amber-800/60 rounded-md px-3 py-1 text-xs uppercase">Retired</span>
+    <span class="font-mono text-cyan-400 bg-cyan-950/30 border border-cyan-800/60 rounded-md px-3 py-1 text-xs uppercase">INCIDENT RESPONSE</span>
+    <span class="font-mono text-xs text-slate-300 bg-slate-900 border border-slate-800 rounded px-2.5 py-1 uppercase">WIRESHARK</span>
+    <span class="font-mono text-xs text-slate-300 bg-slate-900 border border-slate-800 rounded px-2.5 py-1 uppercase">LINUXCLITOOLS</span>
+  </div>
+</div>
+                <!-- Entry: BTLO - AWesome -->
+                <!-- Awesome.md -->
+                <div data-category="INCIDENT RESPONSE SPLUNKCTF LINUXCLI" data-status="active" class="bg-[#0B1120] border border-cyan-800/60 rounded-xl p-4 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-cyan-500/60 hover:shadow-cyan-950/40 transition-all group">
+                <!-- Left Side: CTF Title & Action Links -->
+                <div class="flex flex-wrap items-center gap-3">
+                    <h3 class="text-xl font-bold font-sans text-slate-100 group-hover:text-cyan-400 transition-colors mr-2">
+                    BTLO - AWesome
+                    </h3>
+                    <a href="writeups/Awesome.html" class="inline-flex items-center gap-2 border border-amber-800/80 bg-amber-950/30 text-amber-400 hover:bg-amber-900/40 hover:border-amber-500/60 px-3.5 py-1.5 rounded transition-all font-mono text-xs font-semibold uppercase group/lock">
+                    <svg class="w-3.5 h-3.5 text-amber-400 group-hover/lock:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    </svg>
+                    <span>Unlock Writeup</span>
+                    </a>
+                    <a href="https://blueteamlabs.online/achievement/share/172832/233" target="_blank" class="inline-flex items-center gap-2 border border-pink-500/40 text-pink-400 hover:bg-pink-500/10 px-3.5 py-1.5 rounded transition-all font-mono text-xs font-semibold uppercase">
+                    PROOF OF COMPLETION <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                <!-- Right Side: Tags (State -> Category -> Max 2 Tools) -->
+                <div class="flex flex-wrap items-center gap-2 md:justify-end">
+                    <span class="font-mono text-red-400 bg-red-950/30 border border-red-800/60 rounded-md px-3 py-1 text-xs uppercase">Active</span>
+                    <span class="font-mono text-cyan-400 bg-cyan-950/30 border border-cyan-800/60 rounded-md px-3 py-1 text-xs uppercase">INCIDENT RESPONSE</span>
+                    <span class="font-mono text-xs text-slate-300 bg-slate-900 border border-slate-800 rounded px-2.5 py-1 uppercase">SPLUNKCTF</span>
+                    <span class="font-mono text-xs text-slate-300 bg-slate-900 border border-slate-800 rounded px-2.5 py-1 uppercase">LINUXCLI</span>
+                </div>
+                </div>
+
+                <!-- Entry 2: BTLO - Bad Import -->
+                <div data-category="INCIDENT RESPONSE SPLUNK SYSMON ROBOCOPY" data-status="retired" class="bg-[#0B1120] border border-cyan-800/60 rounded-xl p-4 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-cyan-500/60 hover:shadow-cyan-950/40 transition-all group">
+                  <div class="flex flex-wrap items-center gap-3">
+                    <h3 class="text-xl font-bold font-sans text-slate-100 group-hover:text-cyan-400 transition-colors mr-2">
+                      BTLO - Bad Import
+                    </h3>
+                    <a href="writeups/Bad-Import.html" class="inline-flex items-center gap-2 border border-emerald-800/80 bg-emerald-950/30 text-emerald-400 hover:bg-emerald-900/40 hover:border-emerald-500/60 px-3.5 py-1.5 rounded transition-all font-mono text-xs font-semibold uppercase">
+                      <span>Access Writeup</span>
+                      <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                      </svg>
+                    </a>
+                    <a href="https://blueteamlabs.online/achievement/share/172832/300" target="_blank" class="inline-flex items-center gap-2 border border-pink-500/40 text-pink-400 hover:bg-pink-500/10 px-3.5 py-1.5 rounded transition-all font-mono text-xs font-semibold uppercase">
+                      PROOF OF COMPLETION <i class="fas fa-arrow-right"></i>
+                    </a>
+                  </div>
+                  <div class="flex flex-wrap items-center gap-2 md:justify-end">
+                    <span class="font-mono text-amber-400 bg-amber-950/30 border border-amber-800/60 rounded-md px-3 py-1 text-xs uppercase">Retired</span>
+                    <span class="font-mono text-cyan-400 bg-cyan-950/30 border border-cyan-800/60 rounded-md px-3 py-1 text-xs uppercase">INCIDENT RESPONSE</span>
+                    <span class="font-mono text-xs text-slate-300 bg-slate-900 border border-slate-800 rounded px-2.5 py-1 uppercase">SPLUNK</span>
+                    <span class="font-mono text-xs text-slate-300 bg-slate-900 border border-slate-800 rounded px-2.5 py-1 uppercase">SYSMON</span>
+                  </div>
+                </div>
+                <div data-category="INCIDENT RESPONSE EVENTVIEWER GET-WINEVENT" data-status="retired" class="bg-[#0B1120] border border-cyan-800/60 rounded-xl p-4 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-cyan-500/60 hover:shadow-cyan-950/40 transition-all group">
+  <!-- Left Side: CTF Title & Action Links -->
+  <div class="flex flex-wrap items-center gap-3">
+    <h3 class="text-xl font-bold font-sans text-slate-100 group-hover:text-cyan-400 transition-colors mr-2">
+      BTLO - Attacks
+    </h3>
+    <a href="writeups/Attacks.html" class="inline-flex items-center gap-2 border border-emerald-800/80 bg-emerald-950/30 text-emerald-400 hover:bg-emerald-900/40 hover:border-emerald-500/60 px-3.5 py-1.5 rounded transition-all font-mono text-xs font-semibold uppercase">
+      <span>Access Writeup</span>
+      <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+      </svg>
+    </a>
+    <a href="https://blueteamlabs.online/achievement/share/172832/154" target="_blank" class="inline-flex items-center gap-2 border border-pink-500/40 text-pink-400 hover:bg-pink-500/10 px-3.5 py-1.5 rounded transition-all font-mono text-xs font-semibold uppercase">
+      PROOF OF COMPLETION <i class="fas fa-arrow-right"></i>
+    </a>
+  </div>
+  <!-- Right Side: Tags (State -> Category -> Max 2 Tools) -->
+  <div class="flex flex-wrap items-center gap-2 md:justify-end">
+    <span class="font-mono text-amber-400 bg-amber-950/30 border border-amber-800/60 rounded-md px-3 py-1 text-xs uppercase">Retired</span>
+    <span class="font-mono text-cyan-400 bg-cyan-950/30 border border-cyan-800/60 rounded-md px-3 py-1 text-xs uppercase">INCIDENT RESPONSE</span>
+    <span class="font-mono text-xs text-slate-300 bg-slate-900 border border-slate-800 rounded px-2.5 py-1 uppercase">EVENTVIEWER</span>
+    <span class="font-mono text-xs text-slate-300 bg-slate-900 border border-slate-800 rounded px-2.5 py-1 uppercase">GET-WINEVENT</span>
+  </div>
+</div>
+                <div data-category="DIGITAL FORENSICS AUTOPSY ZIMMERMANTOOLS" data-status="retired" class="bg-[#0B1120] border border-cyan-800/60 rounded-xl p-4 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-cyan-500/60 hover:shadow-cyan-950/40 transition-all group">
+  <!-- Left Side: CTF Title & Action Links -->
+  <div class="flex flex-wrap items-center gap-3">
+    <h3 class="text-xl font-bold font-sans text-slate-100 group-hover:text-cyan-400 transition-colors mr-2">
+      BTLO - Countdown
+    </h3>
+    <a href="writeups/Countdown.html" class="inline-flex items-center gap-2 border border-emerald-800/80 bg-emerald-950/30 text-emerald-400 hover:bg-emerald-900/40 hover:border-emerald-500/60 px-3.5 py-1.5 rounded transition-all font-mono text-xs font-semibold uppercase">
+      <span>Access Writeup</span>
+      <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+      </svg>
+    </a>
+    <a href="https://blueteamlabs.online/achievement/share/172832/1" target="_blank" class="inline-flex items-center gap-2 border border-pink-500/40 text-pink-400 hover:bg-pink-500/10 px-3.5 py-1.5 rounded transition-all font-mono text-xs font-semibold uppercase">
+      PROOF OF COMPLETION <i class="fas fa-arrow-right"></i>
+    </a>
+  </div>
+  <!-- Right Side: Tags (State -> Category -> Max 2 Tools) -->
+  <div class="flex flex-wrap items-center gap-2 md:justify-end">
+    <span class="font-mono text-amber-400 bg-amber-950/30 border border-amber-800/60 rounded-md px-3 py-1 text-xs uppercase">Retired</span>
+    <span class="font-mono text-cyan-400 bg-cyan-950/30 border border-cyan-800/60 rounded-md px-3 py-1 text-xs uppercase">DIGITAL FORENSICS</span>
+    <span class="font-mono text-xs text-slate-300 bg-slate-900 border border-slate-800 rounded px-2.5 py-1 uppercase">AUTOPSY</span>
+    <span class="font-mono text-xs text-slate-300 bg-slate-900 border border-slate-800 rounded px-2.5 py-1 uppercase">ZIMMERMANTOOLS</span>
+  </div>
+</div>
+<div data-category="SECURITY OPERATIONS Wireshark Cyberchef" data-status="retired" class="bg-[#0B1120] border border-cyan-800/60 rounded-xl p-4 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-cyan-500/60 hover:shadow-cyan-950/40 transition-all group">
+
+  <!-- Left Side: CTF Title & Action Links -->
+
+  <div class="flex flex-wrap items-center gap-3">
+
+    <h3 class="text-xl font-bold font-sans text-slate-100 group-hover:text-cyan-400 transition-colors mr-2">
+
+      BTLO - Deep Phish
+
+    </h3>
+
+    <a href="writeups/Deep Phish.html" class="inline-flex items-center gap-2 border border-emerald-800/80 bg-emerald-950/30 text-emerald-400 hover:bg-emerald-900/40 hover:border-emerald-500/60 px-3.5 py-1.5 rounded transition-all font-mono text-xs font-semibold uppercase">
+
+      <span>Access Writeup</span>
+
+      <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+
+      </svg>
+
+    </a>
+
+    <a href="https://blueteamlabs.online/achievement/share/172832/140" target="_blank" class="inline-flex items-center gap-2 border border-pink-500/40 text-pink-400 hover:bg-pink-500/10 px-3.5 py-1.5 rounded transition-all font-mono text-xs font-semibold uppercase">
+
+      PROOF OF COMPLETION <i class="fas fa-arrow-right"></i>
+
+    </a>
+
+  </div>
+
+  <!-- Right Side: Tags (State -> Category -> Max 2 Tools) -->
+
+  <div class="flex flex-wrap items-center gap-2 md:justify-end">
+
+    <span class="font-mono text-amber-400 bg-amber-950/30 border border-amber-800/60 rounded-md px-3 py-1 text-xs uppercase">Retired</span>
+
+    <span class="font-mono text-cyan-400 bg-cyan-950/30 border border-cyan-800/60 rounded-md px-3 py-1 text-xs uppercase">SECURITY OPERATIONS</span>
+
+    <span class="font-mono text-xs text-slate-300 bg-slate-900 border border-slate-800 rounded px-2.5 py-1 uppercase">Wireshark</span>
+
+    <span class="font-mono text-xs text-slate-300 bg-slate-900 border border-slate-800 rounded px-2.5 py-1 uppercase">Cyberchef</span>
+
+  </div>
+
+</div>
+<div data-category="DIGITAL FORENSICS EventViewer CLI" data-status="retired" class="bg-[#0B1120] border border-cyan-800/60 rounded-xl p-4 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-cyan-500/60 hover:shadow-cyan-950/40 transition-all group">
+
+  <!-- Left Side: CTF Title & Action Links -->
+
+  <div class="flex flex-wrap items-center gap-3">
+
+    <h3 class="text-xl font-bold font-sans text-slate-100 group-hover:text-cyan-400 transition-colors mr-2">
+
+      BTLO - Defender
+
+    </h3>
+
+    <a href="writeups/Defender.html" class="inline-flex items-center gap-2 border border-emerald-800/80 bg-emerald-950/30 text-emerald-400 hover:bg-emerald-900/40 hover:border-emerald-500/60 px-3.5 py-1.5 rounded transition-all font-mono text-xs font-semibold uppercase">
+
+      <span>Access Writeup</span>
+
+      <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+
+      </svg>
+
+    </a>
+
+    <a href="https://blueteamlabs.online/achievement/share/172832/68" target="_blank" class="inline-flex items-center gap-2 border border-pink-500/40 text-pink-400 hover:bg-pink-500/10 px-3.5 py-1.5 rounded transition-all font-mono text-xs font-semibold uppercase">
+
+      PROOF OF COMPLETION <i class="fas fa-arrow-right"></i>
+
+    </a>
+
+  </div>
+
+  <!-- Right Side: Tags (State -> Category -> Max 2 Tools) -->
+
+  <div class="flex flex-wrap items-center gap-2 md:justify-end">
+
+    <span class="font-mono text-amber-400 bg-amber-950/30 border border-amber-800/60 rounded-md px-3 py-1 text-xs uppercase">Retired</span>
+
+    <span class="font-mono text-cyan-400 bg-cyan-950/30 border border-cyan-800/60 rounded-md px-3 py-1 text-xs uppercase">DIGITAL FORENSICS</span>
+
+    <span class="font-mono text-xs text-slate-300 bg-slate-900 border border-slate-800 rounded px-2.5 py-1 uppercase">EventViewer</span>
+
+    <span class="font-mono text-xs text-slate-300 bg-slate-900 border border-slate-800 rounded px-2.5 py-1 uppercase">CLI</span>
+
+  </div>
+
+</div>
+<div data-category="INCIDENT RESPONSE Wireshark Splunk" data-status="retired" class="bg-[#0B1120] border border-cyan-800/60 rounded-xl p-4 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-cyan-500/60 hover:shadow-cyan-950/40 transition-all group">
+
+  <!-- Left Side: CTF Title & Action Links -->
+
+  <div class="flex flex-wrap items-center gap-3">
+
+    <h3 class="text-xl font-bold font-sans text-slate-100 group-hover:text-cyan-400 transition-colors mr-2">
+
+      BTLO - DomainNance
+
+    </h3>
+
+    <a href="writeups/DomainNance.html" class="inline-flex items-center gap-2 border border-emerald-800/80 bg-emerald-950/30 text-emerald-400 hover:bg-emerald-900/40 hover:border-emerald-500/60 px-3.5 py-1.5 rounded transition-all font-mono text-xs font-semibold uppercase">
+
+      <span>Access Writeup</span>
+
+      <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+
+      </svg>
+
+    </a>
+
+    <a href="https://blueteamlabs.online/achievement/share/172832/215" target="_blank" class="inline-flex items-center gap-2 border border-pink-500/40 text-pink-400 hover:bg-pink-500/10 px-3.5 py-1.5 rounded transition-all font-mono text-xs font-semibold uppercase">
+
+      PROOF OF COMPLETION <i class="fas fa-arrow-right"></i>
+
+    </a>
+
+  </div>
+
+  <!-- Right Side: Tags (State -> Category -> Max 2 Tools) -->
+
+  <div class="flex flex-wrap items-center gap-2 md:justify-end">
+
+    <span class="font-mono text-amber-400 bg-amber-950/30 border border-amber-800/60 rounded-md px-3 py-1 text-xs uppercase">Retired</span>
+
+    <span class="font-mono text-cyan-400 bg-cyan-950/30 border border-cyan-800/60 rounded-md px-3 py-1 text-xs uppercase">INCIDENT RESPONSE</span>
+
+    <span class="font-mono text-xs text-slate-300 bg-slate-900 border border-slate-800 rounded px-2.5 py-1 uppercase">Wireshark</span>
+
+    <span class="font-mono text-xs text-slate-300 bg-slate-900 border border-slate-800 rounded px-2.5 py-1 uppercase">Splunk</span>
+
+  </div>
+
+</div>
+
+                <!-- Entry 3: BTLO - BEC-ky -->
+                <div data-category="INCIDENT RESPONSE PHISHING EMAILHEADERANALYSIS BEC" data-status="retired" class="bg-[#0B1120] border border-cyan-800/60 rounded-xl p-4 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-cyan-500/60 hover:shadow-cyan-950/40 transition-all group">
+                  <div class="flex flex-wrap items-center gap-3">
+                    <h3 class="text-xl font-bold font-sans text-slate-100 group-hover:text-cyan-400 transition-colors mr-2">
+                      BTLO - BEC-ky
+                    </h3>
+                    <a href="writeups/BEC-ky.html" class="inline-flex items-center gap-2 border border-emerald-800/80 bg-emerald-950/30 text-emerald-400 hover:bg-emerald-900/40 hover:border-emerald-500/60 px-3.5 py-1.5 rounded transition-all font-mono text-xs font-semibold uppercase">
+                      <span>Access Writeup</span>
+                      <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                      </svg>
+                    </a>
+                    <a href="https://blueteamlabs.online/achievement/share/172832/267" target="_blank" class="inline-flex items-center gap-2 border border-pink-500/40 text-pink-400 hover:bg-pink-500/10 px-3.5 py-1.5 rounded transition-all font-mono text-xs font-semibold uppercase">
+                      PROOF OF COMPLETION <i class="fas fa-arrow-right"></i>
+                    </a>
+                  </div>
+                  <div class="flex flex-wrap items-center gap-2 md:justify-end">
+                    <span class="font-mono text-amber-400 bg-amber-950/30 border border-amber-800/60 rounded-md px-3 py-1 text-xs uppercase">Retired</span>
+                    <span class="font-mono text-cyan-400 bg-cyan-950/30 border border-cyan-800/60 rounded-md px-3 py-1 text-xs uppercase">INCIDENT RESPONSE</span>
+                    <span class="font-mono text-xs text-slate-300 bg-slate-900 border border-slate-800 rounded px-2.5 py-1 uppercase">PHISHING</span>
+                    <span class="font-mono text-xs text-slate-300 bg-slate-900 border border-slate-800 rounded px-2.5 py-1 uppercase">EMAILHEADERANALYSIS</span>
+                  </div>
+                </div>
+
+                <div data-category="SECURITY OPERATIONS VIRUSTOTAL URLHAUS" data-status="retired" class="bg-[#0B1120] border border-cyan-800/60 rounded-xl p-4 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-cyan-500/60 hover:shadow-cyan-950/40 transition-all group">
+  <!-- Left Side: CTF Title & Action Links -->
+  <div class="flex flex-wrap items-center gap-3">
+    <h3 class="text-xl font-bold font-sans text-slate-100 group-hover:text-cyan-400 transition-colors mr-2">
+      BTLO - Blocker
+    </h3>
+    <a href="writeups/Blocker.html" class="inline-flex items-center gap-2 border border-emerald-800/80 bg-emerald-950/30 text-emerald-400 hover:bg-emerald-900/40 hover:border-emerald-500/60 px-3.5 py-1.5 rounded transition-all font-mono text-xs font-semibold uppercase">
+      <span>Access Writeup</span>
+      <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+      </svg>
+    </a>
+    <a href="https://blueteamlabs.online/achievement/share/172832/112" target="_blank" class="inline-flex items-center gap-2 border border-pink-500/40 text-pink-400 hover:bg-pink-500/10 px-3.5 py-1.5 rounded transition-all font-mono text-xs font-semibold uppercase">
+      PROOF OF COMPLETION <i class="fas fa-arrow-right"></i>
+    </a>
+  </div>
+  <!-- Right Side: Tags (State -> Category -> Max 2 Tools) -->
+  <div class="flex flex-wrap items-center gap-2 md:justify-end">
+    <span class="font-mono text-amber-400 bg-amber-950/30 border border-amber-800/60 rounded-md px-3 py-1 text-xs uppercase">Retired</span>
+    <span class="font-mono text-cyan-400 bg-cyan-950/30 border border-cyan-800/60 rounded-md px-3 py-1 text-xs uppercase">SECURITY OPERATIONS</span>
+    <span class="font-mono text-xs text-slate-300 bg-slate-900 border border-slate-800 rounded px-2.5 py-1 uppercase">VIRUSTOTAL</span>
+    <span class="font-mono text-xs text-slate-300 bg-slate-900 border border-slate-800 rounded px-2.5 py-1 uppercase">URLHAUS</span>
+  </div>
+</div>  
+                <!-- Deep Freeze.md -->
+<div data-category="INCIDENT RESPONSE SPLUNKCTF LINUXCLI" data-status="retired" class="bg-[#0B1120] border border-cyan-800/60 rounded-xl p-4 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-cyan-500/60 hover:shadow-cyan-950/40 transition-all group">
+  <!-- Left Side: CTF Title & Action Links -->
+  <div class="flex flex-wrap items-center gap-3">
+    <h3 class="text-xl font-bold font-sans text-slate-100 group-hover:text-cyan-400 transition-colors mr-2">
+      BTLO - Deep Freeze
+    </h3>
+    <a href="writeups/Deep Freeze.html" class="inline-flex items-center gap-2 border border-emerald-800/80 bg-emerald-950/30 text-emerald-400 hover:bg-emerald-900/40 hover:border-emerald-500/60 px-3.5 py-1.5 rounded transition-all font-mono text-xs font-semibold uppercase">
+      <span>Access Writeup</span>
+      <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+      </svg>
+    </a>
+    <a href="https://blueteamlabs.online/achievement/share/172832/249" target="_blank" class="inline-flex items-center gap-2 border border-pink-500/40 text-pink-400 hover:bg-pink-500/10 px-3.5 py-1.5 rounded transition-all font-mono text-xs font-semibold uppercase">
+      PROOF OF COMPLETION <i class="fas fa-arrow-right"></i>
+    </a>
+  </div>
+  <!-- Right Side: Tags (State -> Category -> Max 2 Tools) -->
+  <div class="flex flex-wrap items-center gap-2 md:justify-end">
+    <span class="font-mono text-amber-400 bg-amber-950/30 border border-amber-800/60 rounded-md px-3 py-1 text-xs uppercase">Retired</span>
+    <span class="font-mono text-cyan-400 bg-cyan-950/30 border border-cyan-800/60 rounded-md px-3 py-1 text-xs uppercase">INCIDENT RESPONSE</span>
+    <span class="font-mono text-xs text-slate-300 bg-slate-900 border border-slate-800 rounded px-2.5 py-1 uppercase">SPLUNKCTF</span>
+    <span class="font-mono text-xs text-slate-300 bg-slate-900 border border-slate-800 rounded px-2.5 py-1 uppercase">LINUXCLI</span>
+  </div>
+</div>
+<div data-category="INCIDENT RESPONSE Wireshark Cyberchef" data-status="retired" class="bg-[#0B1120] border border-cyan-800/60 rounded-xl p-4 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-cyan-500/60 hover:shadow-cyan-950/40 transition-all group">
+
+  <!-- Left Side: CTF Title & Action Links -->
+
+  <div class="flex flex-wrap items-center gap-3">
+
+    <h3 class="text-xl font-bold font-sans text-slate-100 group-hover:text-cyan-400 transition-colors mr-2">
+
+      BTLO - Too Late
+
+    </h3>
+
+    <a href="writeups/Too Late.html" class="inline-flex items-center gap-2 border border-emerald-800/80 bg-emerald-950/30 text-emerald-400 hover:bg-emerald-900/40 hover:border-emerald-500/60 px-3.5 py-1.5 rounded transition-all font-mono text-xs font-semibold uppercase">
+
+      <span>Access Writeup</span>
+
+      <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+
+      </svg>
+
+    </a>
+
+    <a href="https://blueteamlabs.online/achievement/share/172832/78" target="_blank" class="inline-flex items-center gap-2 border border-pink-500/40 text-pink-400 hover:bg-pink-500/10 px-3.5 py-1.5 rounded transition-all font-mono text-xs font-semibold uppercase">
+
+      PROOF OF COMPLETION <i class="fas fa-arrow-right"></i>
+
+    </a>
+
+  </div>
+
+  <!-- Right Side: Tags (State -> Category -> Max 2 Tools) -->
+
+  <div class="flex flex-wrap items-center gap-2 md:justify-end">
+
+    <span class="font-mono text-amber-400 bg-amber-950/30 border border-amber-800/60 rounded-md px-3 py-1 text-xs uppercase">Retired</span>
+
+    <span class="font-mono text-cyan-400 bg-cyan-950/30 border border-cyan-800/60 rounded-md px-3 py-1 text-xs uppercase">INCIDENT RESPONSE</span>
+
+    <span class="font-mono text-xs text-slate-300 bg-slate-900 border border-slate-800 rounded px-2.5 py-1 uppercase">Wireshark</span>
+
+    <span class="font-mono text-xs text-slate-300 bg-slate-900 border border-slate-800 rounded px-2.5 py-1 uppercase">Cyberchef</span>
+
+  </div>
+
+</div>
+
+                <!-- Entry 5: BTLO - Macro-Ni -->
+                <div data-category="DIGITAL FORENSICS OLETOOLS CYBERCHEF" data-status="retired" class="bg-[#0B1120] border border-cyan-800/60 rounded-xl p-4 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-cyan-500/60 hover:shadow-cyan-950/40 transition-all group">
+                  <div class="flex flex-wrap items-center gap-3">
+                    <h3 class="text-xl font-bold font-sans text-slate-100 group-hover:text-cyan-400 transition-colors mr-2">
+                      BTLO - Macro-Ni
+                    </h3>
+                    <a href="writeups/Macro-Ni.html" class="inline-flex items-center gap-2 border border-emerald-800/80 bg-emerald-950/30 text-emerald-400 hover:bg-emerald-900/40 hover:border-emerald-500/60 px-3.5 py-1.5 rounded transition-all font-mono text-xs font-semibold uppercase">
+                      <span>Access Writeup</span>
+                      <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                      </svg>
+                    </a>
+                    <a href="https://blueteamlabs.online/achievement/share/172832/301" target="_blank" class="inline-flex items-center gap-2 border border-pink-500/40 text-pink-400 hover:bg-pink-500/10 px-3.5 py-1.5 rounded transition-all font-mono text-xs font-semibold uppercase">
+                      PROOF OF COMPLETION <i class="fas fa-arrow-right"></i>
+                    </a>
+                  </div>
+                  <div class="flex flex-wrap items-center gap-2 md:justify-end">
+                    <span class="font-mono text-amber-400 bg-amber-950/30 border border-amber-800/60 rounded-md px-3 py-1 text-xs uppercase">Retired</span>
+                    <span class="font-mono text-cyan-400 bg-cyan-950/30 border border-cyan-800/60 rounded-md px-3 py-1 text-xs uppercase">Reverse Engineering</span>
+                    <span class="font-mono text-xs text-slate-300 bg-slate-900 border border-slate-800 rounded px-2.5 py-1 uppercase">OLETOOLS</span>
+                    <span class="font-mono text-xs text-slate-300 bg-slate-900 border border-slate-800 rounded px-2.5 py-1 uppercase">CYBERCHEF</span>
+                  </div>
+                </div>
+
+                <!-- Entry 6: BTLO - MiddleMayhem -->
+                <div data-category="SECURITY OPERATIONS SPLUNK NETCAT CURL" data-status="retired" class="bg-[#0B1120] border border-cyan-800/60 rounded-xl p-4 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-cyan-500/60 hover:shadow-cyan-950/40 transition-all group">
+                  <div class="flex flex-wrap items-center gap-3">
+                    <h3 class="text-xl font-bold font-sans text-slate-100 group-hover:text-cyan-400 transition-colors mr-2">
+                      BTLO - MiddleMayhem
+                    </h3>
+                    <a href="writeups/MiddleMayhem.html" class="inline-flex items-center gap-2 border border-emerald-800/80 bg-emerald-950/30 text-emerald-400 hover:bg-emerald-900/40 hover:border-emerald-500/60 px-3.5 py-1.5 rounded transition-all font-mono text-xs font-semibold uppercase">
+                      <span>Access Writeup</span>
+                      <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                      </svg>
+                    </a>
+                    <a href="https://blueteamlabs.online/achievement/share/172832/259" target="_blank" class="inline-flex items-center gap-2 border border-pink-500/40 text-pink-400 hover:bg-pink-500/10 px-3.5 py-1.5 rounded transition-all font-mono text-xs font-semibold uppercase">
+                      PROOF OF COMPLETION <i class="fas fa-arrow-right"></i>
+                    </a>
+                  </div>
+                  <div class="flex flex-wrap items-center gap-2 md:justify-end">
+                    <span class="font-mono text-amber-400 bg-amber-950/30 border border-amber-800/60 rounded-md px-3 py-1 text-xs uppercase">Retired</span>
+                    <span class="font-mono text-cyan-400 bg-cyan-950/30 border border-cyan-800/60 rounded-md px-3 py-1 text-xs uppercase">SECURITY OPERATIONS</span>
+                    <span class="font-mono text-xs text-slate-300 bg-slate-900 border border-slate-800 rounded px-2.5 py-1 uppercase">SPLUNK</span>
+                    <span class="font-mono text-xs text-slate-300 bg-slate-900 border border-slate-800 rounded px-2.5 py-1 uppercase">NETCAT</span>
+                  </div>
+                </div>
+
+                <!-- Entry 7: BTLO - NIKA-AD -->
+                <div data-category="DIGITAL FORENSICS WIRESHARK SPLUNK" data-status="retired" class="bg-[#0B1120] border border-cyan-800/60 rounded-xl p-4 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-cyan-500/60 hover:shadow-cyan-950/40 transition-all group">
+                  <div class="flex flex-wrap items-center gap-3">
+                    <h3 class="text-xl font-bold font-sans text-slate-100 group-hover:text-cyan-400 transition-colors mr-2">
+                      BTLO - NIKA-AD
+                    </h3>
+                    <a href="writeups/Nika-AD.html" class="inline-flex items-center gap-2 border border-emerald-800/80 bg-emerald-950/30 text-emerald-400 hover:bg-emerald-900/40 hover:border-emerald-500/60 px-3.5 py-1.5 rounded transition-all font-mono text-xs font-semibold uppercase">
+                      <span>Access Writeup</span>
+                      <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                      </svg>
+                    </a>
+                    <a href="https://blueteamlabs.online/achievement/share/172832/211" target="_blank" class="inline-flex items-center gap-2 border border-pink-500/40 text-pink-400 hover:bg-pink-500/10 px-3.5 py-1.5 rounded transition-all font-mono text-xs font-semibold uppercase">
+                      PROOF OF COMPLETION <i class="fas fa-arrow-right"></i>
+                    </a>
+                  </div>
+                  <div class="flex flex-wrap items-center gap-2 md:justify-end">
+                    <span class="font-mono text-amber-400 bg-amber-950/30 border border-amber-800/60 rounded-md px-3 py-1 text-xs uppercase">Retired</span>
+                    <span class="font-mono text-cyan-400 bg-cyan-950/30 border border-cyan-800/60 rounded-md px-3 py-1 text-xs uppercase">DIGITAL FORENSICS</span>
+                    <span class="font-mono text-xs text-slate-300 bg-slate-900 border border-slate-800 rounded px-2.5 py-1 uppercase">WIRESHARK</span>
+                    <span class="font-mono text-xs text-slate-300 bg-slate-900 border border-slate-800 rounded px-2.5 py-1 uppercase">SPLUNK</span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+        </section>
+
+
+        <!-- TECHNICAL SKILLS MATRIX -->
+        <section id="skills" class="py-16 lg:py-24 bg-slate-900/40 border-b border-slate-800/60">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <div class="mb-12">
+                    <div class="text-cyan-400 font-mono text-xs tracking-wider uppercase mb-2">Technical Competencies</div>
+                    <h2 class="text-3xl sm:text-4xl font-bold text-slate-100">Skills & Security Stack</h2>
+                    <p class="text-slate-400 text-sm mt-2 max-w-xl">
+                        A breakdown of tools, platforms, and methodologies I utilize daily for security operations, incident response, and system administration.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+                    <!-- Category 1: DFIR & Memory Forensics -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+                        <div class="flex items-center gap-3 mb-4 text-cyan-400">
+                            <i class="fa-solid fa-microscope text-xl"></i>
+                            <h3 class="font-bold text-slate-100 text-base">DFIR & Forensics</h3>
+                        </div>
+                        <ul class="space-y-2.5 text-xs text-slate-300 font-mono">
+                            <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Memory Acquisition & Analysis (Volatility 3 / DumpIt / AVML)
+                            </li>
+                            <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Artifact & Registry Analysis (Eric Zimmerman Tools / RECmd)
+                            </li>
+                            <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Forensic Imaging & Triage (FTK Imager / Autopsy / KAPE)
+                            </li>
+                            <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Host Evidentiary Collection (MFT / Prefetch / Event Logs)
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Category 2: Network & Threat Analysis -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+                        <div class="flex items-center gap-3 mb-4 text-cyan-400">
+                            <i class="fa-solid fa-network-wired text-xl"></i>
+                            <h3 class="font-bold text-slate-100 text-base">SIEM, Network & Threat Analysis</h3>
+                        </div>
+                        <ul class="space-y-2.5 text-xs text-slate-300 font-mono">
+                            <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Packet & Traffic Analysis (Wireshark / Zeek / NetworkMiner)
+                            </li>
+                            <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Log Aggregation & KQL (Splunk / Azure Log Analytics / Wazuh)
+                            </li>
+                            <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> NIDS & Traffic Inspection (Snort / Suricata / SPAN Ports)
+                            </li>
+                            <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Vulnerability Management (Nessus / OpenVAS Scans)
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Category 3: Systems & Cloud Administration -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+                        <div class="flex items-center gap-3 mb-4 text-cyan-400">
+                            <i class="fa-solid fa-server text-xl"></i>
+                            <h3 class="font-bold text-slate-100 text-base">Systems & Identity</h3>
+                        </div>
+                        <ul class="space-y-2.5 text-xs text-slate-300 font-mono">
+                            <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Enterprise Identity & Access (Active Directory / GPO / Entra ID)
+                            </li>
+                            <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> GCP & Azure (Entra ID)
+                            </li>
+                            <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Systems & Telemetry (Windows & Linux CLI / Sysmon)
+                            </li>
+                            <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Sysmon & Windows Event Logs
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Category 4: Scripting & Automation -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+                        <div class="flex items-center gap-3 mb-4 text-cyan-400">
+                            <i class="fa-solid fa-code text-xl"></i>
+                            <h3 class="font-bold text-slate-100 text-base">Scripting & Tools</h3>
+                        </div>
+                        <ul class="space-y-2.5 text-xs text-slate-300 font-mono">
+                            <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Python (SecOps Automation & Log Parsing)
+                            </li>
+                            <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> PowerShell (Active Directory & System Admin)
+                            </li>
+                            <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Bash Scripting & Systemd
+                            </li>
+                            <li class="flex items-center gap-2 bg-slate-950 p-2 rounded border border-slate-800">
+                                <i class="fa-solid fa-check text-cyan-400 text-[10px]"></i> Version Control & Docs (Git / GitHub Actions / Markdown)
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- FOOTER / CONTACT SECTION -->
+        <section id="contact" class="py-16 lg:py-20 bg-slate-950">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                
+                <div class="max-w-2xl mx-auto space-y-6">
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-xs font-mono text-cyan-400">
+                        <i class="fa-solid fa-paper-plane"></i> Let's Connect
+                    </div>
+
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-100">
+                        Interested in working together or reviewing my work?
+                    </h2>
+                    
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        I am currently looking for Tier 1 / Tier 2 SOC Analyst, Digital Forensics, and Threat Detection opportunities. Feel free to reach out directly via email or LinkedIn.
+                    </p>
+
+                    <!-- Email Box Copy Widget -->
+                    <div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+                        <div class="bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-sm font-mono text-slate-200 flex items-center justify-between w-full sm:w-auto gap-4">
+                            <span id="email-address">orhersee@gmail.com</span>
+                            <button onclick="copyEmail()" class="text-xs bg-slate-800 hover:bg-cyan-500 hover:text-slate-950 text-cyan-400 px-2.5 py-1 rounded transition-all flex items-center gap-1.5">
+                                <i class="fa-solid fa-copy"></i>
+                                <span id="copy-text">Copy</span>
+                            </button>
+                        </div>
+
+                        <a href="mailto:orhersee@gmail.com" class="px-6 py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold text-sm transition-all shadow-lg shadow-cyan-500/20 flex items-center gap-2">
+                            <i class="fa-solid fa-envelope"></i>
+                            Send Direct Email
+                        </a>
+                    </div>
+
+                    <!-- Copyright Notice -->
+                    <p class="text-slate-600 text-xs font-mono pt-8">
+                        &copy; <span id="year"></span> Cybersecurity Portfolio. Built for GitHub Pages.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- Interactive JavaScript -->
+    <script>
+        // Set current dynamic year in footer
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // Mobile Navigation Toggle
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Close mobile menu on link click
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // Search Filter for Writeups List Items
+        const searchInput = document.getElementById('writeup-search');
+        const writeupItems = document.querySelectorAll('#writeups-list > div');
+
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase().trim();
+                writeupItems.forEach(item => {
+                    const text = item.innerText.toLowerCase();
+                    const category = (item.getAttribute('data-category') || '').toLowerCase();
+                    const status = (item.getAttribute('data-status') || '').toLowerCase();
+
+                    if (text.includes(query) || category.includes(query) || status.includes(query)) {
+                        item.style.display = 'flex';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        }
+
+        // Copy Email to Clipboard helper
+        function copyEmail() {
+            const emailText = document.getElementById('email-address').textContent;
+            
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(emailText).then(showCopied).catch(fallbackCopy);
+            } else {
+                fallbackCopy();
+            }
+
+            function fallbackCopy() {
+                const dummy = document.createElement('textarea');
+                document.body.appendChild(dummy);
+                dummy.value = emailText;
+                dummy.select();
+                document.execCommand('copy');
+                document.body.removeChild(dummy);
+                showCopied();
+            }
+
+            function showCopied() {
+                const copyBtnText = document.getElementById('copy-text');
+                copyBtnText.textContent = 'Copied!';
+                setTimeout(() => {
+                    copyBtnText.textContent = 'Copy';
+                }, 2000);
+            }
+        }
+    </script>
+</body>
+</html>

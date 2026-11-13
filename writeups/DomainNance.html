@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="ctf-title" content="DomainNance">
+    <meta name="ctf-status" content="Retired">
+    <meta name="ctf-pass-hash" content="">
+    <meta name="ctf-platform" content="Blue Team Labs Online">
+    <meta name="ctf-difficulty" content="Medium">
+    <meta name="ctf-category" content="Incident Response">
+    <meta name="ctf-description" content="">
+    <meta name="ctf-tags" content="#Wireshark #Splunk">
+    <title>DomainNance</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-slate-200 font-sans antialiased selection:bg-cyan-500 selection:text-slate-950">
+    <main class="max-w-4xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+        <a href="../index.html#writeups" class="inline-flex items-center gap-2 text-slate-400 hover:text-cyan-400 text-sm font-mono mb-8 transition-colors">
+            <i class="fa-solid fa-arrow-left text-xs"></i> Back to Portfolio
+        </a>
+        <article class="prose prose-invert max-w-none space-y-6">
+            <div class="max-w-5xl mx-auto px-4 py-8">
+    <p class="font-mono text-xs text-slate-500 uppercase tracking-widest mb-2">// BLUE TEAM LABS ONLINE · WRITEUP</p>
+    <h1 class="text-4xl sm:text-5xl font-bold text-slate-100 tracking-tight mb-4">DomainNance</h1>
+
+    <div class="flex flex-wrap gap-2 mb-6 font-mono text-xs font-semibold uppercase">
+        <span class="bg-cyan-950/80 text-cyan-400 border border-cyan-800/80 px-3 py-1 rounded">BLUE TEAM LABS ONLINE</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">EASY</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">SPLUNK</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">WIRESHARK</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">ACTIVE DIRECTORY</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">WEB COMPROMISE</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">LATERAL MOVEMENT</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">CREDENTIAL DUMPING</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">GOLDEN TICKET</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">MIMIKATZ</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">POWERSHELL</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">CERTUTIL</span>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-3 my-6 font-mono text-xs">
+        <a href="../index.html#writeups" class="inline-flex items-center gap-2 bg-[#092b38] border border-cyan-800 text-cyan-400 hover:bg-cyan-900/50 px-4 py-2 rounded-lg transition-all"><i class="fa-solid fa-arrow-left text-xs"></i> BACK TO PORTFOLIO</a>
+    </div>
+
+    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight mb-4 mt-8 text-slate-100 font-sans">Executive Summary & Overview</h2>
+    <div class="text-slate-300 text-sm sm:text-base leading-relaxed space-y-4 mb-8 font-sans">
+        <p>This challenge involved analyzing network traffic and Splunk logs to reconstruct an attacker's activities, from initial web server compromise to full domain-wide control. The investigation revealed a multi-stage attack chain, beginning with the exploitation of a web server to exfiltrate sensitive credentials.</p>
+        <p>Subsequently, the attacker leveraged these credentials to gain access to an Active Directory-joined workstation, <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">DESKTOP-2FII9FV</code>. On this system, tools like <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">certutil.exe</code> were used to download malicious binaries, including <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Mimikatz</code> (disguised as <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Troubleshooter.ps1</code> and <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">svch0st.exe</code>). The attacker then executed <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Mimikatz</code> via <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">powershell.exe</code> to dump credentials and ultimately perform a <strong class="text-cyan-400 font-mono text-xs font-semibold">Golden Ticket</strong> attack, achieving full domain compromise of <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">highlysecured.tech</code>.</p>
+    </div>
+
+    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight mb-4 mt-8 text-slate-100 font-sans">Asset Information</h2>
+    <div class="overflow-x-auto my-6 rounded-xl border border-slate-800/80 bg-[#0B1120] shadow-xl">
+        <table class="w-full text-left border-collapse text-xs font-mono">
+            <thead>
+                <tr class="border-b border-slate-800 bg-slate-900/60 text-slate-400 uppercase tracking-wider">
+                    <th class="py-3 px-4">HOSTNAME / IP</th>
+                    <th class="py-3 px-4">SUMMARY</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                    <td class="py-3 px-4 text-cyan-400 font-semibold break-all">192.168.1.13</td>
+                    <td class="py-3 px-4 text-slate-300 break-words font-sans">Attacker Machine IP address.</td>
+                </tr>
+                <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                    <td class="py-3 px-4 text-cyan-400 font-semibold break-all">192.168.1.12</td>
+                    <td class="py-3 px-4 text-slate-300 break-words font-sans">DVWA Web Server IP address.</td>
+                </tr>
+                <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                    <td class="py-3 px-4 text-cyan-400 font-semibold break-all">WIN-3IGU5KH5MV2.highlysecured.tech</td>
+                    <td class="py-3 px-4 text-slate-300 break-words font-sans">System where user <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">mtyson</code> logged in from <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">10.0.2.11</code>.</td>
+                </tr>
+                <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                    <td class="py-3 px-4 text-cyan-400 font-semibold break-all">DESKTOP-2FII9FV</td>
+                    <td class="py-3 px-4 text-slate-300 break-words font-sans">Workstation where attacker downloaded and executed malicious files.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight mb-6 mt-8 text-slate-100 font-sans">Question & Answer Solutions</h2>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">1. What is the IP of Attacker Machine while interacting with Webserver? (Format: X.X.X.X)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">192.168.1.13</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Identified by examining the source IP addresses of POST/GET requests directed at the web server in network traffic logs.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">2. The Attacker was able to execute commands on the WebServer. How many commands were executed? (Format: Count)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">6</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Counted the distinct command execution events observed on the web server, likely through web shell interaction or command injection.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">3. The Attacker found a useful file in the WebServer. What is the name of the File as mentioned? (Format: filename.extension)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">.credentials.txt</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Discovered by analyzing POST requests in network captures (e.g., Wireshark) which indicated the attacker accessing or exfiltrating this specific file.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">4. What important data is present inside the file? (Format: Xxxx Xxxxx : Xxxxxxxx)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">Mike Tyson : P@55w0rd</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: The content of the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">.credentials.txt</code> file contained this username and password pair.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">5. The Attacker was able to execute commands on the WebServer. How many commands were executed? (Format: Count)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">10.0.2.0/24</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: While the question asks for a count, the provided answer is a network range. This likely indicates a mislabeled question in the raw notes. The solution mentions filtering for <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">http.request.method == POST</code>, suggesting network analysis to identify the attacker's network segment.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">6. Using the help of Splunk, What is the Domain Name of the AD Environment? (Format: domain.tld)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">highlysecured.tech</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Identified by searching Splunk logs for hostnames and user activity, specifically using queries like <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">index=* host="DESKTOP-2FII9FV" OriginalFileName="CertUtil.exe"</code> which revealed domain-joined systems and associated domain names.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">7. A user account “mtyson” downloaded a few files into one of the systems. What's the name of the system? (Format: ComputerName)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">DESKTOP-2FII9FV</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Splunk logs indicated file download activity by user <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">mtyson</code> on this specific workstation.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">8. What is the first file that was downloaded onto the system? Provide the Original & Final Name with extension (Format: ActualName, GivenName)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">Invoke-Mimikatz.ps1, Troubleshooter.ps1</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Splunk query <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">index=* host="DESKTOP-2FII9FV" NOT "*splunk*" OR "*edge*" User="*tyson*" "Troubleshooter.ps1"</code> revealed that <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Troubleshooter.ps1</code> was the initial download, which was actually <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Invoke-Mimikatz.ps1</code>.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">9. What One-Liner command was used by Attacker to dump credentials? (Format: Command)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">powershell -Command '. .\Troubleshooter.ps1 ; Invoke-Mimikatz -Command "privilege::debug" ; Invoke-Mimikatz -Command "sekurlsa::logonpasswords"'</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Identified in Splunk logs using a query like <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">index=* host="DESKTOP-2FII9FV" NOT "*splunk*" OR "*edge*" earliest="04/18/2024:19:03:37" User="*tyson*" EventCode=1 mimikatz*</code>, filtering for process creation events and <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">mimikatz</code> keywords.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">10. The attacker also downloaded a CompiledBinary and stored it under a legitimate looking name. What is the name under which the file was saved? (Format: Filename.ext)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">svch0st.exe</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Sysmon logs (EventCode 1 or 4688) in Splunk, filtered for <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">certutil</code> and user <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">mtyson</code>, showed the download and renaming of a binary to <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">svch0st.exe</code>.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">11. The attacker claims to have successfully performed lateral movement. What ticket was used to execute the pass-the-ticket attack? (Format: Ticket Name)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">0-60a10000-mtyson@krbtgt~HIGHLYSECURED.TECH-HIGHLYSECURED.TECH.kirbi</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: This specific Kerberos ticket file was observed being used in conjunction with <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Mimikatz</code> for a pass-the-ticket attack, indicating lateral movement.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">12. It is believed that the attacker has achieved domain-wide compromise. What technique was used? (Format: Xxxxxx Xxxxxx)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">Golden Ticket</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: The use of <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Mimikatz</code> to forge a Kerberos Ticket Granting Ticket (TGT) for the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">krbtgt</code> account signifies a Golden Ticket attack, leading to domain-wide compromise.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">13. What command was used to perform the attack? (Format: Command)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">mimikatz.exe "kerberos::golden /user:mtyson /domain:highlysecured.tech /sid:S-1-5-21-2778836013-2025790062-2140220986-1108 /krbtgt:31d6cfe0d16ae931b73c59d7e0c089c0 /id:500 /ptt"</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: This specific <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Mimikatz</code> command, found in Splunk logs, was used to generate and inject the Golden Ticket, specifying the user, domain, SID, <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">krbtgt</code> hash, and ID.</p>
+    </div>
+
+    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight mb-4 mt-8 text-slate-100 font-sans">Key Takeaways & Security Insights</h2>
+    <ul class="space-y-4 text-sm text-slate-300 font-sans my-4">
+        <li class="flex items-start gap-2">
+            <span class="text-cyan-400 mt-1">•</span>
+            <div>
+                <strong class="text-cyan-400 font-semibold font-mono">Web Server Security:</strong> Initial compromise often targets web-facing applications. Robust input validation, regular patching, and strong access controls are crucial to prevent command injection and file exfiltration.
+            </div>
+        </li>
+        <li class="flex items-start gap-2">
+            <span class="text-cyan-400 mt-1">•</span>
+            <div>
+                <strong class="text-cyan-400 font-semibold font-mono">Credential Management:</strong> Storing sensitive credentials (like <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Mike Tyson : P@55w0rd</code>) in plain text files (<code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">.credentials.txt</code>) is a critical vulnerability. Implement secure credential storage solutions and enforce strong password policies.
+            </div>
+        </li>
+        <li class="flex items-start gap-2">
+            <span class="text-cyan-400 mt-1">•</span>
+            <div>
+                <strong class="text-cyan-400 font-semibold font-mono">Endpoint Detection & Response (EDR):</strong> Tools like Sysmon are invaluable for detecting suspicious process creation, file downloads (e.g., <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">certutil.exe</code>), and execution of known malicious tools (<code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Mimikatz</code>).
+            </div>
+        </li>
+        <li class="flex items-start gap-2">
+            <span class="text-cyan-400 mt-1">•</span>
+            <div>
+                <strong class="text-cyan-400 font-semibold font-mono">Active Directory Hardening:</strong> Attacks like Golden Ticket demonstrate the severe impact of <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">krbtgt</code> account compromise. Implement strict security for domain controllers, monitor for suspicious Kerberos activity, and regularly rotate the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">krbtgt</code> password.
+            </div>
+        </li>
+        <li class="flex items-start gap-2">
+            <span class="text-cyan-400 mt-1">•</span>
+            <div>
+                <strong class="text-cyan-400 font-semibold font-mono">Log Analysis with Splunk:</strong> Centralized logging and powerful SIEM solutions like Splunk are essential for correlating events across multiple systems, identifying attack patterns, and tracing attacker movements. Effective queries can quickly pinpoint critical indicators of compromise.
+            </div>
+        </li>
+    </ul>
+</div>
+        </article>
+    </main>
+</body>
+</html>

