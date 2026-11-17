@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="ctf-title" content="Anakus">
+    <meta name="ctf-status" content="Retired">
+    <meta name="ctf-pass-hash" content="">
+    <meta name="ctf-platform" content="Blue Team Labs Online">
+    <meta name="ctf-difficulty" content="Easy">
+    <meta name="ctf-category" content="Reverse Engineering">
+    <meta name="ctf-description" content="">
+    <meta name="ctf-tags" content="#Cyberchef #Zimmerman #DetectItEasy">
+    <title>Anakus</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-slate-200 font-sans antialiased selection:bg-cyan-500 selection:text-slate-950">
+    <main class="max-w-4xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+        <a href="../index.html#writeups" class="inline-flex items-center gap-2 text-slate-400 hover:text-cyan-400 text-sm font-mono mb-8 transition-colors">
+            <i class="fa-solid fa-arrow-left text-xs"></i> Back to Portfolio
+        </a>
+        <article class="prose prose-invert max-w-none space-y-6">
+            <div class="max-w-5xl mx-auto px-4 py-8">
+    <!-- Header Section -->
+    <p class="font-mono text-xs text-slate-500 uppercase tracking-widest mb-2">// BLUE TEAM LABS ONLINE · WRITEUP</p>
+    <h1 class="text-4xl sm:text-5xl font-bold text-slate-100 tracking-tight mb-4">Anakus</h1>
+
+    <!-- Metadata Pill Badges -->
+    <div class="flex flex-wrap gap-2 mb-6 font-mono text-xs font-semibold uppercase">
+        <span class="bg-cyan-950/80 text-cyan-400 border border-cyan-800/80 px-3 py-1 rounded">BLUE TEAM LABS ONLINE</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">EASY</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">REVERSE ENGINEERING</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">CYBERCHEF</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">ZIMMERMAN</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">DETECT IT EASY</span>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex flex-wrap items-center gap-3 my-6 font-mono text-xs">
+        <a href="../index.html#writeups" class="inline-flex items-center gap-2 bg-[#092b38] border border-cyan-800 text-cyan-400 hover:bg-cyan-900/50 px-4 py-2 rounded-lg transition-all"><i class="fa-solid fa-arrow-left text-xs"></i> BACK TO PORTFOLIO</a>
+    </div>
+
+    <!-- Executive Summary & Overview -->
+    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight mb-4 mt-8 text-slate-100 font-sans">Executive Summary & Overview</h2>
+    <div class="text-slate-300 text-sm sm:text-base leading-relaxed space-y-4 mb-8 font-sans">
+        <p>This challenge, "Anakus," from Blue Team Labs Online, simulates a malware analysis assessment for a prospective Malware Analyst role at Tesserent. The scenario involves Loda Sukana, tasked with analyzing "Threat logs" and "Malware(s)" within a provided virtual machine environment. The objective is to demonstrate proficiency in reverse engineering and incident response techniques to identify and analyze malicious artifacts.</p>
+        <p>The investigation focuses on two primary suspicious files: <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">lnrvmp.dll</code> and <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">hataker.exe</code>. Utilizing a suite of forensic tools such as <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Detect It Easy</code>, <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">SigCheck</code>, <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">TCPview</code>, and <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Timeline Explorer</code>, the analysis uncovers critical details about the malware's characteristics, its attempts at evasion, network communication patterns, and the broader impact observed in system logs. The challenge emphasizes practical application of static and dynamic analysis to identify threats and map them to MITRE ATT&CK techniques.</p>
+    </div>
+
+    <!-- Asset Information Table -->
+    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight mb-4 mt-8 text-slate-100 font-sans">Asset Information</h2>
+    <div class="overflow-x-auto my-6 rounded-xl border border-slate-800/80 bg-[#0B1120] shadow-xl">
+        <table class="w-full text-left border-collapse text-xs font-mono">
+            <thead>
+                <tr class="border-b border-slate-800 bg-slate-900/60 text-slate-400 uppercase tracking-wider">
+                    <th class="py-3 px-4">ASSET NAME</th>
+                    <th class="py-3 px-4">SUMMARY</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                    <td class="py-3 px-4 text-cyan-400 font-semibold break-all">lnrvmp.dll</td>
+                    <td class="py-3 px-4 text-slate-300 break-words font-sans">Suspected malware (DLL file). SHA256: <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">fb20fc4e474369e6d8626be3ef6e79027c2db3ba0a46f7b68c6981d6859d6d32</code>. Identified as C/C++ with high entropy.</td>
+                </tr>
+                <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                    <td class="py-3 px-4 text-cyan-400 font-semibold break-all">hataker.exe</td>
+                    <td class="py-3 px-4 text-slate-300 break-words font-sans">Suspected malware (Executable file). SHA256: <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">4cf89d9ea959a91b8d8253a6a9f7b375963c953135ee9ab3cf336e5ce0dabc49</code>. Detected as <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Trojan:Win32/Meterpreter.RPZ!MTB</code>.</td>
+                </tr>
+                <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                    <td class="py-3 px-4 text-cyan-400 font-semibold break-all">BTLOTest</td>
+                    <td class="py-3 px-4 text-slate-300 break-words font-sans">User account on the virtual machine where the investigation is conducted.</td>
+                </tr>
+                <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                    <td class="py-3 px-4 text-cyan-400 font-semibold break-all">Investigation Directory</td>
+                    <td class="py-3 px-4 text-slate-300 break-words font-sans">Contains the malware samples <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">hataker.exe</code> and <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">lnrvmp.dll</code>.</td>
+                </tr>
+                <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                    <td class="py-3 px-4 text-cyan-400 font-semibold break-all">Tools Directory</td>
+                    <td class="py-3 px-4 text-slate-300 break-words font-sans">Location of analysis tools including <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Detect It Easy</code>, <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">SigCheck</code>, <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">TCPview</code>, and <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Timeline Explorer</code>.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Question & Answer Solutions -->
+    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight mb-6 mt-8 text-slate-100 font-sans">Question & Answer Solutions</h2>
+
+    <!-- Q1 -->
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">1. Using Detect it Easy, what is the SHA256 hash of the malware in question (lnrvmp.dll), and what language was it written in? Feel free to utilize VirusTotal to garner more information (Format: SHA256, Language)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">fb20fc4e474369e6d8626be3ef6e79027c2db3ba0a46f7b68c6981d6859d6d32, C/C++</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: The <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Get-FileHash</code> cmdlet was used to obtain the SHA256 hash of <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">lnrvmp.dll</code>. <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Detect It Easy</code> and VirusTotal confirmed the language as C/C++.</p>
+    </div>
+
+    <!-- Q2 -->
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">2. The total entropy value in Detect it Easy gives us a general indication of the randomness across the entire file, but the presence of a highly entropic-packed section indicates a portion of the file containing data that has been compressed—packed. Usually, an entropy above 7.2 is considered malicious, what is the name of this section in question? (Format: .xxxx)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">.rsrc</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Analysis of the file's sections in VirusTotal (or <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Detect It Easy</code>) revealed that the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">.rsrc</code> section had an entropy value exceeding 7.2, indicating potential packing or obfuscation.</p>
+    </div>
+
+    <!-- Q3 -->
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">3. Given the file’s entropy level, reputation on VirusTotal, and weird characteristics, it is clear that is malicious. However, attackers will sometimes use the names of security companies in their malware to bypass detection. In this case, what product name is this malware impersonating? (Format: Product Name)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">Sophos Anti-Virus</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: The <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">SigCheck.exe -a lnrvmp.dll</code> command was used to inspect the file's embedded information, revealing it was attempting to impersonate "Sophos Anti-Virus".</p>
+    </div>
+
+    <!-- Q4 -->
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">4. Using SigCheck, let's see if the file has been signed with a code-signing certificate—proving its validity. Include the “Verified” status and “Signing date” also known as Link Date (Format: Status, X:XX PM X/X/XXXX)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">Unsigned, 4:59 PM 9/1/2022</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Executing <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">SigCheck.exe -a lnrvmp.dll</code> showed that the file was <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Unsigned</code> and had a Link Date of <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">4:59 PM 9/1/2022</code>.</p>
+    </div>
+
+    <!-- Q5 -->
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">5. Let’s look at the alleged malware “hataker.exe”. Judging from its hash, it is not apparent on most malware platforms—albeit, it does not exclude its maliciousness. Turn on Windows Defender and run the malware until it picks it up. What is the name given to this alleged, malicious trojan-type program? (Format: Trojan:full name)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">Trojan:Win32/Meterpreter.RPZ!MTB</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Windows Defender was enabled in the VM's system settings. Upon executing <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">hataker.exe</code>, Windows Defender detected it as <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Trojan:Win32/Meterpreter.RPZ!MTB</code>.</p>
+    </div>
+
+    <!-- Q6 -->
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">6. Interestingly, now knowing the trojan type for the “hataker.exe”, we can safely assume the attacker was planning to initiate a connection from the victim’s endpoint to its command and control server. What is this method called? (Format: Xxxxxxx Xxxxx)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">Reverse Shell</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: A <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Meterpreter</code> payload is commonly used to establish a reverse shell, allowing an attacker to gain remote control over a compromised system by having the victim initiate the connection.</p>
+    </div>
+
+    <!-- Q7 -->
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">7. Sticking to the same context, let’s dissect the malware further. What dynamic domain is the malware “hataker.exe” using to establish a connection back to the attacker’s system? (Format: Domain name)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">0.tcp.ngrok.io</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Running <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">TCPview</code> while <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">hataker.exe</code> was active revealed an outgoing connection to an IP address. A quick lookup of this IP on VirusTotal identified the associated dynamic DNS domain as <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">0.tcp.ngrok.io</code>.</p>
+    </div>
+
+    <!-- Q8 -->
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">8. Using Timeline Explorer, look at the “Threat Logs” from the incident, how many high-risk alerts were tracked? (Format: Count)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">6</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: The <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Log_threat.csv</code> file was opened in <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Timeline Explorer</code> and filtered by the "High" risk level, showing a total count of 6 alerts.</p>
+    </div>
+
+    <!-- Q9 -->
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">9. What are the two “Rule Titles” with the highest count under the high-risk alerts level group—in respective order? (Format: Rule Title 1, Rule Title 2)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">Important Log File Cleared, Important Windows Service Terminated With Error</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Within <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Timeline Explorer</code>, after filtering for high-risk alerts, these two rule titles appeared with the highest frequency (2 counts each).</p>
+    </div>
+
+    <!-- Q10 -->
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">10. Examine the last “Rule Title” for the high-risk alerts level group: what MITRE ID does this correspond to and what is the TgtGrp in question? (Format: TechniqueID, TgtGrp)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">T1098, Administrators</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: The last high-risk alert, "User added to local group," indicated the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">TgtGrp</code> as <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Administrators</code>. Researching this activity points to MITRE ATT&CK Technique ID <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">T1098</code> (Account Manipulation).</p>
+    </div>
+
+    <!-- Q11 -->
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">11. Looking at the medium-risk level alerts, what is the “Rule Title” and count of the popular alert group? (Format: Rule Title, Count)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">Potentially Malicious PwSh, 457</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Filtering the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Log_threat.csv</code> in <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Timeline Explorer</code> for medium-risk alerts showed "Potentially Malicious PwSh" as the most frequent rule title with a count of 457.</p>
+    </div>
+
+    <!-- Q12 -->
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">12. What function was used for the password spray attack? Lists its MITRE ID for this type of attack as well (Format: powershell-function, TXXXX.xxx)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">Invoke-LocalPasswordSpray, T1110.003</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: The "Potentially Malicious PwSh" alerts (from Q11) indicated the use of the PowerShell function <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Invoke-LocalPasswordSpray</code>. This technique aligns with MITRE ATT&CK Technique ID <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">T1110.003</code> (Password Spraying).</p>
+    </div>
+
+    <!-- Key Takeaways & Security Insights -->
+    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight mb-4 mt-8 text-slate-100 font-sans">Key Takeaways & Security Insights</h2>
+    <ul class="space-y-4 text-sm text-slate-300 font-sans my-4">
+        <li class="flex items-start gap-2">
+            <span class="text-cyan-400 mt-1">•</span>
+            <div>
+                <strong class="text-cyan-400 font-semibold font-mono">Importance of Static Analysis:</strong> Tools like <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Detect It Easy</code> and <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">SigCheck</code> are crucial for initial triage, identifying file characteristics (hash, language, entropy, signing status), and uncovering attempts at impersonation. High entropy sections often indicate packing or obfuscation, a common malware tactic.
+            </div>
+        </li>
+        <li class="flex items-start gap-2">
+            <span class="text-cyan-400 mt-1">•</span>
+            <div>
+                <strong class="text-cyan-400 font-semibold font-mono">Dynamic Analysis for Network Activity:</strong> Executing suspicious binaries in a controlled environment and monitoring network connections with tools like <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">TCPview</code> is essential to identify Command and Control (C2) infrastructure, such as dynamic DNS services like <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">ngrok.io</code>, which attackers use for covert communication.
+            </div>
+        </li>
+        <li class="flex items-start gap-2">
+            <span class="text-cyan-400 mt-1">•</span>
+            <div>
+                <strong class="text-cyan-400 font-semibold font-mono">Endpoint Detection and Response (EDR) Capabilities:</strong> Enabling and observing <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Windows Defender</code>'s detection capabilities provides immediate insights into the malware's classification (e.g., <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Trojan:Win32/Meterpreter</code>), confirming its malicious intent and type.
+            </div>
+        </li>
+        <li class="flex items-start gap-2">
+            <span class="text-cyan-400 mt-1">•</span>
+            <div>
+                <strong class="text-cyan-400 font-semibold font-mono">Log Analysis for Incident Context:</strong> Tools like <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Timeline Explorer</code> are vital for reviewing threat logs, identifying high and medium-risk alerts, and understanding the sequence of events during an incident. This helps in correlating malware activity with system-level changes.
+            </div>
+        </li>
+        <li class="flex items-start gap-2">
+            <span class="text-cyan-400 mt-1">•</span>
+            <div>
+                <strong class="text-cyan-400 font-semibold font-mono">MITRE ATT&CK Framework:</strong> Mapping observed attacker techniques (e.g., Account Manipulation <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">T1098</code>, Password Spraying <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">T1110.003</code>) to the MITRE ATT&CK framework provides a standardized way to describe and understand adversary behavior, aiding in defensive strategies.
+            </div>
+        </li>
+        <li class="flex items-start gap-2">
+            <span class="text-cyan-400 mt-1">•</span>
+            <div>
+                <strong class="text-cyan-400 font-semibold font-mono">Common Attack Techniques:</strong> The challenge highlighted several common attack techniques, including the use of reverse shells (e.g., <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Meterpreter</code>), impersonation of legitimate software, and credential access methods like password spraying via PowerShell functions.
+            </div>
+        </li>
+    </ul>
+</div>
+        </article>
+    </main>
+</body>
+</html>

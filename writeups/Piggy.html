@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="ctf-title" content="Piggy">
+    <meta name="ctf-status" content="Retired">
+    <meta name="ctf-pass-hash" content="">
+    <meta name="ctf-platform" content="Blue Team Labs Online">
+    <meta name="ctf-difficulty" content="Easy">
+    <meta name="ctf-category" content="Security Operations">
+    <meta name="ctf-description" content="">
+    <meta name="ctf-tags" content="#Wirehsark #OSINT">
+    <title>Piggy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-slate-200 font-sans antialiased selection:bg-cyan-500 selection:text-slate-950">
+    <main class="max-w-4xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+        <a href="../index.html#writeups" class="inline-flex items-center gap-2 text-slate-400 hover:text-cyan-400 text-sm font-mono mb-8 transition-colors">
+            <i class="fa-solid fa-arrow-left text-xs"></i> Back to Portfolio
+        </a>
+        <article class="prose prose-invert max-w-none space-y-6">
+            <div class="max-w-5xl mx-auto px-4 py-8">
+  <!-- Header Section -->
+  <p class="font-mono text-xs text-slate-500 uppercase tracking-widest mb-2">// BLUE TEAM LABS ONLINE · WRITEUP</p>
+  <h1 class="text-4xl sm:text-5xl font-bold text-slate-100 tracking-tight mb-4">Piggy</h1>
+
+  <!-- Metadata Badges -->
+  <div class="flex flex-wrap gap-2 mb-6 font-mono text-xs font-semibold uppercase">
+    <span class="bg-cyan-950/80 text-cyan-400 border border-cyan-800/80 px-3 py-1 rounded">BLUE TEAM LABS ONLINE</span>
+    <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">EASY</span>
+    <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">SECURITY OPERATIONS</span>
+    <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">WIRESHARK</span>
+    <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">OSINT</span>
+    <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">RETIRED</span>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="flex flex-wrap items-center gap-3 my-6 font-mono text-xs">
+    <a href="../index.html#writeups" class="inline-flex items-center gap-2 bg-[#092b38] border border-cyan-800 text-cyan-400 hover:bg-cyan-900/50 px-4 py-2 rounded-lg transition-all"><i class="fa-solid fa-arrow-left text-xs"></i> BACK TO PORTFOLIO</a>
+  </div>
+
+  <!-- Executive Summary & Overview -->
+  <h2 class="text-2xl sm:text-3xl font-bold tracking-tight mb-4 mt-8 text-slate-100 font-sans">Executive Summary & Overview</h2>
+  <div class="text-slate-300 text-sm sm:text-base leading-relaxed space-y-4 mb-8 font-sans">
+    <p>
+      This challenge involved investigating network activity using <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Wireshark</code> to identify suspicious communications, malware families, and associated MITRE ATT&CK techniques. The analysis focused on four distinct <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">PCAP</code> files, each presenting a unique scenario ranging from SSH data transfers to DNS exfiltration attempts. Key tasks included identifying remote IP addresses, calculating data transfer volumes, performing OSINT on suspicious IPs to uncover malware infrastructure, and mapping observed activities to specific ATT&CK techniques and sub-techniques.
+    </p>
+  </div>
+
+  <!-- Question & Answer Solutions -->
+  <h2 class="text-2xl font-bold text-slate-100 mb-6 font-sans">Question & Answer Solutions</h2>
+
+  <!-- Q1 Card -->
+  <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+    <p class="text-slate-200 text-sm font-sans font-medium">1. PCAP One) What remote IP address was used to transfer data over SSH? (Format: X.X.X.X)</p>
+    <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">35.211.33.16</p>
+    <p class="text-slate-400 text-xs font-sans">Reasoning: Filtered <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">PCAP One</code> for <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">SSH</code> traffic and identified the remote IP.</p>
+  </div>
+
+  <!-- Q2 Card -->
+  <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+    <p class="text-slate-200 text-sm font-sans font-medium">2. PCAP One) How much data was transferred in total? (Format: XXXX M)</p>
+    <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">1131</p>
+    <p class="text-slate-400 text-xs font-sans">Reasoning: Checked <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">PCAP One</code> capture file properties, filtering for <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">ip.addr == 35.211.33.16</code> to display total bytes transferred.</p>
+  </div>
+
+  <!-- Q3 Card -->
+  <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+    <p class="text-slate-200 text-sm font-sans font-medium">3. PCAP Two) Review the IPs the infected system has communicated with. Perform OSINT searches to identify the malware family tied to this infrastructure (Format: MalwareName)</p>
+    <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">trickbot</p>
+    <p class="text-slate-400 text-xs font-sans">Reasoning: OSINT on the communicating IPs in <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">PCAP Two</code> revealed associations with the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Trickbot</code> malware family.</p>
+  </div>
+
+  <!-- Q4 Card -->
+  <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+    <p class="text-slate-200 text-sm font-sans font-medium">4. PCAP Three) Review the two IPs that are communicating on an unusual port. What are the two ASN numbers these IPs belong to? (Format: ASN, ASN)</p>
+    <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">14061, 63949</p>
+    <p class="text-slate-400 text-xs font-sans">Reasoning: Identified unusual port communications in <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">PCAP Three</code>. Performed OSINT on the IPs <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">194.233.171.171</code> (ASN <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">63949</code>, Outernet, Inc.) and <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">104.236.57.24</code> (ASN <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">14061</code>, DigitalOcean, LLC).</p>
+  </div>
+
+  <!-- Q5 Card -->
+  <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+    <p class="text-slate-200 text-sm font-sans font-medium">5. PCAP Three) Perform OSINT checks. What malware category have these IPs been attributed to historically? (Format: MalwareType)</p>
+    <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">miner</p>
+    <p class="text-slate-400 text-xs font-sans">Reasoning: OSINT via services like VirusTotal showed historical attribution of these IPs to <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">miner</code> malware.</p>
+  </div>
+
+  <!-- Q6 Card -->
+  <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+    <p class="text-slate-200 text-sm font-sans font-medium">6. PCAP Three) What ATT&CK technique is most closely related to this activity? (Format: TXXXX)</p>
+    <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">T1496</p>
+    <p class="text-slate-400 text-xs font-sans">Reasoning: The activity aligns with the MITRE ATT&CK technique <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">T1496</code>, Resource Hijacking, commonly associated with cryptocurrency mining.</p>
+  </div>
+
+  <!-- Q7 Card -->
+  <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+    <p class="text-slate-200 text-sm font-sans font-medium">7. PCAP Four) Go to View > Time Display Format > Seconds Since Beginning of Capture. How long into the capture was the first TXT record query made? (Use the default time, which is seconds since the packet capture started) (Format: X.xxxxxx)</p>
+    <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">8.527712125</p>
+    <p class="text-slate-400 text-xs font-sans">Reasoning: Adjusted <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Wireshark</code> time display to "Seconds Since Beginning of Capture" and located the first <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">TXT</code> record query in <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">PCAP Four</code>.</p>
+  </div>
+
+  <!-- Q8 Card -->
+  <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+    <p class="text-slate-200 text-sm font-sans font-medium">8. PCAP Four) Go to View > Time Display Format > UTC Date and Time of Day. What is the date and timestamp? (Format: YYYY-MM-DD HH:MM:SS)</p>
+    <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">2024-05-24 10:08:50</p>
+    <p class="text-slate-400 text-xs font-sans">Reasoning: Changed <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Wireshark</code> time display to "UTC Date and Time of Day" and noted the timestamp of the first <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">TXT</code> record query.</p>
+  </div>
+
+  <!-- Q9 Card -->
+  <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+    <p class="text-slate-200 text-sm font-sans font-medium">9. PCAP Four) What is the ATT&CK subtechnique relating to this activity? (Format: TXXXX.xxx)</p>
+    <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">T1071.004</p>
+    <p class="text-slate-400 text-xs font-sans">Reasoning: The activity in <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">PCAP Four</code> involves using <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">DNS</code> traffic to mask data exfiltration, which directly corresponds to the MITRE ATT&CK sub-technique <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">T1071.004</code>, Application Layer Protocol: <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">DNS</code>.</p>
+  </div>
+
+  <!-- Key Takeaways & Security Insights -->
+  <h2 class="text-2xl sm:text-3xl font-bold tracking-tight mb-4 mt-8 text-slate-100 font-sans">Key Takeaways & Security Insights</h2>
+  <ul class="space-y-4 text-sm text-slate-300 font-sans my-4">
+    <li class="flex items-start gap-2">
+      <span class="text-cyan-400 mt-1">•</span>
+      <div>
+        <strong class="text-cyan-400 font-semibold font-mono">Importance of ASN Mapping:</strong> Identifying Autonomous System Numbers (<code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">ASN</code>s) for IP addresses is crucial. While an IP address provides a location, the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">ASN</code> reveals the organization or entity that owns the IP range, offering valuable context for threat intelligence and attribution.
+      </div>
+    </li>
+    <li class="flex items-start gap-2">
+      <span class="text-cyan-400 mt-1">•</span>
+      <div>
+        <strong class="text-cyan-400 font-semibold font-mono">OSINT for Threat Intelligence:</strong> Leveraging Open-Source Intelligence (<code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">OSINT</code>) tools and databases (e.g., VirusTotal, IP reputation services) is essential for correlating suspicious IPs with known malware families (<code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Trickbot</code>, <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">miner</code>) and historical attack campaigns.
+      </div>
+    </li>
+    <li class="flex items-start gap-2">
+      <span class="text-cyan-400 mt-1">•</span>
+      <div>
+        <strong class="text-cyan-400 font-semibold font-mono">MITRE ATT&CK Framework:</strong> The <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">MITRE ATT&CK</code> framework provides a standardized taxonomy for describing adversary tactics and techniques. Mapping observed network activity to specific techniques like <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">T1496</code> (Resource Hijacking) or sub-techniques like <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">T1071.004</code> (<code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">DNS</code> for Command and Control) is vital for understanding adversary behavior and developing effective defenses.
+      </div>
+    </li>
+    <li class="flex items-start gap-2">
+      <span class="text-cyan-400 mt-1">•</span>
+      <div>
+        <strong class="text-cyan-400 font-semibold font-mono">Network Traffic Analysis with Wireshark:</strong> <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Wireshark</code> remains an indispensable tool for deep packet inspection, allowing analysts to identify unusual ports, protocols, data transfer volumes, and timing anomalies that can indicate malicious activity.
+      </div>
+    </li>
+  </ul>
+</div>
+        </article>
+    </main>
+</body>
+</html>

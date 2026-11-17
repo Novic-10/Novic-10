@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="ctf-title" content="Magika">
+    <meta name="ctf-status" content="Retired">
+    <meta name="ctf-pass-hash" content="">
+    <meta name="ctf-platform" content="Blue Team Labs Online">
+    <meta name="ctf-difficulty" content="Easy">
+    <meta name="ctf-category" content="Reverse Engineering">
+    <meta name="ctf-description" content="">
+    <meta name="ctf-tags" content="#Python3 #HxD">
+    <title>Magika</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-slate-200 font-sans antialiased selection:bg-cyan-500 selection:text-slate-950">
+    <main class="max-w-4xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+        <a href="../index.html#writeups" class="inline-flex items-center gap-2 text-slate-400 hover:text-cyan-400 text-sm font-mono mb-8 transition-colors">
+            <i class="fa-solid fa-arrow-left text-xs"></i> Back to Portfolio
+        </a>
+        <article class="prose prose-invert max-w-none space-y-6">
+            <div class="max-w-5xl mx-auto px-4 py-8">
+    <p class="font-mono text-xs text-slate-500 uppercase tracking-widest mb-2">// BLUE TEAM LABS ONLINE · WRITEUP</p>
+    <h1 class="text-4xl sm:text-5xl font-bold text-slate-100 tracking-tight mb-4">Magika</h1>
+
+    <div class="flex flex-wrap gap-2 mb-6 font-mono text-xs font-semibold uppercase">
+        <span class="bg-cyan-950/80 text-cyan-400 border border-cyan-800/80 px-3 py-1 rounded">BLUE TEAM LABS ONLINE</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">EASY</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">FILE ANALYSIS</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">MALWARE ANALYSIS</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">UPX</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">SSDEEP</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">MD5</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">SHA1</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">HEX</span>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-3 my-6 font-mono text-xs">
+        <a href="../index.html#writeups" class="inline-flex items-center gap-2 bg-[#092b38] border border-cyan-800 text-cyan-400 hover:bg-cyan-900/50 px-4 py-2 rounded-lg transition-all"><i class="fa-solid fa-arrow-left text-xs"></i> BACK TO PORTFOLIO</a>
+    </div>
+
+    <div class="text-slate-300 text-sm sm:text-base leading-relaxed space-y-4 mb-8 font-sans">
+        <p>This challenge focused on fundamental file analysis techniques, crucial for initial malware triage and digital forensics. Participants were tasked with identifying various file properties, including file types, operating system compatibility, packing methods, and unique hash values (MD5, SHA1, SSDEEP).</p>
+        <p>Key tools and methods employed included using the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">file</code> command for type identification, <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">md5sum</code> and <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">sha1sum</code> for cryptographic hashing, <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">ssdeep</code> for fuzzy hashing, and <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">UPX</code> for unpacking compressed executables. The challenge highlighted the importance of understanding file metadata and characteristics to uncover hidden information or malicious intent.</p>
+    </div>
+
+    <h2 class="text-2xl font-bold text-slate-100 mb-6 font-sans">Question & Answer Solutions</h2>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">1. What is the name of the file that its md5 hash ends with "56e"? (Format: file.ext)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">wire.bin</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Used <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">md5sum ./*</code> to list all MD5 hashes and identify the file ending with <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">56e</code>. The <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">file</code> command was used to determine the file type, and <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">.bin</code> was inferred as the extension.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">2. What is the md5 hash value of the file named "DROP_B~1.bin"? (Format: MD5)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">f7d236c4a75f9e0111f0a2d53b7cbc2e</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: The same method as Q1 was applied, using <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">md5sum</code> to find the hash for <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">DROP_B~1.bin</code>.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">3. What is the file type of the file that its md5 ends with "318"? and what OS does this file run? (Format: Type, OS)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">ELF, Linux</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Identified the file using <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">md5sum</code> and then used the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">file</code> command to determine its type and target OS.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">4. How many of the files are identified to run in Windows Systems? (Format: Number)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">5</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Executed <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">file ./*</code> and counted the entries identified as Windows executables.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">5. How many of the files are identified to run in Linux Systems? (Format: Number)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">2</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Executed <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">file ./*</code> and counted the entries identified as Linux executables (ELF).</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">6. How many files are upx packed? (Format: Number)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">4</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Used a hex editor (HxD) to search for the "UPX" string within the files, indicating UPX packing. Alternatively, <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">upx -l</code> could be used.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">7. What is the name of the original executable file that, once restored and verified, has an MD5 hash ending with “348”? (Format: file.ext)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">psamples1.bin</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: UPX-packed files needed to be unpacked first using <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">upx.exe -d [filename]</code>. After unpacking, <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">md5sum</code> was run on the restored files to find the one with an MD5 hash ending in <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">348</code>.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">8. What is the name of the original executable file that, once restored and verified, has an SHA1 hash ending with “80e”? (Format: file.ext)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">712.bin</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Similar to Q7, files were first unpacked using <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">upx.exe -d</code>, then <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">sha1sum</code> was used to find the file with the matching SHA1 hash ending in <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">80e</code>.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">9. What is the name of the file that its ssdeep hash ends with "12qW/"? (Format: String)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">Ardamax</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Used <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">ssdeep ./*</code> to generate fuzzy hashes for all files and then filtered for the hash ending with <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">12qW/</code>.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">10. What is the name of the file that its ssdeep hash value ends with "nV6V"? (Format: .something)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">.DS_Store</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Used <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">ssdeep ./*</code> to find the file with the matching fuzzy hash ending in <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">nV6V</code>.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">11. What file contains a zip header? what is the hex that represents this file type? In hexadecimal format (Format: file.ext, 0x....)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">an-sample.bin, 0x504B</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: A ZIP file header typically starts with the hexadecimal signature <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">0x504B</code>. This was identified by inspecting file headers with a hex editor or using the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">file</code> command which often identifies ZIP archives.</p>
+    </div>
+
+    <h2 class="text-2xl font-bold text-slate-100 mb-4 font-sans">Key Takeaways & Security Insights</h2>
+    <ul class="space-y-4 text-sm text-slate-300 font-sans my-4">
+        <li class="flex items-start gap-2"><span class="text-cyan-400 mt-1">•</span><div><strong class="text-cyan-400 font-semibold font-mono">Importance of Hashing:</strong> Cryptographic hashes (MD5, SHA1) are critical for uniquely identifying files and verifying their integrity. Fuzzy hashes (SSDEEP) are invaluable for identifying similar files, even if they have minor modifications, which is common in malware variants.</div></li>
+        <li class="flex items-start gap-2"><span class="text-cyan-400 mt-1">•</span><div><strong class="text-cyan-400 font-semibold font-mono">File Type Identification:</strong> Tools like the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">file</code> command are essential for quickly determining a file's format and intended operating system, which guides further analysis.</div></li>
+        <li class="flex items-start gap-2"><span class="text-cyan-400 mt-1">•</span><div><strong class="text-cyan-400 font-semibold font-mono">Unpacking Executables:</strong> Malware often uses packers like UPX to compress and obfuscate its code. The ability to identify and unpack these executables is a fundamental step in static analysis, revealing the original, uncompressed binary for deeper inspection.</div></li>
+        <li class="flex items-start gap-2"><span class="text-cyan-400 mt-1">•</span><div><strong class="text-cyan-400 font-semibold font-mono">Hexadecimal Signatures:</strong> Understanding common file magic numbers (hexadecimal signatures) allows for manual identification of file types, especially when file extensions are missing or misleading.</div></li>
+        <li class="flex items-start gap-2"><span class="text-cyan-400 mt-1">•</span><div><strong class="text-cyan-400 font-semibold font-mono">Comprehensive Toolset:</strong> Effective file analysis requires a combination of command-line utilities (e.g., <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">md5sum</code>, <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">sha1sum</code>, <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">ssdeep</code>, <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">file</code>) and specialized tools like UPX unpackers and hex editors.</div></li>
+    </ul>
+</div>
+        </article>
+    </main>
+</body>
+</html>

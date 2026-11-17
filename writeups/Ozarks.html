@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="ctf-title" content="Ozarks">
+    <meta name="ctf-status" content="Retired">
+    <meta name="ctf-pass-hash" content="">
+    <meta name="ctf-platform" content="Blue Team Labs Online">
+    <meta name="ctf-difficulty" content="Medium">
+    <meta name="ctf-category" content="Security Operations">
+    <meta name="ctf-description" content="">
+    <meta name="ctf-tags" content="#Hayabusa #NetworkMiner">
+    <title>Ozarks</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-slate-200 font-sans antialiased selection:bg-cyan-500 selection:text-slate-950">
+    <main class="max-w-4xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+        <a href="../index.html#writeups" class="inline-flex items-center gap-2 text-slate-400 hover:text-cyan-400 text-sm font-mono mb-8 transition-colors">
+            <i class="fa-solid fa-arrow-left text-xs"></i> Back to Portfolio
+        </a>
+        <article class="prose prose-invert max-w-none space-y-6">
+            <div class="max-w-5xl mx-auto px-4 py-8">
+  <p class="font-mono text-xs text-slate-500 uppercase tracking-widest mb-2">// BLUE TEAM LABS ONLINE · WRITEUP</p>
+  <h1 class="text-4xl sm:text-5xl font-bold text-slate-100 tracking-tight mb-4">Ozarks</h1>
+  <div class="flex flex-wrap gap-2 mb-6 font-mono text-xs font-semibold uppercase">
+    <span class="bg-cyan-950/80 text-cyan-400 border border-cyan-800/80 px-3 py-1 rounded">BLUE TEAM LABS ONLINE</span>
+    <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">MEDIUM</span>
+    <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">HAYABUSA</span>
+    <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">PHISHING</span>
+    <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">APT</span>
+    <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">LATERAL MOVEMENT</span>
+    <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">CREDENTIAL DUMPING</span>
+    <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">PERSISTENCE</span>
+    <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">C2</span>
+  </div>
+
+  <div class="flex flex-wrap items-center gap-3 my-6 font-mono text-xs">
+    <a href="../index.html#writeups" class="inline-flex items-center gap-2 bg-[#092b38] border border-cyan-800 text-cyan-400 hover:bg-cyan-900/50 px-4 py-2 rounded-lg transition-all"><i class="fa-solid fa-arrow-left text-xs"></i> BACK TO PORTFOLIO</a>
+  </div>
+
+  <div class="text-slate-300 text-sm sm:text-base leading-relaxed space-y-4 mb-8 font-sans">
+    <p>This writeup details the analysis of a sophisticated phishing campaign attributed to the Kimsuky (APT43) threat group. The incident began with a user, <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Wendy</code>, receiving a malicious <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">.MSC</code> file, <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Financial_Report_2024.MSC</code>, which initiated an infection chain.</p>
+    <p>The attack leveraged a PowerShell command to download a payload from a C2 server (<code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">192.168.42.131</code>), which was initially detected by Windows Defender as <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Trojan:Win32/SuspGolang.AG</code>. Persistence was established via a scheduled task named <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">OneDrive Security Task</code>, and the threat actors utilized <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Sliver C2</code> for command and control.</p>
+    <p>Post-compromise activities included domain reconnaissance using utilities like <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">nltest.exe</code> and <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">net.exe</code>, followed by <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">LSASS</code> credential dumping. The attackers successfully moved laterally to the domain controller (<code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">dc-01</code>) using the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Administrator</code> account and established remote access via <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">code.exe tunnel</code>, demonstrating a full compromise lifecycle.</p>
+  </div>
+
+  <h2 class="text-2xl font-bold text-slate-100 mb-4 font-sans">Asset Information</h2>
+  <div class="overflow-x-auto my-6 rounded-xl border border-slate-800/80 bg-[#0B1120] shadow-xl">
+    <table class="w-full text-left border-collapse text-xs font-mono">
+      <thead>
+        <tr class="border-b border-slate-800 bg-slate-900/60 text-slate-400 uppercase tracking-wider">
+          <th class="py-3 px-4">HOSTNAME</th>
+          <th class="py-3 px-4">SUMMARY</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+          <td class="py-3 px-4 text-cyan-400 font-semibold break-all">dc-01</td>
+          <td class="py-3 px-4 text-slate-300 break-words font-sans">Domain Controller (IP: <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">192.168.42.132</code>)</td>
+        </tr>
+        <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+          <td class="py-3 px-4 text-cyan-400 font-semibold break-all">WK3276</td>
+          <td class="py-3 px-4 text-slate-300 break-words font-sans">Compromised Workstation (IP: <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">192.168.42.133</code>)</td>
+        </tr>
+        <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+          <td class="py-3 px-4 text-cyan-400 font-semibold break-all">C2 Server</td>
+          <td class="py-3 px-4 text-slate-300 break-words font-sans">Command and Control Server (IP: <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">192.168.42.131</code>)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="text-2xl font-bold text-slate-100 mb-6 font-sans">Question & Answer Solutions</h2>
+
+  <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+    <p class="text-slate-200 text-sm font-sans font-medium">1. A user received a phishing email containing a zip file, which included a malicious attachment. Upon interaction with the file, the infection chain was initiated. Identify the name of the compromised user.</p>
+    <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">Wendy</p>
+    <p class="text-slate-400 text-xs font-sans">Reasoning: The user <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Wendy</code> was identified as the recipient of the phishing email and the initial point of compromise, as indicated in the incident details.</p>
+  </div>
+
+  <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+    <p class="text-slate-200 text-sm font-sans font-medium">2. The file type has been abused by the threat group Kimsuky (aka APT43, Velvet Chollima) since April 2024. Provide the name of the malicious file.</p>
+    <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">Financial_Report_2024.MSC</p>
+    <p class="text-slate-400 text-xs font-sans">Reasoning: Open-source intelligence (OSINT) on Kimsuky's recent tactics, techniques, and procedures (TTPs) revealed their use of <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">.MSC</code> files for initial access. The specific file name was found in the initial infection artifacts.</p>
+  </div>
+
+  <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+    <p class="text-slate-200 text-sm font-sans font-medium">3. When the user clicked the link in the malicious file, a PowerShell command was triggered to download a payload from a command-and-control (C2) server. Provide the IP address of the C2 server.</p>
+    <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">192.168.42.131</p>
+    <p class="text-slate-400 text-xs font-sans">Reasoning: The C2 IP address was identified in registry persistence logs, which recorded the PowerShell command attempting to download the payload.</p>
+  </div>
+
+  <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+    <p class="text-slate-200 text-sm font-sans font-medium">4. The payload was initially blocked by Windows Defender antivirus. Name the signature of the threat.</p>
+    <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">Trojan:Win32/SuspGolang.AG</p>
+    <p class="text-slate-400 text-xs font-sans">Reasoning: Windows Defender event logs, specifically Event ID <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">1116</code>, showed the malware being detected and quarantined with the signature <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Trojan:Win32/SuspGolang.AG</code>.</p>
+  </div>
+
+  <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+    <p class="text-slate-200 text-sm font-sans font-medium">5. The file establishes persistence by creating a scheduled task. Provide the name of this scheduled task.</p>
+    <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">OneDrive Security Task</p>
+    <p class="text-slate-400 text-xs font-sans">Reasoning: Analysis of Defender rule names and scheduled task configurations revealed a newly created task named <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">OneDrive Security Task</code>, indicating persistence.</p>
+  </div>
+
+  <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+    <p class="text-slate-200 text-sm font-sans font-medium">6. Identify the name of the command-and-control (C2) tool used by the threat actors to manage their malicious operations.</p>
+    <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">Sliver C2</p>
+    <p class="text-slate-400 text-xs font-sans">Reasoning: The C2 framework was explicitly named in the triggered security rules and alerts, indicating the use of <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Sliver C2</code>.</p>
+  </div>
+
+  <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+    <p class="text-slate-200 text-sm font-sans font-medium">7. A few minutes after the initial infection, the threat actor engaged in hands-on keyboard activity for domain reconnaissance. Specify the timestamp (in UTC) for the first executed command.</p>
+    <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">2024-10-04 15:34:20</p>
+    <p class="text-slate-400 text-xs font-sans">Reasoning: By reviewing event logs for network discovery commands (e.g., <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">net.exe</code>, <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">nltest.exe</code>), the earliest timestamp for such activity was identified.</p>
+  </div>
+
+  <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+    <p class="text-slate-200 text-sm font-sans font-medium">8. This was followed by the dumping of the LSASS process using the initial C2 implant. Provide the process ID of the source process.</p>
+    <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">10840</p>
+    <p class="text-slate-400 text-xs font-sans">Reasoning: Security rules and alerts specifically flagged a process with PID <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">10840</code> (associated with <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">C:\OneDrive.exe</code>) attempting to dump <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">LSASS</code> credentials.</p>
+  </div>
+
+  <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+    <p class="text-slate-200 text-sm font-sans font-medium">9. During their discovery activities within the network using Windows utilities like nltest.exe and net.exe, the threat actor found a privileged user's login session (informed in the scenario). To escalate their privileges and bypass defenses, the attacker injected a command-and-control (C2) implant into a legitimate process. Identify the process ID.</p>
+    <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">9056</p>
+    <p class="text-slate-400 text-xs font-sans">Reasoning: Filtering logs for activity related to the privileged user <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Ruth</code> and C2 implant activity revealed a process with PID <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">9056</code> as the target for injection.</p>
+  </div>
+
+  <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+    <p class="text-slate-200 text-sm font-sans font-medium">10. The threat actor attempted to move laterally to the domain controller. During the initial attempt, the service was detected by Windows Defender AV. Provide the name of the service.</p>
+    <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">Intune</p>
+    <p class="text-slate-400 text-xs font-sans">Reasoning: Windows Defender AV logs showed a detection related to the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Intune</code> service during the initial lateral movement attempt towards the domain controller.</p>
+  </div>
+
+  <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+    <p class="text-slate-200 text-sm font-sans font-medium">11. The threat actor ultimately succeeded in pivoting to the domain controller. Identify the name of the account used by the attacker for this action.</p>
+    <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">Administrator</p>
+    <p class="text-slate-400 text-xs font-sans">Reasoning: Event logs on the domain controller indicated successful authentication and activity using the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Administrator</code> account, confirming its use for lateral movement.</p>
+  </div>
+
+  <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+    <p class="text-slate-200 text-sm font-sans font-medium">12. The attacker returned to the beachhead and attempted to execute commands using a popular IDE platform. This technique was recently used by a Chinese Advanced persistent threat (APT) group to carry out cyber espionage attacks. Provide the executed command.</p>
+    <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">code.exe tunnel</p>
+    <p class="text-slate-400 text-xs font-sans">Reasoning: Analysis of process execution logs on the beachhead system revealed the command <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">code.exe tunnel</code>, which is known to establish remote access under the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">SYSTEM</code> account, a technique observed in recent APT attacks.</p>
+  </div>
+
+  <h2 class="text-2xl font-bold text-slate-100 mb-4 font-sans">Key Takeaways & Security Insights</h2>
+  <ul class="space-y-4 text-sm text-slate-300 font-sans my-4">
+    <li class="flex items-start gap-2">
+      <span class="text-cyan-400 mt-1">•</span>
+      <div>
+        <strong class="text-cyan-400 font-semibold font-mono">Phishing Awareness:</strong> The initial compromise of user <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Wendy</code> via a malicious <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">.MSC</code> file highlights the critical need for robust user awareness training and email security solutions to detect and block such threats.
+      </div>
+    </li>
+    <li class="flex items-start gap-2">
+      <span class="text-cyan-400 mt-1">•</span>
+      <div>
+        <strong class="text-cyan-400 font-semibold font-mono">Defense Evasion & Persistence:</strong> Threat actors continue to abuse legitimate file types (<code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">.MSC</code>) and establish persistence through scheduled tasks (e.g., <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">OneDrive Security Task</code>). Organizations must implement strong application whitelisting and monitor scheduled task creation.
+      </div>
+    </li>
+    <li class="flex items-start gap-2">
+      <span class="text-cyan-400 mt-1">•</span>
+      <div>
+        <strong class="text-cyan-400 font-semibold font-mono">C2 Frameworks & Detection:</strong> The use of <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Sliver C2</code> emphasizes the need for network intrusion detection systems (NIDS) and endpoint detection and response (EDR) solutions capable of identifying known C2 beaconing patterns and suspicious process behaviors.
+      </div>
+    </li>
+    <li class="flex items-start gap-2">
+      <span class="text-cyan-400 mt-1">•</span>
+      <div>
+        <strong class="text-cyan-400 font-semibold font-mono">Credential Dumping & Lateral Movement:</strong> <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">LSASS</code> credential dumping (PID <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">10840</code>) remains a critical post-exploitation technique. Implementing credential protection, privileged access management (PAM), and monitoring for suspicious access to sensitive processes is crucial.
+      </div>
+    </li>
+    <li class="flex items-start gap-2">
+      <span class="text-cyan-400 mt-1">•</span>
+      <div>
+        <strong class="text-cyan-400 font-semibold font-mono">Domain Reconnaissance:</strong> Attackers frequently use built-in Windows utilities like <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">nltest.exe</code> and <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">net.exe</code> for network discovery. Behavioral analytics and logging of command-line executions are vital for early detection.
+      </div>
+    </li>
+    <li class="flex items-start gap-2">
+      <span class="text-cyan-400 mt-1">•</span>
+      <div>
+        <strong class="text-cyan-400 font-semibold font-mono">Endpoint Protection Effectiveness:</strong> Windows Defender successfully detected the initial payload (<code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Trojan:Win32/SuspGolang.AG</code>) and a lateral movement attempt (<code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">Intune</code> service), underscoring the importance of keeping AV/EDR solutions updated and properly configured.
+      </div>
+    </li>
+    <li class="flex items-start gap-2">
+      <span class="text-cyan-400 mt-1">•</span>
+      <div>
+        <strong class="text-cyan-400 font-semibold font-mono">Advanced TTPs:</strong> The use of <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">code.exe tunnel</code> for remote access under the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">SYSTEM</code> account demonstrates sophisticated post-exploitation techniques. Monitoring for unusual process execution and network connections from unexpected binaries is crucial.
+      </div>
+    </li>
+  </ul>
+</div>
+        </article>
+    </main>
+</body>
+</html>
