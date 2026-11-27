@@ -206,6 +206,7 @@ STRICT COLOR & FONTS:
 - Main Headers (H1, H2): Clean sans-serif, bold `text-slate-100` (`text-2xl sm:text-3xl font-bold tracking-tight mb-4 mt-8`).
 - Highlights & Inline Code: Hostnames, binaries, usernames, file paths, registry paths, and script names MUST be wrapped in `font-mono text-cyan-400 font-semibold` (e.g., `<code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">DEV-WKS-01</code>`).
 
+
 REQUIRED INKSEC HEADER STRUCTURE (Top of Writeup):
 1. Breadcrumb Tagline:
 - Format: `<p class="font-mono text-xs text-slate-500 uppercase tracking-widest mb-2">// {PLATFORM} · WRITEUP</p>`
@@ -220,7 +221,8 @@ REQUIRED INKSEC HEADER STRUCTURE (Top of Writeup):
 - Wrap in `<div class="flex flex-wrap items-center gap-3 my-6 font-mono text-xs">`
 - Back Button:
 `<a href="../index.html#writeups" class="inline-flex items-center gap-2 bg-[#092b38] border border-cyan-800 text-cyan-400 hover:bg-cyan-900/50 px-4 py-2 rounded-lg transition-all"><i class="fa-solid fa-arrow-left text-xs"></i> BACK TO PORTFOLIO</a>`
-
+- Proof of Completion Button (populate `{PROOF_OF_COMPLETION_URL}` from the `Proof of Completion` header key in `original.md`):
+`<a href="{PROOF_OF_COMPLETION_URL}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 border border-pink-500/40 text-pink-400 hover:bg-pink-500/10 px-3.5 py-1.5 rounded transition-all font-mono text-xs font-semibold uppercase">PROOF OF COMPLETION <i class="fas fa-arrow-right"></i></a>`
 DOCUMENT SECTIONS & EXACT HTML COMPONENT LAYOUT (IN THIS EXACT ORDER):
 
 1. Executive Summary & Overview:

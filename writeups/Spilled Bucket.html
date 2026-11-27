@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="ctf-title" content="Spilled Bucket">
+    <meta name="ctf-status" content="Retired">
+    <meta name="ctf-pass-hash" content="">
+    <meta name="ctf-platform" content="Blue Team Labs Online">
+    <meta name="ctf-difficulty" content="Easy">
+    <meta name="ctf-category" content="Incident Response">
+    <meta name="ctf-description" content="">
+    <meta name="ctf-tags" content="#Splunk">
+    <title>Spilled Bucket</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-slate-200 font-sans antialiased selection:bg-cyan-500 selection:text-slate-950">
+    <main class="max-w-4xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+        <a href="../index.html#writeups" class="inline-flex items-center gap-2 text-slate-400 hover:text-cyan-400 text-sm font-mono mb-8 transition-colors">
+            <i class="fa-solid fa-arrow-left text-xs"></i> Back to Portfolio
+        </a>
+        <article class="prose prose-invert max-w-none space-y-6">
+            <div class="max-w-5xl mx-auto px-4 py-8">
+    <!-- Header Section -->
+    <p class="font-mono text-xs text-slate-500 uppercase tracking-widest mb-2">// BLUE TEAM LABS ONLINE · WRITEUP</p>
+    <h1 class="text-4xl sm:text-5xl font-bold text-slate-100 tracking-tight mb-4">Spilled Bucket</h1>
+    <div class="flex flex-wrap gap-2 mb-6 font-mono text-xs font-semibold uppercase">
+        <span class="bg-cyan-950/80 text-cyan-400 border border-cyan-800/80 px-3 py-1 rounded">BLUE TEAM LABS ONLINE</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">EASY</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">DFIR</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">CLOUD</span>
+        <span class="bg-slate-900 text-slate-400 border border-slate-800 px-3 py-1 rounded">AWS</span>
+    </div>
+    <div class="flex flex-wrap items-center gap-3 my-6 font-mono text-xs">
+        <a href="../index.html#writeups" class="inline-flex items-center gap-2 bg-[#092b38] border border-cyan-800 text-cyan-400 hover:bg-cyan-900/50 px-4 py-2 rounded-lg transition-all"><i class="fa-solid fa-arrow-left text-xs"></i> BACK TO PORTFOLIO</a>
+        <a href="#" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 border border-pink-500/40 text-pink-400 hover:bg-pink-500/10 px-3.5 py-1.5 rounded transition-all font-mono text-xs font-semibold uppercase">PROOF OF COMPLETION <i class="fas fa-arrow-right"></i></a>
+    </div>
+
+    <!-- Executive Summary & Overview -->
+    <h2 class="text-2xl font-bold text-slate-100 mb-4 font-sans">Executive Summary & Overview</h2>
+    <div class="text-slate-300 text-sm sm:text-base leading-relaxed space-y-4 mb-8 font-sans">
+        <p>A recently formed Australian company, transitioning to cloud infrastructure, experienced a significant security incident due to several misconfigurations. A group of attackers successfully leveraged these vulnerabilities to gain unauthorized access to their AWS environment. Lacking an in-house Incident Response (IR) team for cloud investigations and managing their cloud solely via the browser (no CLI configured), the company required external assistance to understand the scope of the breach and remediate the issues.</p>
+        <p>This writeup details the investigation into the compromise, tracing the attacker's steps from initial access through persistence and lateral movement. Key systems involved include exposed <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">S3 buckets</code>, compromised <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">EC2 instances</code>, and manipulated <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">IAM identities</code>. The investigation relies heavily on analyzing <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">CloudTrail</code> and <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">VPC Flow logs</code> to reconstruct the attack timeline and identify indicators of compromise.</p>
+    </div>
+
+    <!-- Execution Chain & MITRE ATT&CK Mapping -->
+    <h2 class="text-2xl font-bold text-slate-100 mb-4 font-sans">Execution Chain & MITRE ATT&CK Mapping</h2>
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-6 shadow-xl space-y-4">
+        <p class="text-slate-300 text-sm font-sans leading-relaxed"><strong class="text-cyan-400 font-mono text-xs font-semibold">Stage 1 — Cloud Storage Exposure & Access:</strong> Threat activity targeted cloud object storage and retrieved sensitive configuration, VPN profile, and key material (<code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">xxx.xxx.xxx.xxx</code>).</p>
+        <p class="text-slate-300 text-sm font-sans leading-relaxed"><strong class="text-cyan-400 font-mono text-xs font-semibold">Stage 2 — Network & Compute Access:</strong> Remote connections were established toward cloud VPC and compute resources (<code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">xxx.xxx.xxx.xxx</code> -> <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">xxx.xxx.xxx.xxx</code>), accompanied by instance enumeration and SSH key/session activity.</p>
+        <p class="text-slate-300 text-sm font-sans leading-relaxed"><strong class="text-cyan-400 font-mono text-xs font-semibold">Stage 3 — IAM Persistence & Escalation:</strong> A secondary cloud user identity (<code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">&lt;iam_user&gt;</code>) was created and granted elevated administrative access (<code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">&lt;policy_arn&gt;</code>).</p>
+        <p class="text-slate-300 text-sm font-sans leading-relaxed"><strong class="text-cyan-400 font-mono text-xs font-semibold">Stage 4 — Lateral & Outbound Shell Activity:</strong> Follow-on access reached additional compute infrastructure (<code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">xxx.xxx.xxx.xxx</code>) and established an outbound reverse shell (<code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">xxx.xxx.xxx.xxx:&lt;port&gt;</code>).</p>
+    </div>
+
+    <div class="overflow-x-auto my-6 rounded-xl border border-slate-800/80 bg-[#0B1120] shadow-xl">
+        <table class="w-full text-left border-collapse text-xs font-mono">
+            <thead>
+                <tr class="border-b border-slate-800 bg-slate-900/60 text-slate-400 uppercase tracking-wider">
+                    <th class="py-3 px-4">STAGE</th>
+                    <th class="py-3 px-4">TECHNIQUE / SUB-TECHNIQUE</th>
+                    <th class="py-3 px-4">MITRE ID</th>
+                    <th class="py-3 px-4">OBSERVED EVIDENCE / IOCs</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                    <td class="py-3 px-4 text-cyan-400 font-semibold font-sans">Initial Access</td>
+                    <td class="py-3 px-4 text-slate-200 font-sans">T1530 (Data from Cloud Storage)</td>
+                    <td class="py-3 px-4 text-cyan-400 font-semibold whitespace-nowrap">T1530</td>
+                    <td class="py-3 px-4 text-slate-300 font-sans break-words">Accessed exposed cloud storage objects containing configuration and credential material</td>
+                </tr>
+                <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                    <td class="py-3 px-4 text-cyan-400 font-semibold font-sans">Persistence</td>
+                    <td class="py-3 px-4 text-slate-200 font-sans">T1098 (Account Manipulation)</td>
+                    <td class="py-3 px-4 text-cyan-400 font-semibold whitespace-nowrap">T1098</td>
+                    <td class="py-3 px-4 text-slate-300 font-sans break-words">Provisioned a secondary cloud identity and attached broad administrative permissions</td>
+                </tr>
+                <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                    <td class="py-3 px-4 text-cyan-400 font-semibold font-sans">Command and Control</td>
+                    <td class="py-3 px-4 text-slate-200 font-sans">T1071 (Application Layer Protocol)</td>
+                    <td class="py-3 px-4 text-cyan-400 font-semibold whitespace-nowrap">T1071</td>
+                    <td class="py-3 px-4 text-slate-300 font-sans break-words">Initiated remote access and outbound shell connections across cloud instances</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Asset Information Table -->
+    <h2 class="text-2xl font-bold text-slate-100 mb-4 font-sans">Asset Information</h2>
+    <div class="overflow-x-auto my-6 rounded-xl border border-slate-800/80 bg-[#0B1120] shadow-xl">
+        <table class="w-full text-left border-collapse text-xs font-mono">
+            <thead>
+                <tr class="border-b border-slate-800 bg-slate-900/60 text-slate-400 uppercase tracking-wider">
+                    <th class="py-3 px-4">HOSTNAME</th>
+                    <th class="py-3 px-4">SUMMARY</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                    <td class="py-3 px-4 text-cyan-400 font-semibold break-all">developers-configuration</td>
+                    <td class="py-3 px-4 text-slate-300 break-words font-sans">S3 bucket containing sensitive configuration files, VPN profiles, and key material.</td>
+                </tr>
+                <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                    <td class="py-3 px-4 text-cyan-400 font-semibold break-all">18[.]216[.]138[.]52</td>
+                    <td class="py-3 px-4 text-slate-300 break-words font-sans">Attacker's source IP address observed accessing the S3 bucket via <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">GetObject</code> API calls.</td>
+                </tr>
+                <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                    <td class="py-3 px-4 text-cyan-400 font-semibold break-all">VPN-Profiles/DevelopersProfile_wg0.conf</td>
+                    <td class="py-3 px-4 text-slate-300 break-words font-sans">WireGuard VPN configuration file downloaded by the attacker, enabling network access.</td>
+                </tr>
+                <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                    <td class="py-3 px-4 text-cyan-400 font-semibold break-all">122[.]161[.]49[.]105</td>
+                    <td class="py-3 px-4 text-slate-300 break-words font-sans">Attacker's IP address identified from VPC Flow logs, connecting to the EC2 instance via VPN.</td>
+                </tr>
+                <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                    <td class="py-3 px-4 text-cyan-400 font-semibold break-all">10.0.1.125</td>
+                    <td class="py-3 px-4 text-slate-300 break-words font-sans">Private IP address of the initial EC2 instance accessed by the attacker.</td>
+                </tr>
+                <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                    <td class="py-3 px-4 text-cyan-400 font-semibold break-all">arn:aws:iam::764581110688:role/ec2-role</td>
+                    <td class="py-3 px-4 text-slate-300 break-words font-sans">IAM role found by the attacker during enumeration, later used for privilege escalation.</td>
+                </tr>
+                <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                    <td class="py-3 px-4 text-cyan-400 font-semibold break-all">web_engg_2</td>
+                    <td class="py-3 px-4 text-slate-300 break-words font-sans">New IAM user identity created by the attacker for persistence, assigned administrative privileges.</td>
+                </tr>
+                <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                    <td class="py-3 px-4 text-cyan-400 font-semibold break-all">arn:aws:iam::aws:policy/AdministratorAccess</td>
+                    <td class="py-3 px-4 text-slate-300 break-words font-sans">AWS managed policy attached to the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">web_engg_2</code> user, granting full administrative control.</td>
+                </tr>
+                <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                    <td class="py-3 px-4 text-cyan-400 font-semibold break-all">10.0.2.32</td>
+                    <td class="py-3 px-4 text-slate-300 break-words font-sans">Private IP address of a second EC2 instance accessed by the attacker via SSH.</td>
+                </tr>
+                <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                    <td class="py-3 px-4 text-cyan-400 font-semibold break-all">3[.]15[.]209[.]50:13337</td>
+                    <td class="py-3 px-4 text-slate-300 break-words font-sans">Attacker's IP and port for the outbound reverse shell established from the compromised EC2 instance.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Question & Answer Solutions -->
+    <h2 class="text-2xl font-bold text-slate-100 mb-6 font-sans">Question & Answer Solutions</h2>
+    <p class="text-slate-300 text-sm sm:text-base font-sans mb-6">Let&apos;s walk through each investigation question in order, tracing how each artifact and memory or log clue points to the answer.</p>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">1. Which S3 bucket's object was accessed by the attacker?</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">developers-configuration</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: By filtering <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">CloudTrail</code> logs for <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">eventName=GetObject</code> and the attacker's source IP, we can extract the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">bucketName</code> from the raw event data. The query used was <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">index=* "bucketName" eventName=GetObject sourceIPAddress="18.216.138.52"| rex field=_raw "\"bucketName\":\"(?&lt;Extracted_Bucket&gt;[^\"]+)\""| table _time, sourceIPAddress, eventName, Extracted_Bucket</code>.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">2. What was the attacker IP associated in S3 access? (Provide the defanged IP)</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">18[.]216[.]138[.]52</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: The <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">sourceIPAddress</code> field in the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">CloudTrail</code> logs for the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">GetObject</code> event clearly shows the IP address <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">18.216.138.52</code>. This was identified by parsing raw logs as key-value pairs were not consistently indexed. The query used was <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">index=* "bucketName" eventName=GetObject sourceIPAddress="18.216.138.52"</code>.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">3. What object/file did the attacker then access/download that would allow access to their environment?</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">VPN-Profiles/DevelopersProfile_wg0.conf</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Further analysis of <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">CloudTrail</code> <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">GetObject</code> events from the attacker's IP revealed access to <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">VPN-Profiles/DevelopersProfile_wg0.conf</code>, a file type commonly used for VPN configurations, which could grant network access.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">4. Based on the previous question, what is the software associated with the file? Provide the name of the software used for such type of files.</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">wireguard</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: The file extension <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">.conf</code> in conjunction with <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">wg0</code> (a common interface name) strongly indicates a <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">WireGuard</code> VPN configuration file. This was confirmed through OSINT on the file type.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">5. Using the previously mentioned file, one of the attackers accidentally connected via main system leading to his IP address getting leaked. What is the IP address of the Attacker? Provide the defanged IP</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">122[.]161[.]49[.]105</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: By analyzing <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">VPC Flow logs</code> for accepted connections (<code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">action=ACCEPT</code>) to the WireGuard VPN port (<code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">dstport="51820"</code>), the source IP address <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">122.161.49.105</code> was identified as the attacker's connection point. The query used was <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">index=* sourcetype="VPC Flow" action=ACCEPT dstport="51820" | stats count by srcaddr</code>.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">6. What was the Private IP of the EC2 instance to which the attacker connected?</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">10.0.1.125</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Reviewing <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">VPC Flow logs</code> and correlating with the attacker's connection activity, the destination IP address for the accepted VPN connections was found to be <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">10.0.1.125</code>. Although some logs obscured the IP, cross-referencing with other flow records helped pinpoint the target instance. The query used was <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">index=* "requestParameters.iPAddress"=HIDDEN_DUE_TO_SECURITY_REASONS</code> (adjusted to find the actual IP in available logs).</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">7. The attacker performed further enumeration while being inside the EC2 instance and found a role that could be used further by assuming it. What was the ARN of the role?</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">arn:aws:iam::764581110688:role/ec2-role</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Within <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">CloudTrail</code> logs, after the attacker gained access to the EC2 instance, events related to instance metadata or IAM role enumeration would reveal associated roles. The ARN <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">arn:aws:iam::764581110688:role/ec2-role</code> was identified as the role discovered by the attacker.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">8. Using the role Attacker targeted IAM to achieve persistence in the environment. Provide the APIs used for it in order of its usage.</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">CreateUser, CreateAccessKey, AttachUserPolicy</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Filtering <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">CloudTrail</code> logs for IAM events related to user creation and policy attachment, specifically excluding common read-only actions, revealed the sequence of API calls: <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">CreateUser</code>, followed by <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">CreateAccessKey</code>, and finally <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">AttachUserPolicy</code>. The query used was <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">index=* sourcetype=cloudtrail "arn:aws:iam::764581110688:user/web_engg_1" eventName!="list*" eventName!="describe*" eventName!="Get*"| table eventTime, eventName, _raw| sort + eventTime</code>.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">9. Provide the name of the IAM Identity created during Persistence.</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">web_engg_2</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: The <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">CreateUser</code> API call in <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">CloudTrail</code> logs explicitly records the name of the new IAM user created. This was identified as <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">web_engg_2</code>.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">10. What policy was attached to the Identity later? Provide the policy ARN.</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">arn:aws:iam::aws:policy/AdministratorAccess</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Following the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">CreateUser</code> and <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">CreateAccessKey</code> events, the <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">AttachUserPolicy</code> event in <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">CloudTrail</code> logs specifies the policy ARN attached to the new user. This was found to be <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">arn:aws:iam::aws:policy/AdministratorAccess</code>, indicating full administrative privileges.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">11. Another EC2 instance was found to be accessed by the Attacker using SSH. Find its Private IP Address.</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">10.0.2.32</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: By examining <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">VPC Flow logs</code> for SSH connections (<code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">dstport=22</code>) originating from the compromised environment or attacker IPs, a new internal destination IP <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">10.0.2.32</code> was identified, indicating lateral movement to another EC2 instance.</p>
+    </div>
+
+    <div class="bg-[#0B1120] border border-slate-800/80 rounded-xl p-6 mb-4 shadow-xl space-y-3">
+        <p class="text-slate-200 text-sm font-sans font-medium">12. From the above EC2 instance, attacker then created a reverse shell. Find the Reverse Shell IP & port. Provide the Defanged IP</p>
+        <p class="text-cyan-400 font-mono text-base font-bold tracking-wide break-all">3[.]15[.]209[.]50, 13337</p>
+        <p class="text-slate-400 text-xs font-sans">Reasoning: Outbound connections from the newly accessed EC2 instance (<code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">10.0.2.32</code>) to unusual ports or external IPs in <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">VPC Flow logs</code> would indicate a reverse shell. The IP <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">3.15.209.50</code> and port <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">13337</code> were identified as the attacker's listener for the reverse shell.</p>
+    </div>
+
+    <!-- Key Takeaways & Security Insights -->
+    <h2 class="text-2xl font-bold text-slate-100 mb-4 font-sans">Key Takeaways & Security Insights</h2>
+    <ul class="space-y-4 text-sm text-slate-300 font-sans my-4">
+        <li class="flex items-start gap-2"><span class="text-cyan-400 mt-1">•</span><div><strong class="text-cyan-400 font-semibold font-mono">S3 Bucket Security:</strong> Misconfigured S3 buckets can lead to initial access by exposing sensitive data like VPN configurations and SSH keys. Implement strict access controls (least privilege), block public access by default, and regularly audit bucket policies.</div></li>
+        <li class="flex items-start gap-2"><span class="text-cyan-400 mt-1">•</span><div><strong class="text-cyan-400 font-semibold font-mono">VPC Flow Log Monitoring:</strong> <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">VPC Flow logs</code> are crucial for detecting unauthorized network connections, including VPN access, SSH activity, and outbound reverse shells. Monitor for unusual source IPs, destination ports, and traffic patterns.</div></li>
+        <li class="flex items-start gap-2"><span class="text-cyan-400 mt-1">•</span><div><strong class="text-cyan-400 font-semibold font-mono">IAM Role & User Management:</strong> Attackers will seek to establish persistence and escalate privileges. Regularly review IAM roles attached to EC2 instances and user permissions. Implement multi-factor authentication (MFA) for all users, especially those with administrative access, and monitor for <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">CreateUser</code>, <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">CreateAccessKey</code>, and <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">AttachUserPolicy</code> events in <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">CloudTrail</code>.</div></li>
+        <li class="flex items-start gap-2"><span class="text-cyan-400 mt-1">•</span><div><strong class="text-cyan-400 font-semibold font-mono">SSH Key Management:</strong> Compromised SSH keys can grant direct access to compute instances. Implement strong key management practices, rotate keys regularly, and monitor <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">CloudTrail</code> for <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">SendSSHPublicKey</code> or similar events.</div></li>
+        <li class="flex items-start gap-2"><span class="text-cyan-400 mt-1">•</span><div><strong class="text-cyan-400 font-semibold font-mono">CloudTrail for Audit & Forensics:</strong> <code class="font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded text-xs">CloudTrail</code> is indispensable for auditing API activity and reconstructing attack timelines. Ensure it is enabled, configured for all regions, and logs are securely stored and monitored.</div></li>
+        <li class="flex items-start gap-2"><span class="text-cyan-400 mt-1">•</span><div><strong class="text-cyan-400 font-semibold font-mono">Proactive Cloud Security Posture Management (CSPM):</strong> Regularly scan cloud environments for misconfigurations, exposed resources, and adherence to security best practices. This can prevent initial access vectors from being exploited.</div></li>
+    </ul>
+</div>
+        </article>
+    </main>
+</body>
+</html>
